@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 
 
@@ -19,6 +20,9 @@ def weight_t0(data: np.ndarray, grid_size: tuple, weight_init: str) -> np.ndarra
     if weight_init == 'random':
         # initialisation aléatoire des poids dans l'espace des données
         n_poids = grid_size[0] * grid_size[1]
+        if n_poids > data.shape[0]:
+            raise ValueError(f"Grid size {grid_size} ({n_poids} neurons) is too large for "
+                            f"{data.shape[0]} samples when initializing without replacement.")
         indices = np.random.choice(len(data), n_poids, replace= False)
         return data[indices].reshape(grid_size[0], grid_size[1], data.shape[1])
         
@@ -113,3 +117,36 @@ def get_metrics(metric:str):
     
     else:
         raise ValueError(f"Unsupported metric: {metric}")
+    
+
+def plot_som_2D(codebook: np.ndarray, data: np.ndarray, y: np.ndarray, title: str = "SOM Visualization") -> None:
+    """
+    Visualisation du SOM en 2D
+    Args:
+        codebook (np.ndarray): Codebook du SOM à visualiser
+        data (np.ndarray): Données d'entrée pour la visualisation
+        y (np.ndarray): Étiquettes des données pour la coloration des points
+        title (str): Titre du graphique
+    """
+    h, w, d = codebook.shape
+    if d != 2:
+        raise ValueError("Codebook must have 2 dimensions for 2D visualization.")
+
+    plt.figure(figsize=(8, 6))
+    plt.scatter(data[:,0], data[:, 1], c=y, label='Data Points')
+    plt.scatter(codebook[:, :, 0].flatten(), codebook[:, :, 1].flatten(), c='red', marker='X', label='SOM Neurons')
+
+    for i in range(h):
+        for j in range(w):
+            if i+1 < h:
+                plt.plot([codebook[i,j,0], codebook[i+1,j,0]],
+                        [codebook[i,j,1], codebook[i+1,j,1]], 'k-', lw=1)
+            if j+1 < w:
+                plt.plot([codebook[i,j,0], codebook[i,j+1,0]],
+                        [codebook[i,j,1], codebook[i,j+1,1]], 'k-', lw=1)
+    plt.title(title)
+    plt.xlabel('Feature 1')
+    plt.ylabel('Feature 2')
+    plt.legend()
+    plt.grid()
+    plt.show()

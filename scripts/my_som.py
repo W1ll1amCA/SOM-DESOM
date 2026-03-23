@@ -5,7 +5,7 @@ class stepwiseSOM:
     """
     Self-Organizing Map (SOM) en mode original (step-wise)
     """
-    def __init__(self, learning_rate_init: float, rayon_init: float, grid_size: tuple, n_steps: int, weight_init: str, dis_choice: str):
+    def __init__(self, learning_rate_init: float, rayon_init: float, grid_size: tuple, n_steps: int, weight_init: str = 'random', dis_choice: str = 'euclidean'):
         """Initialisation du SOM en fonction de ses hyperparamètres et le type de SOM choisi (batch ou stepwise)
 
         Args:
@@ -13,8 +13,8 @@ class stepwiseSOM:
             rayon_init (float): Rayon initial de voisinage
             grid_size (tuple): Taille de la grille du SOM
             n_steps (int): Nombre d'étapes pour l'entraînement du SOM
-            weight_init (str): Méthode d'initialisation des poids (ex: 'random', 'pca')
-            dis_choice (str): Métrique de distance utilisée pour trouver le neurone gagnant (ex: 'euclidean', 'manhattan', etc.)
+            weight_init (str): Méthode d'initialisation des poids random par défaut (ex: 'random', 'pca')
+            dis_choice (str): Métrique de distance utilisée pour trouver le neurone gagnant euclidean par défaut (ex: 'euclidean', 'manhattan', etc.)
         """
         self.learning_rate_init = learning_rate_init
         self.grid_size = grid_size 
@@ -77,7 +77,7 @@ class batchSOM:
     Self-Organizing Map (SOM) en mode batch
     """
 
-    def __init__(self, rayon_init: float, grid_size: tuple, n_steps: int, weight_init: str, dis_choice: str):
+    def __init__(self, rayon_init: float, grid_size: tuple, n_steps: int, weight_init: str = 'random', dis_choice: str = 'euclidean'):
         """Initialisation du SOM en fonction de ses hyperparamètres et le type de SOM choisi (batch ou stepwise)
 
         Args:
@@ -85,8 +85,8 @@ class batchSOM:
             rayon_init (float): Rayon initial de voisinage
             grid_size (tuple): Taille de la grille du SOM
             n_steps (int): Nombre d'étapes pour l'entraînement du SOM
-            weight_init (str): Méthode d'initialisation des poids (ex: 'random', 'pca')
-            dis_choice (str): Métrique de distance utilisée pour trouver le neurone gagnant (ex: 'euclidean', 'manhattan', etc.)
+            weight_init (str): Méthode d'initialisation des poids random par défaut (ex: 'random', 'pca')
+            dis_choice (str): Métrique de distance utilisée pour trouver le neurone gagnant euclidean par défaut (ex: 'euclidean', 'manhattan', etc.)
         """
         self.grid_size = grid_size 
         self.n_steps = n_steps 
@@ -123,7 +123,7 @@ class batchSOM:
                 nodes[bmu_idx].append(x)    
 
             # mise à jour du codebook par la moyenne des points associés à chaque noeud
-            codebook = self.update_weights_batch(codebook, nodes, t, self.rayon_init, None, self.n_steps, self.grid_size)
+            codebook = self.update_weights_batch(codebook, nodes, t)
 
         return codebook
    
