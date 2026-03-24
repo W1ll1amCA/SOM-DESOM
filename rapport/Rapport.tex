@@ -1,0 +1,206 @@
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc} 
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{arrows,positioning,shapes,decorations.pathreplacing}
+
+
+\begin{document}
+
+\begin{titlepage}
+    \thispagestyle{empty}
+
+    \begin{flushright}
+        Année 2025--2026
+    \end{flushright}
+
+    \vspace{1.5cm}
+
+    \begin{center}
+        \includegraphics[width=1\textwidth]{../images/unige\_csd.png}\hspace{1cm}
+    \end{center}
+
+    \vspace{1.5cm}
+
+    \begin{center}
+        {\LARGE Projet de Bachelor d’informatique}
+    \end{center}
+
+    \vspace{0.5cm}
+
+    \begin{center}
+        {\Huge\bfseries SOM : Self-Organizing Maps}
+    \end{center}
+
+    \vfill
+
+    \begin{center}
+        {\Large William Guillermo Calero Roncal}
+    \end{center}
+
+    \vfill
+
+    \begin{center}
+        Année 2025--2026
+    \end{center}
+
+\end{titlepage}
+
+% =========================
+% Table des matières
+% =========================
+\tableofcontents
+\clearpage
+
+% =========================
+% Contenu chap1
+% =========================
+\chapter{Introduction}
+
+Durant les dernières décennies, plusieurs méthodes d'apprentissage automatique ont fait leur apparition. 
+Cela s'est produit par une croissance exponentielle des données récoltées avec lesquelles nous tentons de répondre à 
+des questions dans plusieurs domaines. Plusieurs méthodes s'inspirent directement du cerveau humain et une d'entre elles 
+se nomme les maps auto-organisées (self organizing-maps: SOM). Cette méthode s'inspire directement des brain maps. 
+Certaines cellules du cerveau répondent de manière sélective à un stimulus sensoriel spécifique et ces cellules ont tendance 
+à s'assembler formant une topographie particulière en fonction du stimulus spécifique \cite{Kohonen2012SOM}.
+Les SOM permettent la projection des données de grande dimension dans une grille à petite dimension tout en essayant de préserver leur topologie locale en tenant compte 
+de leur voisinage.
+
+\section{Contexte}
+Actuellement, les réseaux de neurones ont une place centrale dans le domaine de l'apprentissage automatique. 
+Cette méthode, s'inspirant aussi des neurones du cerveau humain, consiste à former des interconnexions entre 
+couches des neurones artificiels. Dans la littérature, nous observons une tendance à appeler les SOM des réseaux 
+de neurones. Cependant, nous observons certaines différences remarquables entre les réseaux de neurones et les maps 
+auto-organisées. Pour rester au clair, nous allons rappeler la définition de ce qu'est un neurone artificiel, puis nous 
+le comparerons avec le “neurone” d'un SOM.
+
+\subsection{Neurone artificiel}
+Un neurone artificiel ou plus communément un neurone formel est une représentation d'une combinaison linéaire suivie d'une fonction d'activation \cite{Cours_IA_UNIGE}. 
+Pour un neurone $k$ nous avons $m+1$ entrées avec pour chaque entrée des données 
+correspondantes $x_0,\dots, x_m$ et des poids $w_{k0}, \dots, w_{km}$. À cela nous ajoutons une fonction d'activation $\varphi$ qui
+nous donne une valeur en sortie qui va être par la suite être transférée à la couche suivante (si ce n'est la dernière). 
+De manière plus formel la donnée de sortie pour le neurone $k$ est donnée par l'équation suivante : 
+$y_k = \varphi(\sum_{i=0}^{m} w_{ki} x_i)$ \cite{Artificial_neuron_wikipedia}.
+Ce type de neurone utilise une fonction de coût (loss function) lors de la rétropropagation dont le but est de la minimiser 
+l'erreur d'approximation. Dans ce contexte, nous avons un apprentissage supervisé, car la fonction se repose sur la connaissance des labels. 
+Ainsi, un neurone artificiel est une analogie qui interprète  mathématiquement 
+le fonctionnement d'un neurone avec des méthodes statistiques de machine learning (apprentissage automatique).
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  neuron/.style={circle, draw, minimum size=1.5cm},
+  input/.style={circle, draw, fill=green!20, minimum size=0.8cm},
+  neu_som/.style={circle, draw, minimum size=2.3cm},
+  >=latex
+]   
+    % neurone artificiel
+    \node[input] (x0) at (0,3) {$x_0$};
+    \node[input] (x1) at (0,1.5) {$x_1$};
+    \node[input] (x2) at (0,0) {$x_2$};
+    \node at (0,-1) {$\vdots$};
+    \node[input] (xn) at (0,-2) {$x_n$};
+
+    \node at (8,1) {$y = \varphi(z)$};
+    
+    \node[neuron] (n) at (4,1) {$z = \sum w_i x_i$};
+
+    \draw[->] (x0) -- node[midway, above left] {$w_0$} (n);
+    \draw[->] (x1) -- node[midway, above left] {$w_1$} (n);
+    \draw[->] (x2) -- node[midway, above left] {$w_2$} (n);
+    \draw[->] (xn) -- node[midway, above left] {$w_n$} (n);
+    \draw[->] (n) -- (7,1);
+\end{tikzpicture}
+\caption{Neurone formel}
+\label{fig:neurone}
+\end{figure}
+
+\subsection{Neurone du SOM}
+Par contraste, un "neurone" d'un SOM est une unité de calcul qui représente un prototype de données.
+Il est défini par un vecteur de poids $m$ de même dimension que les données d'entrée. 
+Ce "neurone" est mis à jour en fonction de la distance entre les données d'entrée et le neurone lui-même. 
+Le neurone qui est le plus proche de la donnée d'entrée est appelé Best Matching Unit (BMU) et c'est lui qui est mis à jour
+ainsi que ses voisins en fonction de la formule suivante : $m_c(t+1) = m_c(t) + h_{ci}(t)[\tilde{x} - m_c(t)]$ \cite{Kohonen2012SOM}. 
+Dans ce contexte, nous avons un apprentissage non supervisé, car nous n'avons pas de labels pour guider l'apprentissage.
+Cela est une différence fondamentale avec les neurones formels, car les SOM sont utilisés pour la visualisation et la réduction de la dimensionnalité, 
+tandis que les neurones formels sont utilisés plutôt pour la classification et la régression. 
+De plus, les SOM préservent la topologie des données d'entrée, ce qui n'est pas le cas des neurones formels.
+
+Même s'ils partagent une inspiration biologique commune, les SOM présentent des caractéristiques uniques qui les distinguent des réseaux de neurones traditionnels.
+Ainsi, même si historiquement les maps auto-organisées sont classées comme des réseaux de neurones, par les différences que nous avons citées,
+il est raisonnable de les considérer comme des structures différentes. 
+Par la suite de ce rapport et pour éviter toutes confusions, nous allons utiliser "noeud" pour les unités de calcul d'un SOM.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  neuron/.style={circle, draw, minimum size=1.5cm},
+  input/.style={circle, draw, fill=green!20, minimum size=0.8cm},
+  neu_som/.style={circle, draw, minimum size=2.3cm},
+  >=latex
+]   
+    
+    % neurone d'un SOM
+    \node[neu_som] (x) at (0,-6) {$\tilde{x}$};
+    
+    \node[neu_som] (mc) at (5,-6) {$m_c$};
+    
+    \draw[->] (x) -- node[midway, above] {$BMU$} (mc);
+    \draw[->, thick, loop above] (mc) to [out=0, in=120, looseness=5] node[above, rotate=-30] {$m_c + h_{ci}[\tilde{x} - m_c] $} (mc);
+\end{tikzpicture}
+\caption{Noeud d'un SOM}
+\label{fig:neoudSOM}
+\end{figure}
+
+\section{Objectifs du projet}
+
+L'objectif de ce projet consiste à comprendre les maps auto-organisées, leurs limites ainsi que 
+les extensions proposées dans la littérature pour y remédier. Dans la suite de ce rapport, un état de l'art sur les SOM sera présenté. 
+Ensuite, nous ferons une étude empirique en prenant un SOM from scratch, un SOM d'une bibliothèque existante ainsi qu'une l'extension D-SOM. 
+Enfin, nous analyserons et discuterons de leurs performances, afin de mettre en évidence leurs avantages et inconvénients.
+
+
+% =========================
+% Contenu chap2
+% =========================
+
+\chapter{État de l’art}
+
+\section{Self-Organizing Maps (SOM)}
+
+\section{Limites et Extensions}
+
+\section{D-SOM}
+
+
+% =========================
+% Contenu chap3
+% =========================
+
+\chapter{Etude empirique}
+
+\section{Données utilisées}
+
+\section{SOM de base}
+
+\section{D-SOM}
+
+\section{Comparaison et analyse des résultats}
+
+% =========================
+% Contenu chap4
+% =========================
+
+\chapter{Conclusion}
+
+
+
+\bibliographystyle{plain}
+\bibliography{bibliography}
+
+\end{document}

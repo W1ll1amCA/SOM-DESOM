@@ -16,6 +16,13 @@ __pycache__/
 venv_som/
 
 #Latex
-*synctex.gz
+*.bib
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
 *.pdf
-rapport/build
+*synctex.gz
+*.toc
