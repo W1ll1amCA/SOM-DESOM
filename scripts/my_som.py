@@ -81,7 +81,6 @@ class batchSOM:
         """Initialisation du SOM en fonction de ses hyperparamètres et le type de SOM choisi (batch ou stepwise)
 
         Args:
-            learning_rate_init (float): Taux d'apprentissage initial
             rayon_init (float): Rayon initial de voisinage
             grid_size (tuple): Taille de la grille du SOM
             n_steps (int): Nombre d'étapes pour l'entraînement du SOM

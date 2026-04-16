@@ -8,6 +8,11 @@
 \usepackage{setspace}
 \usepackage{float}
 \usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{microtype}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usetikzlibrary{arrows,positioning,shapes,decorations.pathreplacing}
 
 
@@ -66,7 +71,7 @@
 Durant les dernières décennies, plusieurs méthodes d'apprentissage automatique ont fait leur apparition. 
 Cela s'est produit par une croissance exponentielle des données récoltées avec lesquelles nous tentons de répondre à 
 des questions dans plusieurs domaines. Plusieurs méthodes s'inspirent directement du cerveau humain et une d'entre elles 
-se nomme les maps auto-organisées (self organizing-maps: SOM). Cette méthode s'inspire directement des brain maps. 
+se nomme les cartes auto-organisées (self organizing-maps: SOM). Cette méthode s'inspire directement des brain maps. 
 Certaines cellules du cerveau répondent de manière sélective à un stimulus sensoriel spécifique et ces cellules ont tendance 
 à s'assembler formant une topographie particulière en fonction du stimulus spécifique \cite{Kohonen2012SOM}.
 Les SOM permettent la projection des données de grande dimension dans une grille à petite dimension tout en essayant de préserver leur topologie locale en tenant compte 
@@ -74,23 +79,36 @@ de leur voisinage.
 
 \section{Contexte}
 Actuellement, les réseaux de neurones ont une place centrale dans le domaine de l'apprentissage automatique. 
-Cette méthode, s'inspirant aussi des neurones du cerveau humain, consiste à former des interconnexions entre 
-couches des neurones artificiels. Dans la littérature, nous observons une tendance à appeler les SOM des réseaux 
-de neurones. Cependant, nous observons certaines différences remarquables entre les réseaux de neurones et les maps 
-auto-organisées. Pour rester au clair, nous allons rappeler la définition de ce qu'est un neurone artificiel, puis nous 
-le comparerons avec le “neurone” d'un SOM.
+Insipirée aussi des neurones biologiques, des cellues nerveuses dont la fonction est de recevoir et transmettre 
+des informations via des sigaux chimiques et électriques \cite{Neurone_wikipedia}. Ces modèles consistent à former des interconnexions entre 
+couches des neurones artificiels. 
+
+Dans la littérature, nous observons une tendance à appeler les SOM des réseaux 
+de neurones. Cependant, certaines différences remarquables entre les réseaux de neurones et les cartes 
+auto-organisées existent. Afin de clairifier ces distinctions, nous allons rappeler la définition d'un neurone artificiel dans les réseaux de neurones classiques, 
+puis nous comparerons ce modèle avec le “neurone” d'un SOM.
 
 \subsection{Neurone artificiel}
 Un neurone artificiel ou plus communément un neurone formel est une représentation d'une combinaison linéaire suivie d'une fonction d'activation \cite{Cours_IA_UNIGE}. 
-Pour un neurone $k$ nous avons $m+1$ entrées avec pour chaque entrée des données 
-correspondantes $x_0,\dots, x_m$ et des poids $w_{k0}, \dots, w_{km}$. À cela nous ajoutons une fonction d'activation $\varphi$ qui
-nous donne une valeur en sortie qui va être par la suite être transférée à la couche suivante (si ce n'est la dernière). 
-De manière plus formel la donnée de sortie pour le neurone $k$ est donnée par l'équation suivante : 
-$y_k = \varphi(\sum_{i=0}^{m} w_{ki} x_i)$ \cite{Artificial_neuron_wikipedia}.
-Ce type de neurone utilise une fonction de coût (loss function) lors de la rétropropagation dont le but est de la minimiser 
-l'erreur d'approximation. Dans ce contexte, nous avons un apprentissage supervisé, car la fonction se repose sur la connaissance des labels. 
-Ainsi, un neurone artificiel est une analogie qui interprète  mathématiquement 
-le fonctionnement d'un neurone avec des méthodes statistiques de machine learning (apprentissage automatique).
+Pour un neurone $k$, considérons $m+1$ entrées  $x_0,\dots, x_m$ et des poids associés $w_{k0}, \dots, w_{km}$. Généralement, $x_0$ est une entrée de biais qui est fixée à 1.
+Son fonctionnent commence par une somme pondérée de ses entrées:   
+$$
+a_k = \sum_{i=0}^{m} w_{ki} x_i
+$$
+
+À cela, une fonction d'activation $\varphi(.)$ \cite{Artificial_neuron_wikipedia} est appliqué pour avoir la sortie du neurone :
+$$
+\hat{y}_k = \varphi(a_k)
+$$
+
+Cela va être par la suite être transférée à la couche suivante (si ce n'est la dernière). 
+Les réseaux de neurones, qui ont ce type de neurones et au moins une sous-couche, sont entrainés à travers une fonction de coût $\mathcal{L}$ (loss function) dont le but est de la minimiser. 
+Cette correction est réalisée à travers un algorithme d'optimisation tel que la descente de gradient (gradient descent) \cite{Cours_IA_UNIGE}.
+L'agorithme réduit les erreurs de prédiction entre $\hat{y}_k$ et $y_k$ en ajustant les poids $w_{ki}$. 
+Dans ce contexte, nous avons un apprentissage supervisé, car la fonction se repose sur la connaissance des labels.  
+Ainsi, un neurone artificiel est une analogie qui interprète mathématiquement 
+le fonctionnement d'un neurone avec des méthodes d'apprentissage du machine learning (apprentissage automatique).
+
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
@@ -106,11 +124,11 @@ le fonctionnement d'un neurone avec des méthodes statistiques de machine learni
     \node at (0,-1) {$\vdots$};
     \node[input] (xn) at (0,-2) {$x_n$};
 
-    \node at (8,1) {$y = \varphi(z)$};
+    \node at (8,1) {$\hat{y} = \varphi(a)$};
     
-    \node[neuron] (n) at (4,1) {$z = \sum w_i x_i$};
+    \node[neuron] (n) at (4,1) {$a = \sum w_i x_i$};
 
-    \draw[->] (x0) -- node[midway, above left] {$w_0$} (n);
+    \draw[->] (x0) -- node[midway, above ] {$w_0$} (n);
     \draw[->] (x1) -- node[midway, above left] {$w_1$} (n);
     \draw[->] (x2) -- node[midway, above left] {$w_2$} (n);
     \draw[->] (xn) -- node[midway, above left] {$w_n$} (n);
@@ -121,47 +139,53 @@ le fonctionnement d'un neurone avec des méthodes statistiques de machine learni
 \end{figure}
 
 \subsection{Neurone du SOM}
-Par contraste, un "neurone" d'un SOM est une unité de calcul qui représente un prototype de données.
-Il est défini par un vecteur de poids $m$ de même dimension que les données d'entrée. 
-Ce "neurone" est mis à jour en fonction de la distance entre les données d'entrée et le neurone lui-même. 
-Le neurone qui est le plus proche de la donnée d'entrée est appelé Best Matching Unit (BMU) et c'est lui qui est mis à jour
-ainsi que ses voisins en fonction de la formule suivante : $m_c(t+1) = m_c(t) + h_{ci}(t)[\tilde{x} - m_c(t)]$ \cite{Kohonen2012SOM}. 
-Dans ce contexte, nous avons un apprentissage non supervisé, car nous n'avons pas de labels pour guider l'apprentissage.
+Par contraste, un "neurone" d'un SOM est un vecteur prototype représentant une région de l'espace des données.
+Il est défini par un vecteur de poids $w_i \in \mathbb{R}^d$ de même dimension que les données d'entrée $x \in \mathbb{R}^d$. 
+Ce "neurone" est mis à jour en fonction de la distance entre les données d'entrée et son vecteur de poids. 
+
+Le neurone qui est le plus proche de la donnée d'entrée est appelé \textit{Best Matching Unit} (BMU), noté $w_c$, et c'est lui qui est mis à jour
+ainsi que ses voisins en fonction de la formule suivante : 
+$$w_i(t+1) = w_i(t) + h_{ci}(t)[x(t) - w_i(t)]$$ 
+Ici, $h_{ci}(t)$ est la fonction de voisinage qui diminue avec la distance entre le $w_i(t)$ et le BMU, ainsi que du temps $t$ \cite{Kohonen2012SOM}.
+
+Dans ce contexte, nous avons un apprentissage dit non supervisé et compétitif, car les "neurones" sont en compétition pour représenter les données d'entrée, et sans labels pour guider l'apprentissage.
 Cela est une différence fondamentale avec les neurones formels, car les SOM sont utilisés pour la visualisation et la réduction de la dimensionnalité, 
 tandis que les neurones formels sont utilisés plutôt pour la classification et la régression. 
-De plus, les SOM préservent la topologie des données d'entrée, ce qui n'est pas le cas des neurones formels.
-
-Même s'ils partagent une inspiration biologique commune, les SOM présentent des caractéristiques uniques qui les distinguent des réseaux de neurones traditionnels.
-Ainsi, même si historiquement les maps auto-organisées sont classées comme des réseaux de neurones, par les différences que nous avons citées,
-il est raisonnable de les considérer comme des structures différentes. 
-Par la suite de ce rapport et pour éviter toutes confusions, nous allons utiliser "noeud" pour les unités de calcul d'un SOM.
+De plus, les SOM préservent la topologie des données d'entrée, c'est-à-dire qu'ils conservent les relations de voisinage dans la projection de l'espace à dimension réduite, ce qui n'est pas le cas des neurones formels. 
+Nous remarquons également une différence dans la fonction de coût, elles n'ont pas la même finalité.
+Les SOM utilisent une fonction de coût basée sur la minimisation d'une mesure de distance entre les données d'entrée et les prototypes, tandis que les neurones formels ont 
+une fonction de coût basée sur l'erreur de prédiction. Donc, la fonction de coût d'une carte auto-organisées ne produit pas de manière explicite de sortie ou de prédiction. 
 
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
-  neuron/.style={circle, draw, minimum size=1.5cm},
-  input/.style={circle, draw, fill=green!20, minimum size=0.8cm},
   neu_som/.style={circle, draw, minimum size=2.3cm},
   >=latex
 ]   
     
     % neurone d'un SOM
-    \node[neu_som] (x) at (0,-6) {$\tilde{x}$};
+    \node[neu_som] (x) at (0,-6) {$x(t)$};
     
-    \node[neu_som] (mc) at (5,-6) {$m_c$};
+    \node[neu_som] (wc) at (5,-6) {$w_c(t+1)$};
     
-    \draw[->] (x) -- node[midway, above] {$BMU$} (mc);
-    \draw[->, thick, loop above] (mc) to [out=0, in=120, looseness=5] node[above, rotate=-30] {$m_c + h_{ci}[\tilde{x} - m_c] $} (mc);
+    \draw[->] (x) -- node[midway, above] {$BMU(x(t))$} (wc);
+    \draw[->, thick, dashed, loop above] (wc) to [out=60, in=120, looseness=5] node[above, rotate=0] {$w_c(t) + h_{ci}(t)[x(t) - w_c(t)] $} (wc);
 \end{tikzpicture}
 \caption{Noeud d'un SOM}
-\label{fig:neoudSOM}
+\label{fig:noeudSOM}
 \end{figure}
+
+Même s'ils partagent une inspiration biologique commune, les SOM présentent des caractéristiques uniques qui les distinguent des réseaux de neurones traditionnels.
+Ainsi, même si historiquement les cartes auto-organisées sont classées comme des réseaux de neurones, par les différences que nous avons citées,
+il est raisonnable de les considérer comme des structures différentes. 
+
+Par la suite de ce rapport et pour éviter toutes confusions, nous allons utiliser "noeud" pour les unités de calcul d'un SOM.
 
 \section{Objectifs du projet}
 
-L'objectif de ce projet consiste à comprendre les maps auto-organisées, leurs limites ainsi que 
+L'objectif de ce projet consiste à comprendre les cartes auto-organisées, leurs limites ainsi que 
 les extensions proposées dans la littérature pour y remédier. Dans la suite de ce rapport, un état de l'art sur les SOM sera présenté. 
-Ensuite, nous ferons une étude empirique en prenant un SOM from scratch, un SOM d'une bibliothèque existante ainsi qu'une l'extension D-SOM. 
+Ensuite, nous ferons une étude empirique en modélisant et implémentant un SOM de zéro et en comparant avec un SOM d'une bibliothèque existante ainsi qu'avec l'extension DESOM. 
 Enfin, nous analyserons et discuterons de leurs performances, afin de mettre en évidence leurs avantages et inconvénients.
 
 
@@ -169,13 +193,344 @@ Enfin, nous analyserons et discuterons de leurs performances, afin de mettre en 
 % Contenu chap2
 % =========================
 
-\chapter{État de l’art}
+\chapter{État de l'art}
 
 \section{Self-Organizing Maps (SOM)}
 
-\section{Limites et Extensions}
+Les cartes auto-organisées ont été introduites par Teuvo Kohonen en 1982 \cite{SurveySOM}. 
+Ce modèle se base sur une approche d'apprentissage compétitive. Il s'agit d'une forme d'apprentissage non supervisé
+où chaque nœud "compétent" représente une région de l'espace des données d'entrée. 
+Ce type d'apprentissage est utilisé notamment pour le clustering. 
 
-\section{D-SOM}
+
+\subsection{Quantification vectorielle (VQ)}
+La quantification vectorielle (VQ) est une technologie utilisée surtout dans le traitement moderne de la numérisation des signaux \cite{Kohonen2012SOM}.
+Dans cette méthode, les vecteurs d'entrées fonctionnent comme des features qui sont représentés dans un espace fini par 
+d'autres vecteur de même dimension. Cet ensemble de vecteurs se nomme codebook. 
+Une VQ s'interprète de la manière suivante: Soit $x \in \mathbb{R}^d$ un vecteur d'entrée et soit le codebook avec $w_i$ vecteurs de même dimension et $w_c$, le vecteur gagnant (apprentissage compétitif),
+le plus proche de $x$ \cite{SOM1990}.
+
+$$ c(x) = \arg\min_{i} ||x - w_i||^2 $$
+
+Admettons que $p(x)$ soit la densité de probabilité de $x$, alors l'erreur moyen de quantification $E$ est définie par:
+
+$$ E = \int_V p(x) ||x - w_{c(x)}||^2 dV $$
+
+où $V$ est l'espace d'entrée et donc $dV$ est le volume différentiel. La fonction $E$ est en rélatité une fonction d'energie qui peut être minimisée par 
+l'algorithme de descente de gradient \cite{Kohonen2012SOM}. Par simplification, nous avons pris une distance euclidienne, mais d'autres mesures de distance peuvent être utilisées.
+Dans la littérature, la variante que nous avons présentée est connue sous le nom de "k-means" \cite{Kohonen2012SOM}.
+
+Dans la pratique, $p(x)$ est inconnue, mais nous avons un ensemble de données $\{x_i \in \mathbb{R}^d\}_{1 \leq i \leq n}$. Pour avoir une estimation de  $E$, 
+il faut approximer $p(x)$ par une distribution empirique à partir de l'ensemble de données. Donc, nous avons :
+
+$$ p(x) \approx \frac{1}{n} \sum_{i=1}^{n} \delta(x - x_i) $$
+
+Où la fonction $\delta$ peut être interprétée \cite{Dirac_wikipedia} :
+$$\delta(x) =
+\begin{cases}
+\infty & \text{si } x = 0 \\
+0 & \text{sinon}
+\end{cases}
+$$
+
+La particularité de cette fonction qui nous intéresse est la suivante \cite{Dirac_wikipedia}:
+$$\int_{-\infty}^{\infty} f(x) \delta(x - a) dx = f(a)$$
+
+En supossons que $f(x) = ||x - w_{c(x)}||^2$, alors nous avons :
+$$ E \approx \int_V  f(x)\frac{1}{n} \sum_{i=1}^{n} \delta(x - x_i)dV \Leftrightarrow$$
+$$ E \approx \frac{1}{n} \sum_{i=1}^{n} \int_V  f(x) \delta(x - x_i)dV  =  \frac{1}{n} \sum_{i=1}^{n} f(x_i) \Leftrightarrow $$
+$$ E \approx \frac{1}{n} \sum_{i=1}^{n} ||x_i - w_{c(x_i)}||^2 $$
+
+
+Ainsi, la quantification vectorielle est une méthode d'apprentissage compétitive qui permet de représenter des données à travers un ensemble de prototypes, donc elle permet de faire du clustering.
+Les SOM suivent cette même approche d'apprentissage compétitive. Cependant, contrairement à la VQ classique, les SOM force une topologie sur les prototypes, 
+de manière à ce que les prototypes voisins dans la grille soient aussi proches dans l'espace des données d'entrée. 
+
+
+\subsection{SOM de base}
+En effet, le SOM créent une structure qui préserve la topologie locale dans un voisinage défini. Ce "calibrage" ou mise à jour des noeuds voisins dépend du Best Matching Unit(BMU), le noeud gagnant, et du temps $t$ \cite{SOM1990}.
+Les cartes auto-organisées ne dérivent pas de manière explicite d'une fonction de coût globale, mais d'une règle de mise à jour locale qui est appliquée à chaque noeud en fonction de sa proximité avec le BMU.
+
+Soit un ensemble de données d'entrée $ \{x_i\in \mathbb{R}^d \}_{1 \leq i \leq n} $ et un codebook $ \{w_i \in \mathbb{R}^d\}_{1 \leq i \leq m} $.
+Le BMU suit le même principe que celui de la VQ, c'est à dire le noeud le plus proche d'un certain $x$ :
+$$ c = \arg\min_{i} ||x - w_i||^2 $$
+$$ BMU(x) = w_c $$
+
+L'entier $c$ représente l'indice du noeud gagnant. En partant de la quantification vectorielle, l'équation de mise à jour d'un noeud $w_i$ est la suivante \cite{SOM1990}:
+$$w_i(t+1) = \begin{cases}
+    w_i(t) + \alpha(t)[x(t) - w_i(t)] & \text{si } i = c \\
+    w_i(t) & \text{sinon}
+\end{cases}$$
+
+Où $\alpha(t)$ est le taux d'apprentissage qui diminue avec le temps $t$. Nous observons que dans cette formule, seul le noeud gagnant est mis à jour.
+Dans le VQ classique, seulement le noeud gagnant est mis à jour et sans interaction avec ses voisins. Cependant, dans les SOM, les noeuds voisins du BMU sont aussi mis à jour.
+
+Admettons l'ensemble de noeuds voisins du BMU $N_c(t)$ qui décroit avec le temps, alors la formule de mise à jour devient \cite{SOM1990}:
+$$w_i(t+1) = \begin{cases}
+    w_i(t) + \alpha(t)[x(t) - w_i(t)] & \text{si } w_i \in N_c(t) \\
+    w_i(t) & \text{sinon}
+\end{cases}$$
+
+Avec cette nouvelle approche, les noeuds voisins du BMU sont aussi mis à jour. Cependant, le taux de mise à jour pour les noeuds voisins est la même que celui du BMU, 
+ce qui peut poser des problèmes de convergence, des transitions plus brusques qui peuvent provoquer des cartes moins lisses et organisées. Donc nous dégradons la propriété
+la plus importante des SOM qui est la préservation de la topologie locale.
+
+Un choix plus standard et efficace est de prendre la fonction gaussienne de voisinage $h_{ci}(t)$ qui diminue avec la distance entre le noeud $w_i$ et le BMU $w_c$ 
+ainsi que du temps $t$ \cite{Kohonen2012SOM}:
+$$ h_{ci}(t) = \alpha(t) e^{-\frac{||idx(w_c) - idx(w_i)||^2}{2\sigma(t)^2}} $$
+
+Où $idx(w_c)$ et $idx(w_i)$ sont les indices de position du BMU et du noeud $w_i$ dans la grille. $\sigma(t)$ est le rayon de voisinage qui diminue avec le $t$ 
+et qui contrôle l'étendue de la mise à jour des noeuds voisins. Elle peut être définie de la manière suivante, avec T le nombre total d'itérations \cite{SurveySOM}:
+$$\sigma(t) = \sigma_0 e^{-\frac{t}{T}} $$
+
+Donc, la distance entre les noeuds dans la grille influence la mise à jour, plus un noeud est éloigné du BMU, moins il sera mis à jour. Cette approche permet 
+d'avoir des cartes plus lisses et organisées avec des transitions plus douces.
+
+Cela nous mène à la formule de mise à jour finale d'un noeud $w_i$ dans un SOM:
+$$w_i(t+1) = w_i(t) + h_{ci}(t)[x(t) - w_i(t)]$$
+
+Nous pouvons aussi interpréter la mise à jour en deux termes de variation de poids.
+Pour le noeud gagnant (BMU) :
+$$ \Delta w_c(t) = \alpha(t)\,[x(t) - w_c(t)]$$
+
+Pour un noeud voisin $w_i$ :
+$$ \Delta w_i(t) = h_{ci}(t)\,[x(t) - w_i(t)]$$
+
+Ainsi, la mise à jour des poids peut s'écrire de manière équivalente :
+$$w_i(t+1) = w_i(t) + \Delta w_i(t)$$
+
+De manière plus schématique, nous avons la figure \ref{fig:som_schema} qui illustre la mise à jour d'un noeud $w_i$ en fonction du BMU $w_c$ et de la distance entre eux dans la grille.
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+input/.style={circle, draw, minimum size=1.5cm},
+bmu/.style={circle, draw, fill=red!20, minimum size=1.5cm},
+noeud/.style={circle, draw, fill=blue!20, minimum size=1.5cm},
+>=latex
+]
+\node[input] (xi) at (2,0) {$x$};
+
+\node[bmu] (wc) at (2,-3) {$w_c$};
+
+\node[noeud] (w1) at (-1,-6) {$w_1$};
+\node[noeud] (w2) at (2,-6) {$w_2$};
+\node at (4,-6) {$\dots$};
+\node[noeud] (wi) at (6,-6) {$w_i$};
+
+\draw[->, thick, dashed] (xi) -- (wc) node[midway, right] {$BMU(x)$};
+
+\draw[->, thick, loop] (wc) to [out=120, in=180, looseness=5] node[left, rotate=0] {$\Delta w_c(t)$} (wc);
+
+\draw[<->, thick] (wc) -- (w1) node[midway, left] {$\Delta w_1(t)$};
+\draw[<->, thick] (wc) -- (w2) node[midway, right] {$\Delta w_2(t)$};
+\draw[<->, thick] (wc) -- (wi) node[midway, right] {$\Delta w_i(t)$};
+
+\draw[<->, thick] (w1) -- (0,-8);
+\node at (-1,-8) {$\dots$};
+\draw[<->, thick] (w1) -- (-2,-8);
+
+\draw[<->, thick] (w2) -- (1,-8);
+\node at (2,-8) {$\dots$};
+\draw[<->, thick] (w2) -- (3,-8);
+
+\draw[<->, thick] (wi) -- (5,-8);
+\node at (6,-8) {$\dots$};
+\draw[<->, thick] (wi) -- (7,-8);
+
+\end{tikzpicture}
+\caption{Mise à jour des noeuds voisins $w_1, w_2, \dots, w_i$ en fonction du BMU $w_c$ et de la distance dans la grille}
+\label{fig:som_schema}
+\end{figure}
+
+Cela nous donne une première idée d'algorithme d'apprentissage:
+
+\begin{algorithm}[H]
+\caption{Algorithme d'apprentissage d'un SOM (stepwise)}
+\label{alg:SOM_stepwise}
+\begin{algorithmic}[1]
+    \State Initialiser les poids $w_i$ de manière aléatoire ou avec PCA
+    \State Initialiser le taux d'apprentissage $\alpha(0)$ et la largeur de voisinage $\sigma(0)$
+    \State Définir le nombre d'itérations maximum $T$
+    \For{$t = 1$ \textbf{à} $T$}
+        \State Sélectionner un échantillon d'entrée $x(t)$
+        \State $c = \arg\min_{i} ||x(t) - w_i||^2$ \Comment{indice du BMU}
+        \State $\alpha(t) = \alpha(0) \cdot e^{-t/T}$ \Comment{décroissance du taux d'apprentissage}
+        \State $\sigma(t) = \sigma(0) \cdot e^{-t/T}$ \Comment{décroissance de la largeur de voisinage}
+        \For{tous les noeuds $i$}
+            \State $h_{ci}(t) = \alpha(t) \cdot e^{\left(-\frac{\|c - i\|^2}{2\sigma(t)^2}\right)}$ \Comment{calcul de la fonction de voisinage}
+            \State $w_i(t+1) = w_i(t) + h_{ci}(t) \cdot [x(t) - w_i(t)]$ \Comment{mise à jour du poids du noeud $i$}
+        \EndFor
+    \EndFor
+\end{algorithmic}
+\end{algorithm}
+
+Ainsi, nous avons présenté les étapes de l'agorithme d'apprentissage d'un SOM de manière détaillée. Neanmoins, il existe un autre variante plus efficace en
+pratique appelée \textit{batch SOM} \cite{SOM1990}.
+
+
+\subsection{Batch SOM}
+Batch SOM est une variante du SOM classique qui diffère de l'approche stepwise présentée précédemment. Au lieu de mettre à jour les poids à partir d'un seul échantillon à chaque itération, 
+elle utilise l'ensemble des données d'entrée.
+Cette approche permet la parallélisation des calculs, ce qui peut accélérer la convergence, notamment pour les grands ensembles de données \cite{Kohonen2012SOM}.
+
+Nous partons de la supposition que la convergence vers un état stable d'un SOM existe \cite{Kohonen2012SOM}. Nous avons quelques exigences pour que cela soit possible:
+\begin{itemize}
+    \item lorsque $t \to \infty$, alors l'espérance de $w_i(t)$ est égale à l'espérance de $w_i(t+1)$
+    \item $h_{ci} \neq 0$ 
+    \item $c$ est l'indice du BMU pour $x(t)$
+\end{itemize} 
+
+
+Cela peut être vu comme la recherche d'un point fixe des poids $w_i$, où les mise à jour sont en moyenne nulles. 
+Nous pouvons l'écrire avec $E_t$ l'opérateur d'espérance sur $t$ \cite{Kohonen2012SOM}:
+$$ \forall i, \ \  E_t{h_{ci}[x(t) - w_i(t)]} = 0 $$
+
+Remarquons que $w_i(t)$ est indépendant de $t$ lorsque $t \to \infty$, nous allons le noter $w_i^*$. Si l'espérance $E_t$ est calculée à partir de la distribution empirique des données d'entrée, 
+alors nous avons :
+$$ E_t(h_{ci}(t)[x(t) - w_i^*]) = \frac{1}{t} \sum_{t} h_{ci}(t)[x(t) - w_i^*] = 0$$
+
+En développant cette expression, nous obtenons :
+$$ \frac{1}{t} \sum_{t} h_{ci}(t)[x(t) - w_i^*] = 0 \Leftrightarrow $$
+$$ \sum_{t} h_{ci}(t)x(t) - w_i^*\sum_{t} h_{ci}(t)  = 0 \Leftrightarrow $$
+$$ w_i^* = \frac{\sum_{t} h_{ci}(t)x(t)}{\sum_{t} h_{ci}(t)} $$
+
+
+L'expression actuelle peut être écrite en regroupant leur $BMU$. Soit $C_j$ l'ensemble des données dont le BMU est $w_j$, $n_j$ le nombre de points dans ce groupe, 
+et $x_{w,j}$ la moyenne de ces points. Alors, la mise à jour peut s'écrire \cite{Kohonen2012SOM} :
+$$w_i^* = \frac{\sum_{j} h_{ji} \, n_j \, x_{w,j}}{\sum_{j} h_{ji} \, n_j}$$
+
+Avec cette nouvelle interprétation, chaque noeud $w_i$ est mise à jour comme une moyenne pondérée des données qui lui sont associées. Nous avons donc une première approche de comment batch SOM fonctionne. 
+Comme déjà mentionnée, cette variante traite l'ensemble des données d'entrée à chaque itération et pour cela le noeuds du SOM sont associés à une liste des copies des $x(t)$ dont ils sont le BMU \cite{Kohonen2012SOM}.
+Schématiquement, la figure \ref{fig:batch_som} illustre la mise à jour des noeuds dans le batch SOM.
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+space/.style={draw, rectangle, shape border rotate=90, minimum width=8cm, minimum height=5cm, align=center},
+input/.style={circle, draw, minimum size=0.25cm},
+noeud/.style={circle, draw, fill=blue!20, minimum size=3cm},
+poids/.style={circle, draw, fill=red!20, minimum size=0.75cm},
+>=latex
+]
+
+% Espace d'entrée
+\node[space] (V) at (0,0) {};
+
+\node[input] (x1) at (-3,1.5) {$x(1)$};
+\node[input] (x2) at (0,1.5) {$x(2)$};
+\node[input] (x3) at (3,1.5) {$x(3)$};
+
+\node[input] (x4) at (3,0) {$x(4)$};
+\node[input] (x5) at (0,0) {$x(5)$};
+\node[input] (x6) at (-3,0) {$x(6)$};
+
+\node[input] (x7) at (-3,-1.5) {$x(7)$};
+\node[input] (x8) at (0,-1.5) {$x(8)$};
+\node[] (xd) at (3,-1.5) {\textbf{\dots}};
+
+% Noeuds du SOM:
+\node[noeud] (w1) at (-6,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline $x(1)$ \\ \hline $x(4)$ \\ \hline $x(7)$ \end{tabular}};
+\node[poids] (w1p) at (-6.75,-7) {$w_1$};
+
+\node[noeud] (w2) at (-2.75,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline $x(2)$ \\ \hline $x(6)$ \\ \hline $x(8)$ \end{tabular}};
+\node[poids] (w2p) at (-3.5,-7) {$w_2$};
+% w_i
+\node[noeud] (w3) at (0.5,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline $x(3)$ \\ \hline $x(5)$ \\ \hline \textbf{\dots} \end{tabular}};
+\node[poids] (w3p) at (-0.25,-7) {$w_i$};
+
+\node[noeud] (w4) at (3.75,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
+\node[poids] (w4p) at (3,-7) {$w_4$};
+
+\node[noeud] (w5) at (7,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
+\node[poids] (w5p) at (6.25,-7) {$w_5$};
+
+% 2-ème ligne
+\node[noeud] (w6) at (-6,-10.5) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
+\node[poids] (w6p) at (-6.75,-10.5) {$w_6$};
+
+\node[noeud] (w7) at (-2.75,-10.5) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
+\node[poids] (w7p) at (-3.5,-10.5) {$w_7$};
+
+\node[noeud] (w8) at (0.5,-10.5) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
+\node[poids] (w8p) at (-0.25,-10.5) {};
+
+\node[noeud] (w9) at (3.75,-10.5) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
+\node[poids] (w9p) at (3,-10.5) {};
+
+\node[noeud] (w10) at (7,-10.5) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
+\node[poids] (w10p) at (6.25,-10.5) {};
+
+% 3-ème ligne
+\node[noeud] (w11) at (-6,-14) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
+\node[poids] (w11p) at (-6.75,-14) {};
+
+\node[noeud] (w12) at (-2.75,-14) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
+\node[poids] (w12p) at (-3.5,-14) {};
+
+\node[] (w15) at (0.25,-14) {\textbf{\dots}};
+
+% zone de voisinage:
+\node[space, dashed, thick, rounded corners=4pt, minimum width=9.5cm, minimum height=7cm, draw=red!50] (N) at (0.5,-8.75) {};
+\node[] (N_label) at (5.5,-12.5) {$N_c$: voisinage du BMU $w_c$};
+
+% lignes:
+\draw[double, double distance=4pt, thick, -implies] (V) -- (0,-5) node[pos=0.25,right] {Repartition des inputs dans les noeuds};
+\draw[->, thick, loop] (N) to [out=270, in=300, looseness=3]node[pos=0.4,right] {$w_i^{new}$} (w3);
+
+\end{tikzpicture}
+\caption{Illustration du fonctionnement du batch SOM. Les données d'entrée sont associées à leur BMU, puis les prototypes sont mise à jour comme des moyennes pondérées des données, 
+en tenant compte de la fonction de voisinage.}
+\label{fig:batch_som}
+\end{figure}
+
+L'algorithme suit l'idée présentée dans la figure \ref{fig:batch_som}. Nous avons une notions de regroupement de données pour chaque noeud.
+L'implémentation est faite à l'aide d'un dictionnaire qui associe au noeud $w_j$ l'ensemble $C_{j} =\{x_i \in \mathbb{R}^d : BMU(x_i) = w_j\}$.
+L'algorithme d'apprentissage du batch SOM est présenté dans l'algorithme \ref{alg:SOM_batch}, où la fonction de voisinage est définie par :
+$$h_{ji}(t) = \exp\left(-\frac{\|idx_j - idx_i\|^2}{2\sigma(t)^2}\right)$$
+
+\begin{algorithm}[H]
+\caption{Algorithme d'apprentissage d'un batch SOM}
+\label{alg:SOM_batch}
+\begin{algorithmic}[1]
+    \State Initialiser les poids $w_i$ de manière aléatoire ou avec PCA
+    \State Initialiser $\sigma(0)$
+    \State Définir $T$ le nombre d'itérations maximum
+    
+    \For{$t = 1$ \textbf{à} $T$}
+        \State nodes = \{\} \Comment{Dictionnaire pour stocker les données associées à chaque noeud}
+        \State $\sigma(t) = \sigma(0) e^{-t/T}$ \Comment{Calcul de la largeur de voisinage}
+        \For{chaque $x_i$ dans les données}
+            \State $c = \arg\min_{j} \|x_i - w_j\|^2$
+            \State nodes[$c$].append($x_i$) \Comment{Ajouter $x_i$ à la liste des données associées au noeud $w_c$}
+        \EndFor
+        \For{chaque noeud $j$}
+            \State $x_{w,j} = mean(nodes[j])$ \Comment{Moyenne des données dans $C_j$}
+            \State $n_j = len(nodes[j])$ \Comment{Nombre de données dans $C_j$}
+        \EndFor
+        \For{chaque noeud $i$}
+            \State calculer $h_{ji}(t)$ pour tout $j$
+            \State $w_i(t+1) = \frac{\sum_{j} h_{ji}(t)\, n_j\, x_{w,j}}{\sum_{j} h_{ji}(t)\, n_j}$ \Comment{Mise à jour du poids du noeud $i$}
+        \EndFor
+    \EndFor
+\end{algorithmic}
+\end{algorithm}
+
+Ainsi, cette variante a pu être construite à partir de l'hypothèse de convergence d'un SOM vers un état stable. Elle permet une convergence plus rapide, surtout pour les grands ensembles de données, 
+et se prête naturellement à la parallélisation. Dans la littérature, Kohonen souligne également que le batch SOM peut aussi être généralisée
+pour des données d'entrée non vectorielles, à condition de disposer d'une mesure de distance entre les données d'entrée et les noeuds du SOM \cite{Kohonen2012SOM}.
+
+Enfin, nous avons présenté deux variantes d'apprentissage pour un SOM classique: la version stepwise et la version batch. 
+Cependant, malgré ses avantages, le batch SOM présente certaines limites, notamment en termes de complexité computationnelle et de mémoire requise \cite{SurveySOM}.
+
+\section{Limites}
+
+
+\section{Extensions}
+
+\subsection{K-SOM}
+\subsection{flow-SOM}
+\subsection{Desom}
+
+\section{Deep embedded self-organizing maps (DESOM)}
 
 
 % =========================
@@ -188,7 +543,7 @@ Enfin, nous analyserons et discuterons de leurs performances, afin de mettre en 
 
 \section{SOM de base}
 
-\section{D-SOM}
+\section{DESOM}
 
 \section{Comparaison et analyse des résultats}
 
