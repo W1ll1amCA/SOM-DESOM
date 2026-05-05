@@ -388,7 +388,7 @@ Nous partons de la supposition que la convergence vers un état stable d'un SOM 
 
 Cela peut être vu comme la recherche d'un point fixe des poids $w_i$, où les mise à jour sont en moyenne nulles. 
 Nous pouvons l'écrire avec $E_t$ l'opérateur d'espérance sur $t$ \cite{Kohonen2012SOM}:
-$$ \forall i, \ \  E_t{h_{ci}[x(t) - w_i(t)]} = 0 $$
+$$ \forall i, \ \  E_t(h_{ci}[x(t) - w_i(t)]) = 0 $$
 
 Remarquons que $w_i(t)$ est indépendant de $t$ lorsque $t \to \infty$, nous allons le noter $w_i^*$. Si l'espérance $E_t$ est calculée à partir de la distribution empirique des données d'entrée, 
 alors nous avons :
@@ -707,16 +707,147 @@ Ainsi, cette méthode fusionne les SOM avec d'autres techniques de machine learn
 Cela est aussi le cas avec les SOM hybrides.
 
 \subsection{SOM Hybrides}
-(MLP + SOM et CNN + SOM)
+Les SOM hybrides sont une extension combinant les cartes auto-organisées avec d'autres techniques d'apprentissage automatique.
+Nous allons présenter deux type de SOM hybrides : SOM-CNN et SOM-MLP. Il en existe d'autres, mais nous allons nous limiter à ces deux types.
+
+\subsubsection{SOM-CNN}
+Cette extension combine les capacités de représentation des réseaux de neurones convolutionnels (CNN) avec les propriétés de structuration topologique des SOM.
+Selon les approches, les caractéristiques extraites par le CNN peuvent être utilisées comme entrée d'un SOM pour effectuer un clustering, ou inversement, 
+les sorties d'un SOM peuvent servir d'entrée à un CNN pour des tâches supervisées.
+Ce type de réseau, employer notament dans l'analyse d'images, utilise l'opération de convolution pour extraire des caractéristiques à partir des données d'entrée, ce qui est particulièrement 
+efficace pour les données structurées en grille, comme les images.
+
+Opération de convolution est définie de manière \textbf{discrète} comme suit:
+$$ (f * g)(t) = \sum_{a=-\infty}^{\infty} f(a) \cdot g(t - a) $$
+
+Où $f$ est la fonction d'entrée (par exemple, une image), $g$ est le noyau de convolution (un petit filtre qui capture des caractéristiques spécifiques), $a$ est l'indice de sommation 
+et $t$ est la position de sortie. Dans le cas des images, cette opération est généralisée en deux dimensions, où le noyau de convolution se déplace sur une grille bidimensionnelle.
+
+Comme pour FlowSOM, cette approche ne propose pas une nouvelle variante de SOM, mais plutôt une nouvelle manière d'utiliser les SOM en les intégrant dans un pipeline d'apprentissage plus large.
+Le SOM est utilisé pour effectuer un clustering des données et produire une représentation structurée, qui est ensuite exploitée par un modèle supervisé 
+tel qu'un CNN, afin d'améliorer les performances de prédiction.
+
+Dans le document \cite{CNN_SOM}, ce type d'approche est testée pour savoir si la présicion de detection de la resistance phénotypique des vecteurs de malaria est améliorée. 
+Les résultats expérimentaux montrent une amélioration des performances en termes de précision de classification par rapport à un CNN seul, 
+suggérant que l'intégration du SOM permet de mieux capturer la structure des données.
+
+\subsubsection{SOM-MLP}
+La combinaison d'un SOM avec un perceptron multicouche (MLP) est une autre approche hybride qui vise à tirer parti des avantages de chaque technique.
+L'approche du document \cite{MLP_SOM} présente ce modèle hybride pour la prédiction manquante des logs de puits, en se basant sur des similitudes lithofaciques géologiques.
+
+Dans cette architecture, le but du SOM est de est d'organiser les données dans un espace de faible dimension (souvent bidimensionnel) tout en préservant leur structure topologique, 
+et de regrouper les observations similaires en clusters. Cette représentation peut ensuite être utilisée comme entrée d'un modèle supervisé. Le MLP, en tant que réseau de neurones 
+profond capable de modéliser des relations non linéaires complexes, exploite ces informations pour effectuer des tâches de prédiction, telles que l'estimation de valeurs manquantes. 
+
+Les résultats expérimentaux montrent que l'approche SOM-MLP permet d'améliorer la précision de prédiction par rapport à des méthodes classiques, 
+notamment dans des contextes où les données présentent une forte hétérogénéité.
+
+Ainsi, certaines extensions de SOM, comme les cartes auto-organisées hybrides, ne se concentrent pas sur l'amélioration de l'algorithme d'apprentissage du SOM lui-même,
+mais plutôt sur l'intégration avec d'autres techniques d'apprentissage automatique pour créer des pipelines plus puissants et adaptés à des tâches spécifiques.
+Cet type d'approche permet de concevoir des modèles plus performants et mieux adaptés aux problématiques du monde réel, 
+où les données sont souvent complexes et nécessitent une approche plus intégrée pour l'analyse et la prédiction.
+
 
 \subsection{Autres extensions}
-Nous avons présenté quelques extensions mais il en existe bien d'autres, qui essayent de remédier différentes limites des SOM, que ce soit au niveau de la convergence, de la complexité, 
+Nous avons présenté quelques extensions, mais il en existe d'autres, qui essayent de remédier différentes limites des SOM, que ce soit au niveau de la convergence, de la complexité, 
 de la capacité à traiter des données non vectorielles, ou encore de l'intégration avec d'autres modèles d'apprentissage automatique.
-Cela est représenté dans le document \cite{SurveySOM} qui présente une revue complète des principales extensions des cartes auto-organisées.
-Dans la suite de ce rapport, nous allons nous intéresser à l'extension deep embedded selg-organizing maps (DESOM) qui mixe les SOM avec une 
-technique d'apprentissage profond actuelle, à savoir les auto-encodeurs.
+
+Cela est représenté dans le document \cite{SurveySOM} qui présente une revue complète des principales evolutions des cartes auto-organisées.
+
+Dans la suite de ce rapport, nous allons nous intéresser à l'extension deep embedded self-organizing maps (DESOM) qui mixe les SOM avec une 
+technique moderne d'apprentissage profond: les auto-encodeurs.
 
 \section{Deep embedded self-organizing maps (DESOM)}
+
+L'apprentissage profond est une technique d'apprentissage automatique qui repose sur l'utilisation des réseaux de neurones profonds pour modéliser des relations complexes dans les données.
+Elle est souvent utilisée pour les tâches supervisées, mais peut àgalement être appliquée pour des tâches non supervisées, 
+notamment à travers les auto-encodeurs (AE). Ces derniers sont des réseaux de neurones conçus pour apprendre une représentation compacte des données d'entrées, appelée espace latent \cite{DESOM}.
+
+Cela a conduit à l'emergence des modèles hybrides qui combinent les cartes auto-organisées avec des techniques d'apprentissage profond. L'objectif est de tirer parti à la fois de la capacité 
+de représentation des réseaux profonds et des propriétés topologiques des SOM. Une de ces approches est le Deep Embedded Self-Organizing Maps (DESOM), qui intègre un auto-encodeur 
+avec un SOM permettant un apprentissage conjoint de la représentation et du clustering \cite{DESOM}. 
+
+Contrairement aux approches en deux étapes (réduction de dimension puis clustering), DESOM apprend simultanément un espace latent adapté au clustering et les prototypes du SOM. 
+Ce processus permet de construire un espace latent dit SOM-friendly, dans lequel les données sont organisées de manière plus cohérente pour la quantification et la préservation 
+de la topologie \cite{DESOM}. Le SOM agit ainsi comme une forme de régularisation qui améliore la structure topologique et la qualité du clustering dans cet espace latent.
+
+Dans la suite de ce rapport, nous allons présenter les principes de fonctionnement de DESOM, son architecture et son algorithme d'apprentissage.
+
+\subsection{Autoencodeur (AE)}
+
+Les auto-encodeurs sont des réseaux de neurones conçus pour la reconstruction des données d'entrée de manière non supervisée dont l'objectif 
+est de reconstruire les données d'entrée tout en apprenant une représentation compacte de celles-ci. 
+Ils permettent ainsi d'extraire des caractéristiques pertinentes en minimisant la perte d'information entre l'entrée et sa reconstruction.
+
+Un AE est composé de deux parties principales: un encodeur, qui transforme les données d'entrée $x$ en une représentation de plus faible dimension appelée espace latent $z$,
+et un décodeur, qui reconstruit les données d'entrée à partir de cette représentation latente \cite{DESOM}. L'architecture d'un AE est illustrée à la figure \ref{fig:autoencoder}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    x=1.7cm, y=1.0cm,
+    >=stealth,
+    every node/.style={font=\small},
+    % formes des blocs
+    inputblock/.style={
+        draw=blue!60!black, fill=blue!10, thick,
+        rounded corners=2pt, minimum width=1.2cm, minimum height=3.0cm, align=center
+    },
+    encoderblock/.style={
+        draw=teal!60!black, fill=teal!15, thick,
+        trapezium, trapezium angle=75, trapezium stretches body,
+        minimum width=1.5cm, minimum height=2.8cm, rotate=-90, align=center
+    },
+    latentblock/.style={
+        draw=orange!80!black, fill=orange!20, thick,
+        rounded corners=8pt, minimum width=1.0cm, minimum height=1.8cm, align=center
+    },
+    decoderblock/.style={
+        draw=teal!60!black, fill=teal!15, thick,
+        trapezium, trapezium angle=75, trapezium stretches body,
+        minimum width=1.5cm, minimum height=2.8cm, rotate=90, align=center
+    },
+    outputblock/.style={
+        draw=blue!60!black, fill=blue!10, thick,
+        rounded corners=2pt, minimum width=1.2cm, minimum height=3.0cm, align=center
+    }
+]
+
+% --- Blocs (Nodes) ---
+\node[inputblock] (I) at (0,0) {Données\\d'entrée\\$x$};
+\node[encoderblock] (E) at (2.2,0) {\rotatebox{90}{Encodeur}};
+\node[latentblock] (Z) at (4.4,0) {Espace\\latent\\$z$};
+\node[decoderblock] (D) at (6.6,0) {\rotatebox{-90}{Décodeur}};
+\node[outputblock] (O) at (8.8,0) {Reconstruction\\$\hat{x}$};
+
+% --- Connexions  ---
+\draw[->, UNHCRline/.style={thick, shorten >=2pt, shorten <=2pt}, thick, blue!60!black] (I) -- (E);
+\draw[->, thick, teal!60!black] (E) -- (Z);
+\draw[->, thick, teal!60!black] (Z) -- (D);
+\draw[->, thick, blue!60!black] (D) -- (O);
+
+% --- Accolades en bas ---
+\draw[decorate, decoration={brace, mirror, amplitude=8pt, raise=5pt}, thick, gray!80] 
+    (-0.6,-1.8) -- (4.2,-1.8) node[midway, below=15pt, text=black] {Compression (Codage)};
+    
+\draw[decorate, decoration={brace, mirror, amplitude=8pt, raise=5pt}, thick, gray!80] 
+    (4.6,-1.8) -- (9.4,-1.8) node[midway, below=15pt, text=black] {Reconstruction (Décodage)};
+
+\end{tikzpicture}
+\caption{Architecture générale d'un autoencodeur. L'encodeur compresse les données d'entrée dans un espace latent (goulot d'étranglement), 
+tandis que le décodeur effectue l'opération inverse pour reconstruire $x$.}
+\label{fig:autoencoder}
+\end{figure}
+
+
+Pour que le modèle puisse produire un espace latent de qualité, le modèle est entraîné en minimisant une fonction de perte qui mesure la différence entre les données 
+d'entrée et leur reconstruction. Pour le DESOM, l'AE choisi apartient à la famille des auto-encodeur sous-complets (undercomplete autoencoder), 
+qui impose une contrainte de dimensionnalité sur l'espace latent, c'est à dire que la dimension de l'espace latent est inférieure à celle des données d'entrée.
+Cette contrainte force au modèle à apprendre une réprésentation compréssée et évitant que le modèle puisse utiliser la fonction d'identité pour la reconstruction \cite{DESOM}.
+
+Il existe d'autres types d'auto-encodeurs, comme les AE variationnels (VAE) qui introduisent une modélisation probabilistes de l'espace latent. 
+Cependant, dans ce travail, nous nous concentrerons uniquement sur les AE deterministes produisant un espace latent continu.
+
 
 
 % =========================
