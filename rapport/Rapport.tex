@@ -17,7 +17,7 @@
 \usepackage{booktabs}
 
 
-\usetikzlibrary{arrows,positioning,shapes,decorations.pathreplacing}
+\usetikzlibrary{arrows, positioning, shapes, decorations.pathreplacing, decorations.pathmorphing, arrows.meta, calc}
 
 
 \begin{document}
@@ -814,11 +814,11 @@ et un décodeur, qui reconstruit les données d'entrée à partir de cette repr�
 ]
 
 % --- Blocs (Nodes) ---
-\node[inputblock] (I) at (0,0) {Données\\d'entrée\\$x$};
+\node[inputblock] (I) at (0,0) {Données\\d'entrée\\$\mathbf{x} $};
 \node[encoderblock] (E) at (2.2,0) {\rotatebox{90}{Encodeur}};
-\node[latentblock] (Z) at (4.4,0) {Espace\\latent\\$z$};
+\node[latentblock] (Z) at (4.4,0) {Espace\\latent\\$\mathbf{z}$};
 \node[decoderblock] (D) at (6.6,0) {\rotatebox{-90}{Décodeur}};
-\node[outputblock] (O) at (8.8,0) {Reconstruction\\$\hat{x}$};
+\node[outputblock] (O) at (8.8,0) {Reconstruction\\$\mathbf{\hat{x}}$};
 
 % --- Connexions  ---
 \draw[->, UNHCRline/.style={thick, shorten >=2pt, shorten <=2pt}, thick, blue!60!black] (I) -- (E);
@@ -833,9 +833,10 @@ et un décodeur, qui reconstruit les données d'entrée à partir de cette repr�
 \draw[decorate, decoration={brace, mirror, amplitude=8pt, raise=5pt}, thick, gray!80] 
     (4.6,-1.8) -- (9.4,-1.8) node[midway, below=15pt, text=black] {Reconstruction (Décodage)};
 
+    
 \end{tikzpicture}
 \caption{Architecture générale d'un autoencodeur. L'encodeur compresse les données d'entrée dans un espace latent (goulot d'étranglement), 
-tandis que le décodeur effectue l'opération inverse pour reconstruire $x$.}
+tandis que le décodeur effectue l'opération inverse pour reconstruire $\mathbf{x}$.}
 \label{fig:autoencoder}
 \end{figure}
 
@@ -843,18 +844,360 @@ tandis que le décodeur effectue l'opération inverse pour reconstruire $x$.}
 Pour que le modèle puisse produire un espace latent de qualité, le modèle est entraîné en minimisant une fonction de perte qui mesure la différence entre les données 
 d'entrée et leur reconstruction. Pour le DESOM, l'AE choisi apartient à la famille des auto-encodeur sous-complets (undercomplete autoencoder), 
 qui impose une contrainte de dimensionnalité sur l'espace latent, c'est à dire que la dimension de l'espace latent est inférieure à celle des données d'entrée.
-Cette contrainte force au modèle à apprendre une réprésentation compréssée et évitant que le modèle puisse utiliser la fonction d'identité pour la reconstruction \cite{DESOM}.
+Cette contrainte force au modèle à apprendre une réprésentation compréssée et évite que le modèle puisse utiliser la fonction d'identité pour la reconstruction \cite{DESOM}.
 
 Il existe d'autres types d'auto-encodeurs, comme les AE variationnels (VAE) qui introduisent une modélisation probabilistes de l'espace latent. 
 Cependant, dans ce travail, nous nous concentrerons uniquement sur les AE deterministes produisant un espace latent continu.
 
 
+\subsection{Architecture du DESOM}
+
+L'architecture du DESOM présentée dans \cite{DESOM} repose sur la combinaison d'un auto-encodeur et d'une carte auto-organisée.
+L'objectif est d'intégrer le SOM dans l'architecture de l'auto-encodeur de manière à avoir un apprentissage conjoint d'une représentation latente des données et 
+une organisation topologique de cette représentation.
+
+L'AE prend les données d'entrée $x$ et les encode dans un espace latent $z$, qui est ensuite utilisé comme entrée pour le SOM.
+La couche SOM est entrainée à organiser les noeuds du SOM dans cet espace latent.
+L'architecture du DESOM est illustrée à la figure \ref{fig:desom_architecture_forw}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    x=1.8cm, y=1.2cm,
+    >=Stealth,
+    % --- Styles inspirés de l'image ---
+    vectorblock/.style={
+        draw=blue!60!black, top color=blue!10, bottom color=blue!30,
+        minimum width=0.6cm, minimum height=2.8cm, align=center,
+        font=\sffamily\small
+    },
+    latentblock/.style={
+        draw=purple!60!black, top color=purple!20, bottom color=purple!40,
+        minimum width=0.5cm, minimum height=1.8cm, align=center,
+        font=\sffamily\small
+    },
+    encoderblock/.style={
+        draw=teal!60!black, fill=teal!15, thick,
+        trapezium, trapezium angle=75, trapezium stretches body,
+        minimum width=1.5cm, minimum height=2.4cm, rotate=-90, align=center
+    },
+    somblock/.style={
+        draw=purple!70!black, fill=purple!5, thick, dashed,
+        rounded corners=5pt, minimum width=2.5cm, minimum height=1.8cm, align=center
+    },
+    decoderblock/.style={
+        draw=teal!60!black, fill=teal!15, thick,
+        trapezium, trapezium angle=75, trapezium stretches body,
+        minimum width=1.5cm, minimum height=2.4cm, rotate=90, align=center
+    },
+    forwardarrow/.style={
+        ->, thick, black
+    }
+]
+
+% nodes:
+
+% Input x
+\node[vectorblock] (Input) at (0,0) {\rotatebox{90}{input}};
+\node[below=0.1cm of Input, font=\bfseries] {$\mathbf{x}$};
+
+% Encodeur W_e
+\node[encoderblock] (Encoder) at (1.8,0) {\rotatebox{90}{\begin{tabular}{c} encoder \\ $\mathbf{W}_e$ \end{tabular}}};
+
+% Espace latent z
+\node[latentblock] (Latent) at (3.6,0) {\rotatebox{90}{Espace latent}};
+\node[below=0.1cm of Latent, font=\bfseries] {$\mathbf{z}$};
+
+% Décodeur W_d
+\node[decoderblock] (Decoder) at (5.8,1.5) {\rotatebox{-90}{\begin{tabular}{c} decoder \\ $\mathbf{W}_d$ \end{tabular}}};
+
+% Reconstruction 
+\node[vectorblock] (Output) at (7.8,1.5) {\rotatebox{90}{reconstruction}};
+\node[below=0.1cm of Output, font=\bfseries] {$\tilde{\mathbf{x}}$};
+
+% SOM
+\node[somblock] (SOM) at (6,-2.2) {
+    \textbf{Carte SOM}\\
+    \begin{tikzpicture}[scale=0.2] % Petite grille illustrative
+        \foreach \x in {0,1,2} \foreach \y in {0,1,2}
+            \draw[fill=purple!20] (\x,\y) circle (0.2);
+    \end{tikzpicture}\\
+    \textit{Prototypes} $w_k$
+};
+
+% Flèches
+\draw[forwardarrow] (Input) -- (Encoder);
+\draw[forwardarrow] (Encoder) -- (Latent);
+
+\draw[forwardarrow] (Latent.east) -- ++(0.3,0) |- (Decoder);
+\draw[forwardarrow] (Latent.east) -- ++(0.3,0) |- (SOM.west);
+
+\draw[forwardarrow] (Decoder) -- (Output);
+
+\end{tikzpicture}
+\caption{Architecture du DESOM inspirée du document \cite{DESOM}. Les flèches noires indiquent la propagation avant (forward pass). 
+L'encodeur $ \mathbf{W}_e $ apprend à encoder les données d'entrée $\mathbf{x}$ dans un espace latent $\mathbf{z}$, qui est ensuite utilisé par le décodeur $ \mathbf{W}_d $, 
+pour la reconstruction de $\mathbf{x}$ et par le SOM pour l'apprentissage de la structure topologique et du clustering.}
+\label{fig:desom_architecture_forw}
+\end{figure}
+
+Cette architecture permet un réduction du temps moyen d'apprentissage par rapport à une approche en deux étapes, où nous entraînerons d'abord un auto-encodeur, 
+puis un SOM sur les représentations apprises \cite{DESOM}. Le DESOM optimise simultanément les poids de l'autoencodeur et les prototypes de la carte. 
+Cette optimisation conjointe permet d'obtenir un espace latent plus adapté à l'organisation topologique et au clustering.
+
+Son algorithme d'apprentissage doit donc optimiser à la fois la fonction de perte de reconstruction de l'auto-encodeur et la fonction de perte du SOM en utilisant la méthode de descente de gradient.
+
+\subsection{Fonction de perte du DESOM}
+
+Le rôle de la fonction de perte dans le DESOM est central pour l'apprentissage conjoint de la représentation latente et de la carte auto-organisée.
+La fonction de perte du DESOM, $ \mathcal{L}_{\text{DESOM}} $, est une combinaison de deux composantes principales : 
+la perte de reconstruction de l'AE, $ \mathcal{L}_{\text{R}} $, et la perte du SOM, $ \mathcal{L}_{\text{SOM}} $ \cite{DESOM}. Il faut donc définir explicitement $\mathcal{L}_{\text{SOM}}$.
+
+Pour un SOM classique, soit $\mathcal{L}_{\text{SOM}}^i$ la fonction de perte du SOM pour un échantillon d'entrée $x_i$, avec $w_{c_i}$ comme son noeud gagant (BMU). 
+Alors, la fonction de perte du SOM pour cet échantillon est donnée par :
+$$ \mathcal{L}_{\text{SOM}}^i(x_i, \{w_k\}) = \sum_{k=1}^{m} h_{c_i k} \cdot \| x_i - w_k \|^2 $$
+
+Cette expression est donc la somme des distances au carré entre $x_i$ et les prototypes, où $c_i$ est l'indice du BMU pour l'échantillon $x_i$, 
+$h_{c_i k}$ est la fonction de voisinage entre $w_k$ et le BMU.
+
+Donc, la fonction de perte d'un SOM de manière générale est donnée par :
+$$ \mathcal{L}_{\text{SOM}} = \sum_{i=1}^{n} \mathcal{L}_{\text{SOM}}^i(x_i, c_i, \{w_k\}) \Leftrightarrow $$
+$$ \mathcal{L}_{\text{SOM}} = \sum_{i=1}^{n} \sum_{k=1}^{m} h_{c_i k} \cdot \| x_i - w_k \|^2 $$
+
+La seconde composante pour $ \mathcal{L}_{\text{DESOM}} $ est la fonction de perte de reconstruction $\mathcal{L}_{\text{R}}$ de l'auto-encodeur.
+
+Soit $W_e$ les poids de l'encodeur, $W_{de}$ les poids du décodeur, $x_i \in \mathbb{R}^d$ les données d'entrée et $\tilde{x}_i \in \mathbb{R}^d$ la reconstruction de $x_i$ par l'auto-encodeur, notons
+$f_{W_e}: \mathbb{R}^d \to \mathbb{R}^L$ la fonction d'encodage et $g_{W_{de}}: \mathbb{R}^L \to \mathbb{R}^d$ la fonction de décodage, avec $z_i = f_{W_e}(x_i)$ et $\tilde{x}_i = g_{W_{de}}(z_i)$.
+La fonction de perte de reconstruction $\mathcal{L}_{\text{R}}$ est généralement définie comme la moyenne de l'erreur quadratique (MSE) \cite{DESOM}:
+$$ \mathcal{L}_{\text{R}}(W_e, W_{de}) = \frac{1}{n} \sum_{i=1}^{n} \mathcal{L}_{\text{R}}^i =\frac{1}{n} \sum_{i=1}^{n} \| x_i - \tilde{x}_i \|^2 \Leftrightarrow$$
+
+En remplaçant $\tilde{x}_i$ par son expression, on obtient :
+$$ \mathcal{L}_{\text{R}}(W_e, W_{de}) = \frac{1}{n} \sum_{i=1}^{n} \| x_i - g_{W_{de}}(f_{W_e}(x_i)) \|^2 $$
+
+Finalement, avec les deux fonctions de perte, nous pouvons définir la fonction de perte hybride du DESOM \cite{DESOM}:
+$$ \mathcal{L}_{\text{DESOM}}(W_e, W_{de}, \{w_k\}) = \mathcal{L}_{\text{R}}(W_e, W_{de}) + \gamma  \mathcal{L}_{\text{SOM}}(W_e, \{w_k\}) $$
+
+Il est important de noter que la fonction de perte du SOM, $\mathcal{L}_{\text{SOM}}$, dépend à la fois des poids de l'encodeur $W_e$ et les poids $w_k$ de ses noeuds.
+Ces données d'entrée ne sont plus les données d'origine $x_i$, mais plutôt les représentations latentes $z_i \in \mathbb{R}^L$. Nous aurons donc pour un noeud $S_i$ 
+son vecteur de poids $w_i \in \mathbb{R}^L$.
+
+Le paramètre $\gamma$ est un hyperparamètre qui équilibre l'importance relative de la perte de reconstruction et de la perte du SOM lors de l'apprentissage conjoint du DESOM.
+Une valeur élevée de $\gamma$ donne plus d'importance à l'organisation topologique et au clustering dans l'espace latent, 
+tandis qu'une valeur plus faible privilégie la qualité de reconstruction de l'autoencodeur. 
+
+Ainsi, la fonction de perte du SOM agit comme une régularisation guidée par la carte auto-organisatrice : elle encourage l'encodeur à produire un espace latent adapté à la quantification 
+vectorielle et à la préservation de la topologie.
+
+\subsection{Processus d'apprentissage}
+
+Comme mentionné précédemment, l'apprentissage du DESOM est un processus conjoint qui optimise simultanément les poids de l'auto-encodeur et les noeuds du SOM.
+L'objectif est de minimiser la fonction de perte globale :
+$$\mathcal{L}_{DESOM} = \mathcal{L}_{R} + \gamma \mathcal{L}_{SOM}$$
+
+Cette optimisation permet à l'autoencodeur d'apprendre une représentation latente informative, 
+tout en contraignant cet espace latent à être adapté à l'organisation topologique du SOM (SOM-friendly).
+
+Pour effectuer cette optimisation il faut calculer les gradients de $\mathcal{L}_{\text{DESOM}}$ par rapport aux poids de l'encodeur $W_e$, du décodeur $W_{de}$ et des noeuds du SOM $\{w_k\}$.
+Cependant, le calcul du BMU (via l'opération d'argmin) dont dépend la fonction de voisinage n'est pas différentiable. Pour remédier ce problème,
+nous considérons $h_{c_i k}$ comme des coefficients constants à chaque étape d'optimisation \cite{DESOM}.
+
+Cette contrainte, nous permet d'utiliser la rétropropagation et la descente de gradient pour mettre à jour les paramètres du modèle.
+
+Les gradients de perte globale s'ecrivent alors \cite{DESOM}:
+\begin{align*}
+\frac{\partial \mathcal{L}_{\text{DESOM}}}{\partial W_e} &= \frac{\partial \mathcal{L}_{\text{R}}}{\partial W_e} + \gamma \frac{\partial \mathcal{L}_{\text{SOM}}}{\partial W_e} \\
+\frac{\partial \mathcal{L}_{\text{DESOM}}}{\partial W_{de}} &= \frac{\partial \mathcal{L}_{\text{R}}}{\partial W_{de}} \\
+\frac{\partial \mathcal{L}_{\text{DESOM}}}{\partial w_k} &= \gamma \frac{\partial \mathcal{L}_{\text{SOM}}}{\partial w_k}
+\end{align*}
+
+En calculant pour un point de données $x_i$, les gradients associés à la perte de reconstruction sont donnés par:
+\begin{align*}
+\frac{\partial \mathcal{L}_{\text{R}}^i}{\partial W_e} &= 2(g_{W_{de}}(f_{W_e}(x_i)) - x_i) \frac{\partial g_{W_{de}}(f_{W_e}(x_i))}{\partial W_e} \\
+\frac{\partial \mathcal{L}_{\text{R}}^i}{\partial W_{de}} &= 2(g_{W_{de}}(f_{W_e}(x_i)) - x_i) \frac{\partial g_{W_{de}}(f_{W_e}(x_i))}{\partial W_{de}} \\
+\end{align*}
+
+Les gradients associés à la perte SOM sont :
+\begin{align*}
+\frac{\partial \mathcal{L}_{\text{SOM}^i}}{\partial W_e} &= 2 \sum_{k=1}^{m} h_{c_i k} (f_{W_e}(x_i) - w_k) \frac{\partial f_{W_e}(x_i)}{\partial W_e} \\
+\frac{\partial \mathcal{L}_{\text{SOM}^i}}{\partial w_k} &= 2 h_{c_i k} (w_k - f_{W_e}(x_i))
+\end{align*} 
+
+Avec ces gradients, nous pouvons mettre à jour les poids de l'encodeur, du décodeur et des prototypes du SOM à chaque itération de l'apprentissage 
+à l'aide d'une descente de gradient stochastique par mini-batch \cite{DESOM}. Soit $\beta$ un mini-batch de $n_b$ échantillons et $\eta$ le taux d'apprentissage. 
+Les règles de mise à jour pour l'encodeur et le décodeur sont alors données par :
+\begin{align*}
+W_e &\leftarrow W_e - \frac{\eta}{n_b} \sum_{i \in \beta} \bigg(\frac{\partial \mathcal{L}_{\text{R}}^i}{\partial W_e} + \gamma \frac{\partial \mathcal{L}_{\text{SOM}}^i}{\partial W_e}\bigg) \\
+W_{de} &\leftarrow W_{de} - \frac{\eta}{n_b} \sum_{i \in \beta} \frac{\partial \mathcal{L}_{\text{R}}^i}{\partial W_{de}} \\
+\end{align*}
+
+La règle de mise à jour pour les prototypes du SOM est donnée par \cite{DESOM}:
+$$w_k \leftarrow w_k - \frac{\eta}{n_b} \sum_{i \in \beta} \gamma \frac{\partial \mathcal{L}_{\text{SOM}}^i}{\partial w_k}$$
+
+En développant $\frac{\partial \mathcal{L}_{\text{SOM}}^i}{\partial w_k}$ avec 
+$$z_i = f_{W_e}(x_i)$$ 
+
+La règle de mise à jour devient:
+$$w_k \leftarrow w_k + \frac{2\eta\gamma}{n_b} \sum_{i \in \beta} h_{c_i k} (z_i - w_k)$$
+
+Cette règle montre que chaque noeuds est déplacé vers les représentations latentes du mini-batch, avec une intensité pondérée par la fonction de voisinage du SOM.
+
+Ces mis à jour sont utilisées pour la rétropropagation de l'erreur à travers le réseau.
+L'encodeur reçoit le signal provenant de la reconstruction et le signal provenant de la contrainte SOM, tandis que le décodeur et les noeuds du SOM sont mis à jour
+respectivement à partir la perte de reconstruction et de la perte SOM. La figure \ref{fig:desom_architecture_backw} illustre ce processus d'apprentissage conjoint.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    x=1.8cm, y=1.2cm,
+    >=Stealth,
+    % --- Styles ---
+    vectorblock/.style={
+        draw=blue!60!black, top color=blue!10, bottom color=blue!30,
+        minimum width=0.6cm, minimum height=2.8cm, align=center,
+        font=\sffamily\small
+    },
+    latentblock/.style={
+        draw=purple!60!black, top color=purple!20, bottom color=purple!40,
+        minimum width=0.5cm, minimum height=1.8cm, align=center,
+        font=\sffamily\small
+    },
+    encoderblock/.style={
+        draw=teal!60!black, fill=teal!15, thick,
+        trapezium, trapezium angle=75, trapezium stretches body,
+        minimum width=1.5cm, minimum height=2.4cm, rotate=-90, align=center
+    },
+    somblock/.style={
+        draw=purple!70!black, fill=purple!5, thick, dashed,
+        rounded corners=5pt, minimum width=2.5cm, minimum height=1.8cm, align=center
+    },
+    decoderblock/.style={
+        draw=teal!60!black, fill=teal!15, thick,
+        trapezium, trapezium angle=75, trapezium stretches body,
+        minimum width=1.5cm, minimum height=2.4cm, rotate=90, align=center
+    },
+    backwardarrow/.style={
+        <-, ultra thick, red!70!black, line cap=round
+    },
+    forwardarrow/.style={
+        ->, thick, black
+    },
+    gradnode/.style={
+        fill=white, inner sep=10pt, font=\footnotesize\color{red!70!black}
+    }
+]
+
+% nodes:
+
+% Input
+\node[vectorblock] (Input) at (0,0) {\rotatebox{90}{input}};
+\node[below=0.1cm of Input, font=\bfseries] {$\mathbf{x}$};
+
+% Encodeur
+\node[encoderblock] (Encoder) at (1.5,0) {\rotatebox{90}{\begin{tabular}{c} encoder \\ $\mathbf{W}_e$ \end{tabular}}};
+
+% Espace latent z
+\node[latentblock] (Latent) at (3.6,0) {\rotatebox{90}{Espace latent}};
+\node[below=0.1cm of Latent, font=\bfseries] {$\mathbf{z}$};
+
+% Décodeur
+\node[decoderblock] (Decoder) at (5.8,1.5) {\rotatebox{-90}{\begin{tabular}{c} decoder \\ $\mathbf{W}_d$ \end{tabular}}};
+
+% Reconstruction
+\node[vectorblock] (Output) at (7.8,1.5) {\rotatebox{90}{reconstruction}};
+\node[below=0.1cm of Output, font=\bfseries] {$\tilde{\mathbf{x}}$};
+
+% SOM
+\node[somblock] (SOM) at (5.6,-2.2) {
+    \textbf{Carte SOM}\\
+    \begin{tikzpicture}[scale=0.2]
+        \foreach \x in {0,1,2} \foreach \y in {0,1,2}
+            \draw[fill=purple!10] (\x,\y) circle (0.2);
+    \end{tikzpicture}\\
+    \textit{Prototypes} $w_k$
+};
+
+% Losses
+\node[right=0.2cm of Output, font=\large, color=red!70!black] (LossR) {$\mathcal{L}_{\text{R}}$};
+\node[right=2.4cm of SOM, font=\large, color=red!70!black] (LossSOM) {$\gamma\mathcal{L}_{\text{SOM}}$};
+
+% Flèches de backward pass
+
+% Gradient de la reconstruction vers le décodeur
+\draw[backwardarrow] (Decoder) -- (Output) 
+    node[midway, above=0.1cm, gradnode] {$\frac{\partial \mathcal{L}_R}{\partial \mathbf{W}_{de}}$};
+
+% Gradient du décodeur vers l'encodeur
+\draw[backwardarrow] (Latent.east) -- ++(0.3,0) |- (Decoder)
+    node[pos=0.2, right, gradnode] {$\frac{\partial \mathcal{L}_R}{\partial \mathbf{W}_e}$};
+
+% Gradient du SOM vers l'encodeur
+\draw[backwardarrow] (Latent.east) -- ++(0.3,0) |- (SOM.west)
+    node[pos=0.2, right, gradnode] {$\gamma \frac{\partial \mathcal{L}_{SOM}}{\partial \mathbf{W}_e}$};
+
+% Gradient de la SOM vers les prototypes
+\draw[backwardarrow] (SOM) -- (LossSOM)
+    node[midway, above=0.1cm, gradnode] {$\gamma \frac{\partial \mathcal{L}_{SOM}}{\partial \mathbf{w}_k}$};
+
+\draw[backwardarrow] (Encoder) -- (Latent)
+    node[midway, above=0.1cm, gradnode] {$\frac{\partial \mathcal{L}_{\text{DESOM}}}{\partial \mathbf{W}_e}$};
+    
+% Flèches de forward pass (pour la cohérence visuelle)
+\draw[forwardarrow] (Input) -- (Encoder)
+    node[midway, above, gradnode] {};
+
+\end{tikzpicture}
+\caption{Processus de rétropropagation (backward pass) du DESOM. Les flèches rouges indiquent le flux des gradients. 
+Les poids de l'encodeur $\mathbf{W}_e$ sont mis à jour en fonction des erreurs combinées provenant de la reconstruction ($\mathcal{L}_{\text{R}}$) et 
+de l'organisation topologique du SOM ($\mathcal{L}_{\text{SOM}}$). Les flèches noires indiquent la propagation avant (forward pass) pour la cohérence visuelle.}
+\label{fig:desom_architecture_backw}
+\end{figure}
+
+
+Donc la minimisation se produit via une descente de gradient stochastique comme c'est le cas dans le modèle de SOM stochastique \cite{DESOM}.
+
+L'algorithme \ref{alg:DESOM_alg} présente une description détaillée du processus d'apprentissage du DESOM.
+Les affectations aux BMU et les coefficients de voisinage sont considérés comme constants lors du calcul des gradients à chaque itération.
+\begin{algorithm}[H]
+\caption{Algorithme d'apprentissage du DESOM}
+\label{alg:DESOM_alg}
+\begin{algorithmic}[1]
+\Require Données d'entrée $\{x_i\}_{i=1}^n$,
+            nombre de prototypes $m$,
+            taux d'apprentissage $\eta$,
+            hyperparamètre de régularisation $\gamma$,
+            nombre d'itérations $T$.
+\State Initialiser les poids de l'encodeur $W_e$, du décodeur $W_{de}$ et des prototypes du SOM $\{w_k\}_{k=1}^m$ de manière aléatoire.
+\For{$t = 1$ to $T$}
+    \State Sélectionner un mini-batch $\beta$ de $n_b$ échantillons de données d'entrée.
+    \For{chaque échantillon $x_i$ dans le mini-batch $\beta$}
+        \State Calculer la représentation latente $z_i = f_{W_e}(x_i)$.
+        \State Trouver le BMU $c_i = \arg\min_k \|z_i - w_k\|^2$.
+        \State Calculer les coefficients de voisinage $h_{c_i,k}$ pour chaque prototype $w_k$.
+        \State Calculer la reconstruction $\tilde{x}_i = g_{W_{de}}(z_i)$.
+        \State Calculer les pertes $\mathcal{L}_{R}^{i}$ et $\mathcal{L}_{SOM}^{i}$
+    \EndFor
+    \State Calculer la fonction de coût totale du mini-batch :
+    \State $\mathcal{L}_{\text{DESOM}} = \frac{1}{n_b} \sum_{x_i \in \beta} (\mathcal{L}_{\text{R}}^i + \gamma \mathcal{L}_{\text{SOM}}^i)$
+    \State Calculer les gradients de $\mathcal{L}_{DESOM}^{\beta}$ par rétropropagation.
+    \State Mettre à jour $W_e$, $W_{de}$ et $\{w_k\}_{k=1}^{m}$ par descente de gradient stochastique à mini-batch.
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+
+Ainsi, cet algorithme fournit une description du processus d'apprentissage du DESOM. Cette méthode intégre le SOM dans l'architecture de l'auto-encodeur, 
+en prenant les représentations latentes produite par l'encodeur comme entrée pour le SOM, rendant ainsi l'espace d'entrée SOM-friendly. 
+Cette contrainte encourage l'apprentissage d'un espace latent qui améliore la qualité du clustering et la préservation de la topologie.
 
 % =========================
 % Contenu chap3
 % =========================
 
 \chapter{Etude empirique}
+
+Ce chapitre consistera à la comparaison des performances dans certains jeux de données entre un SOM implémenté depuis zéro, SOM d'une librairie 
+et un DESOM implémenté à l'aide de la librairie PyTorch \cite{PyTorch}.
+
 
 \section{Données utilisées}
 
