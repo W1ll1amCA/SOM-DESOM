@@ -1018,8 +1018,8 @@ En calculant pour un point de données $x_i$, les gradients associés à la pert
 
 Les gradients associés à la perte SOM sont :
 \begin{align*}
-\frac{\partial \mathcal{L}_{\text{SOM}^i}}{\partial W_e} &= 2 \sum_{k=1}^{m} h_{c_i k} (f_{W_e}(x_i) - w_k) \frac{\partial f_{W_e}(x_i)}{\partial W_e} \\
-\frac{\partial \mathcal{L}_{\text{SOM}^i}}{\partial w_k} &= 2 h_{c_i k} (w_k - f_{W_e}(x_i))
+\frac{\partial \mathcal{L}_{\text{SOM}}^i}{\partial W_e} &= 2 \sum_{k=1}^{m} h_{c_i k} (f_{W_e}(x_i) - w_k) \frac{\partial f_{W_e}(x_i)}{\partial W_e} \\
+\frac{\partial \mathcal{L}_{\text{SOM}}^i}{\partial w_k} &= 2 h_{c_i k} (w_k - f_{W_e}(x_i))
 \end{align*} 
 
 Avec ces gradients, nous pouvons mettre à jour les poids de l'encodeur, du décodeur et des prototypes du SOM à chaque itération de l'apprentissage 
