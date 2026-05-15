@@ -73,7 +73,7 @@
 \chapter{Introduction}
 
 Durant les dernières décennies, plusieurs méthodes d'apprentissage automatique ont fait leur apparition. 
-Cela s'est produit par une croissance exponentielle des données récoltées avec lesquelles nous tentons de répondre à 
+Cela s'est produit grâce à une croissance exponentielle des données récoltées avec lesquelles nous tentons de répondre à 
 des questions dans plusieurs domaines. Plusieurs méthodes s'inspirent directement du cerveau humain et une d'entre elles 
 se nomme les cartes auto-organisées (self organizing-maps: SOM). Cette méthode s'inspire directement des brain maps. 
 Certaines cellules du cerveau répondent de manière sélective à un stimulus sensoriel spécifique et ces cellules ont tendance 
@@ -83,7 +83,7 @@ de leur voisinage.
 
 \section{Contexte}
 Actuellement, les réseaux de neurones ont une place centrale dans le domaine de l'apprentissage automatique. 
-Insipirée aussi des neurones biologiques, des cellues nerveuses dont la fonction est de recevoir et transmettre 
+Insipirée aussi des neurones biologiques, des cellues nerveuses dont la fonction est de agréger et transmettre 
 des informations via des sigaux chimiques et électriques \cite{Neurone_wikipedia}, ces modèles consistent à former des interconnexions entre 
 couches des neurones artificiels. 
 
@@ -106,8 +106,8 @@ $$
 $$
 
 Cette valeur va devenir l'entrée de la couche suivante (si ce n'est la dernière). 
-Les réseaux de neurones, qui ont ce type de neurones et au moins une sous-couche, sont entrainés à travers une fonction de coût $\mathcal{L}$ (loss function) dont le but est de la minimiser. 
-Cette correction est réalisée à travers un algorithme d'optimisation tel que la descente de gradient (gradient descent) \cite{Cours_IA_UNIGE}.
+Les réseaux de neurones, qui ont ce type de neurones et au moins une couche cachée, sont entrainés à travers une fonction de coût $\mathcal{L}$ (loss function) dont le but est de la minimiser. 
+Cette correction est réalisée à travers un algorithme d'optimisation tel que la descente de gradient (gradient descent) appelé "Backpropagation" dans ce domaine \cite{Cours_IA_UNIGE}.
 L'agorithme réduit les erreurs de prédiction entre $\hat{y}_k$ et $y_k$ en ajustant les poids $w_{ki}$. 
 Dans ce contexte, nous avons un apprentissage supervisé, car la fonction se repose sur la connaissance des labels $y_k$.  
 Ainsi, un neurone artificiel est une analogie qui interprète mathématiquement 
@@ -142,8 +142,15 @@ le fonctionnement d'un neurone avec des méthodes d'apprentissage du machine lea
 \label{fig:neurone}
 \end{figure}
 
+Dans ce contexte, le but du réseau de neurones est d'approximer une fonction de prédiction du type $y = \phi(x)$ par une fonction $\phi_\theta$ represenntée
+par le réseau et paramétrée par $\theta = [w_{ij}^k]$ l'ensemble des poids.
+
+Le document d'approximatio universelle montre que cela est possible avec un certain niveau d'approximation \cite{Approx_cap_multilayers}.
+
 \subsection{Neurone du SOM}
-Par contraste, un "neurone" d'un SOM est un vecteur prototype représentant une région de l'espace des données.
+Par contraste, étant donné un ensemble de données d'entrée,
+
+un "neurone" d'un SOM est un vecteur prototype représentant une région de l'espace des données.
 Il est associé à un vecteur de poids $w_i \in \mathbb{R}^d$ de même dimension que les données d'entrée $x \in \mathbb{R}^d$. 
 Son vecteur de poids est mis à jour en fonction de la distance entre les données d'entrée et son vecteur de poids. 
 
@@ -155,7 +162,7 @@ Où, $h_{ci}(t)$ est la fonction de voisinage qui diminue avec la distance entre
 Dans ce contexte, nous avons un apprentissage dit non supervisé et compétitif, car les "neurones" sont en compétition pour représenter les données d'entrée, et sans labels pour guider l'apprentissage.
 Cela est une différence fondamentale avec les neurones formels, car les SOM sont utilisés pour la visualisation et la réduction de la dimensionnalité, 
 tandis que les neurones formels sont utilisés plutôt pour la classification et la régression. 
-De plus, les SOM préservent la topologie des données d'entrée, c'est-à-dire qu'ils conservent les relations de voisinage dans la projection de l'espace à dimension réduite, ce qui n'est pas le cas des neurones formels. 
+De plus, les SOM préservent la topologie des données d'entrée, c'est-à-dire qu'ils conservent les relations de voisinage dans la projection de l'espace à dimension réduite, ce qui n'est pas le sujet pour les neurones formels. 
 Nous remarquons également une différence dans la fonction de coût, elles n'ont pas la même finalité.
 Les SOM utilisent une fonction de coût basée sur la minimisation d'une mesure de distance entre les données d'entrée et les prototypes, tandis que les neurones formels ont 
 une fonction de coût basée sur l'erreur de prédiction. Donc, la fonction de coût d'une carte auto-organisées ne produit pas de manière explicite de sortie ou de prédiction. 
@@ -211,9 +218,9 @@ Ce type d'apprentissage est utilisé notamment pour le clustering sous le nom de
 
 \subsection{Quantification vectorielle (VQ)} \label{sec:VQ}
 La quantification vectorielle (VQ) est une technologie utilisée surtout dans le traitement moderne de la numérisation des signaux \cite{Kohonen2012SOM}.
-Elle consite à partitionner en régions distincts et contiguës dont chacune est représentée par un vecteur.
-Dans cette méthode, les données d'entrées fonctionnent comme des features qui sont représentés dans un espace fini par 
-d'autres vecteur de même dimension. Cet ensemble de vecteurs se nomme codebook. 
+Elle consite à partitionner en régions distinctes et contiguës dont chacune est représentée par un vecteur.
+Dans cette méthode, les données d'entrées fonctionnent comme des features qui sont représentées dans un espace fini par 
+d'autres vecteurs de même dimension. Cet ensemble de vecteurs se nomme codebook. 
 Une VQ s'interprète de la manière suivante: Soit $x \in \mathbb{R}^d$ une donnée d'entrée et soit le codebook avec $w_i$ vecteurs de même dimension et $w_c$, le vecteur gagnant (apprentissage compétitif),
 le plus proche de $x$ \cite{SOM1990}.
 
@@ -221,7 +228,7 @@ $$ c(x) = \arg\min_{i} ||x - w_i||^2 $$
 
 Admettons que $p(x)$ soit la densité de probabilité de $x$ sur $V$, alors l'erreur moyen de la quantification $E$ est définie par:
 
-$$ E = \int_V p(x) ||x - w_{c(x)}||^2 dV $$
+$$ \mathcal{E} = \int_V ||x - w_{c(x)}||^2 p(x) dV $$
 
 où $V$ est l'espace d'entrée et donc $dV$ est le volume différentiel. La fonction $E$ est une fonction d'energie qui peut être minimisée par 
 l'algorithme de descente de gradient \cite{Kohonen2012SOM}. Par simplification, nous avons pris une distance euclidienne, mais d'autres mesures de distance peuvent être utilisées.
@@ -232,7 +239,7 @@ il faut approximer $p(x)$ par une distribution empirique à partir de l'ensemble
 
 $$ p(x) \approx \frac{1}{n} \sum_{i=1}^{n} \delta(x - x_i) $$
 
-Où la fonction $\delta$ peut être interprétée \cite{Dirac_wikipedia} :
+Où la fonction $\delta$ est la fonction de Dirac concentrant la densité de probabilité en un point \cite{Dirac_wikipedia} :
 $$\delta(x) =
 \begin{cases}
 \infty & \text{si } x = 0 \\
@@ -244,18 +251,18 @@ La particularité de cette fonction qui nous intéresse est la suivante \cite{Di
 $$\int_{-\infty}^{\infty} f(x) \delta(x - a) dx = f(a)$$
 
 En supossons que $f(x) = ||x - w_{c(x)}||^2$, alors nous avons :
-$$ E \approx \int_V  f(x)\frac{1}{n} \sum_{i=1}^{n} \delta(x - x_i)dV \Leftrightarrow$$
-$$ E \approx \frac{1}{n} \sum_{i=1}^{n} \int_V  f(x) \delta(x - x_i)dV  =  \frac{1}{n} \sum_{i=1}^{n} f(x_i) \Leftrightarrow $$
-$$ E \approx \frac{1}{n} \sum_{i=1}^{n} ||x_i - w_{c(x_i)}||^2 $$
+$$ \mathcal{E} \approx \int_V  f(x)\frac{1}{n} \sum_{i=1}^{n} \delta(x - x_i)dV \Leftrightarrow$$
+$$ \mathcal{E} \approx \frac{1}{n} \sum_{i=1}^{n} \int_V  f(x) \delta(x - x_i)dV  =  \frac{1}{n} \sum_{i=1}^{n} f(x_i) \Leftrightarrow $$
+$$ \mathcal{E} \approx \frac{1}{n} \sum_{i=1}^{n} ||x_i - w_{c(x_i)}||^2 $$
 
 
-Ainsi, la quantification vectorielle est une méthode d'apprentissage compétitive qui permet de représenter des données à travers un ensemble de prototypes, donc elle permet de faire du clustering.
-Les SOM suivent cette même approche d'apprentissage compétitive. Cependant, contrairement à la VQ classique, les SOM force une topologie sur les prototypes, 
+Ainsi, la quantification vectorielle minimise l'énergie $\mathcal{E}$ en associant chaque donnée d'entrée a son prototype (BMU) le plus proche.
+Les SOM suivent cette même approche d'apprentissage compétitive. Cependant, contrairement à la VQ classique, les SOM imposent une topologie sur les prototypes (la grille), 
 de manière à ce que les prototypes voisins dans la grille soient aussi proches dans l'espace des données d'entrée. 
 
 
 \subsection{SOM de base}
-En effet, le SOM créent une structure qui préserve la topologie locale dans un voisinage défini. Ce "calibrage" ou mise à jour des noeuds voisins dépend du Best Matching Unit(BMU), le noeud gagnant, et du temps $t$ \cite{SOM1990}.
+Les SOM créent une structure qui préserve la topologie locale dans un voisinage défini. Ce "calibrage" ou mise à jour des noeuds voisins dépend du Best Matching Unit(BMU), le noeud gagnant, et du temps $t$ \cite{SOM1990}.
 Les cartes auto-organisées ne dérivent pas de manière explicite d'une fonction de coût globale, mais d'une règle de mise à jour locale qui est appliquée à chaque noeud en fonction de sa proximité avec le BMU.
 
 Soit un ensemble de données d'entrée $ \{x_i\in \mathbb{R}^d \}_{1 \leq i \leq n} $ et un codebook $ \{w_i \in \mathbb{R}^d\}_{1 \leq i \leq m} $.
@@ -263,7 +270,7 @@ Le BMU suit le même principe que celui de la VQ, c'est à dire le noeud le plus
 $$ c = \arg\min_{i} ||x - w_i||^2 $$
 $$ BMU(x) = w_c $$
 
-L'entier $c$ représente l'indice du noeud gagnant. En partant de la quantification vectorielle, l'équation de mise à jour d'un noeud $w_i$ est la suivante \cite{SOM1990}:
+L'entier $c$ représente l'indice du noeud gagnant pour les donnée $x$. En partant de la quantification vectorielle, l'équation de mise à jour d'un noeud $w_i$ est la suivante \cite{SOM1990}:
 $$w_i(t+1) = \begin{cases}
     w_i(t) + \alpha(t)[x(t) - w_i(t)] & \text{si } i = c \\
     w_i(t) & \text{sinon}
@@ -272,7 +279,7 @@ $$w_i(t+1) = \begin{cases}
 Où $\alpha(t)$ est le taux d'apprentissage qui diminue avec le temps $t$. Nous observons que dans cette formule, seul le noeud gagnant est mis à jour, il est "attiré" vers la donnée d'entrée.
 Dans le VQ classique, seulement le noeud gagnant est mis à jour et sans interaction avec ses voisins. Cependant, dans les SOM, les noeuds voisins du BMU sont aussi mis à jour.
 
-Admettons l'ensemble de noeuds voisins du BMU $N_c(t)$ qui décroit avec le temps, alors la formule de mise à jour devient \cite{SOM1990}:
+Admettons l'ensemble de noeuds voisins du BMU $N_c(t)$ qui décroit avec le temps, alors la formule de mise à jour devient \cite{SOM1990} (le BMU fait partie de $N_c(t)$):
 $$w_i(t+1) = \begin{cases}
     w_i(t) + \alpha(t)[x(t) - w_i(t)] & \text{si } w_i \in N_c(t) \\
     w_i(t) & \text{sinon}
@@ -391,13 +398,13 @@ Nous pouvons l'écrire avec $E_t$ l'opérateur d'espérance sur $t$ \cite{Kohone
 $$ \forall i, \ \  E_t(h_{ci}[x(t) - w_i(t)]) = 0 $$
 
 Remarquons que $w_i(t)$ est indépendant de $t$ lorsque $t \to \infty$, nous allons le noter $w_i^*$. Si l'espérance $E_t$ est calculée à partir de la distribution empirique des données d'entrée, 
-alors nous avons :
-$$ E_t(h_{ci}(t)[x(t) - w_i^*]) = \frac{1}{t} \sum_{t} h_{ci}(t)[x(t) - w_i^*] = 0$$
+alors nous avons (pour un horizon $T$) :
+$$ E_t(h_{ci}(t)[x(t) - w_i^*]) = \frac{1}{T} \sum_{t=1}^{T} h_{ci}(t)[x(t) - w_i^*] = 0$$
 
 En développant cette expression, nous obtenons :
-$$ \frac{1}{t} \sum_{t} h_{ci}(t)[x(t) - w_i^*] = 0 \Leftrightarrow $$
-$$ \sum_{t} h_{ci}(t)x(t) - w_i^*\sum_{t} h_{ci}(t)  = 0 \Leftrightarrow $$
-$$ w_i^* = \frac{\sum_{t} h_{ci}(t)x(t)}{\sum_{t} h_{ci}(t)} $$
+$$ \frac{1}{T} \sum_{t=1}^{T} h_{ci}(t)[x(t) - w_i^*] = 0 \Leftrightarrow $$
+$$ \sum_{t=1}^{T} h_{ci}(t)x(t) - w_i^*\sum_{t=1}^{T} h_{ci}(t)  = 0 \Leftrightarrow $$
+$$ w_i^* = \frac{\sum_{t=1}^{T} h_{ci}(t)x(t)}{\sum_{t=1}^{T} h_{ci}(t)} $$
 
 
 L'expression actuelle peut être écrite en regroupant leur $BMU$. Soit $C_j$ l'ensemble des données dont le BMU est $w_j$, $n_j$ le nombre de points dans ce groupe, 
@@ -405,7 +412,7 @@ et $x_{w,j}$ la moyenne de ces points. Alors, la mise à jour peut s'écrire \ci
 $$w_i^* = \frac{\sum_{j} h_{ji} \, n_j \, x_{w,j}}{\sum_{j} h_{ji} \, n_j}$$
 
 Avec cette nouvelle interprétation, chaque noeud $w_i$ est mise à jour comme une moyenne pondérée des données qui lui sont associées. Nous avons donc une première approche de comment batch SOM fonctionne. 
-Comme déjà mentionnée, cette variante traite l'ensemble des données d'entrée à chaque itération et pour cela le noeuds du SOM sont associés à une liste des copies des $x(t)$ dont ils sont le BMU \cite{Kohonen2012SOM}.
+Comme déjà mentionné, cette variante traite l'ensemble des données d'entrée à chaque itération et pour cela les noeuds du SOM sont associés à une liste des copies des $x(t)$ dont ils sont le BMU \cite{Kohonen2012SOM}.
 Schématiquement, la figure \ref{fig:batch_som} illustre la mise à jour des noeuds dans le batch SOM.
 \begin{figure}[H]
 \centering
@@ -420,26 +427,26 @@ poids/.style={circle, draw, fill=red!20, minimum size=0.75cm},
 % Espace d'entrée
 \node[space] (V) at (0,0) {};
 
-\node[input] (x1) at (-3,1.5) {$x(1)$};
-\node[input] (x2) at (0,1.5) {$x(2)$};
-\node[input] (x3) at (3,1.5) {$x(3)$};
+\node[input] (x1) at (-3,1.5) {$x_1$};
+\node[input] (x2) at (0,1.5) {$x_2$};
+\node[input] (x3) at (3,1.5) {$x_3$};
 
-\node[input] (x4) at (3,0) {$x(4)$};
-\node[input] (x5) at (0,0) {$x(5)$};
-\node[input] (x6) at (-3,0) {$x(6)$};
+\node[input] (x4) at (3,0) {$x_4$};
+\node[input] (x5) at (0,0) {$x_5$};
+\node[input] (x6) at (-3,0) {$x_6$};
 
-\node[input] (x7) at (-3,-1.5) {$x(7)$};
-\node[input] (x8) at (0,-1.5) {$x(8)$};
+\node[input] (x7) at (-3,-1.5) {$x_7$};
+\node[input] (x8) at (0,-1.5) {$x_8$};
 \node[] (xd) at (3,-1.5) {\textbf{\dots}};
 
 % Noeuds du SOM:
-\node[noeud] (w1) at (-6,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline $x(1)$ \\ \hline $x(4)$ \\ \hline $x(7)$ \end{tabular}};
+\node[noeud] (w1) at (-6,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline $x_1$ \\ \hline $x_4$ \\ \hline $x_7$ \end{tabular}};
 \node[poids] (w1p) at (-6.75,-7) {$w_1$};
 
-\node[noeud] (w2) at (-2.75,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline $x(2)$ \\ \hline $x(6)$ \\ \hline $x(8)$ \end{tabular}};
+\node[noeud] (w2) at (-2.75,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline $x_2$ \\ \hline $x_6$ \\ \hline $x_8$ \end{tabular}};
 \node[poids] (w2p) at (-3.5,-7) {$w_2$};
 % w_i
-\node[noeud] (w3) at (0.5,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline $x(3)$ \\ \hline $x(5)$ \\ \hline \textbf{\dots} \end{tabular}};
+\node[noeud] (w3) at (0.5,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline $x_3$ \\ \hline $x_5$ \\ \hline \textbf{\dots} \end{tabular}};
 \node[poids] (w3p) at (-0.25,-7) {$w_i$};
 
 \node[noeud] (w4) at (3.75,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
@@ -528,10 +535,10 @@ Cependant, malgré ses avantages, le batch SOM présente certaines limites, nota
 
 \section{Limites}
 
-Les cartes auto-organisées possède la capacité de réaliser simultanément une quantification vectorielle et un échelonnage multidimensionnel. 
+Les cartes auto-organisées possède la capacité de réaliser simultanément une quantification vectorielle et un reduction de dimension. 
 Cependant, certains travaux on montré que, du point de vue de l'erreur de la quantification ou de la préservation des distances, les SOM peuvent être moins performant que 
 la combinaison de deux méthodes spécialisées \cite{Limitations_SOM}. En particulier, l'association d'une méthode de quantification vectorielle telle que le k-means, 
-suivie d'une technique d'échelonnage multidimensionnel comme le Sammon mapping, permet d'optimiser séparément ces deux objectifs.
+suivie d'une technique de reduction de dimension comme le Sammon mapping, permet d'optimiser séparément ces deux objectifs.
 
 Cette différence s'explique par le fait que les méthodes utilisées dans une approche séquentielle sont chacune conçues pour minimiser explicitement une fonction de coût spécifique, 
 tandis que les SOM réalisent simultanément ces tâches à travers un mécanisme unique d'apprentissage. Ce couplage induit un compromis entre la qualité de la quantification et celle de la projection, 
@@ -541,20 +548,21 @@ Dans le cas de la quantification vectorielle, la méthode k-means a tendance à 
 tandis que les SOM doivent également satisfaire une contrainte d'organisation topologique. Cela limite la capacité de répresentation des structures de données complexes, 
 en particulier lorsque nous avons un nombre plus élevé de clusters \cite{Limitations_SOM}.
 
-Concernant l'échelonnage multidimensionnel, les technique traditionnellles ont tendance à mieux préserver les distances entre les points de données, tandis que les SOM peuvent introduire des distorsions dans la représentation 
+Concernant la reduction de dimension, les technique traditionnellles ont tendance à mieux préserver les distances entre les points de données, tandis que les SOM peuvent introduire des distorsions dans la représentation 
 des distances à cause de leur structure en grille et de la manière dont ils mettent à jour les poids. Cela s'accentue particulièrement avec l'augmentation de dimensionnalité des données d'entrée.
 
-\subsection{Quantification vectorielle et échelonnage multidimensionnel}
+\subsection{Quantification vectorielle et reduction de dimension}
 
 Une des méthodes les plus courantes pour la quantification vectorielle est le k-means, qui est un algorithme de clustering qui partitionne les données en $k$ clusters en minimisant 
 la somme des distances au carré entre les points de données et les centres de cluster. Cette méthode a été déjà mentionnée dans la section \ref{sec:VQ}. 
-Une différences majeure entre le k-means et les SOM se trouve dans le fait que le k-means ne préserve pas la topologie locale, tandis que les SOM essaient de la préserver à travers leur structure en grille.
+Contrairement au k-means, qui attribue simplement chaque observation à un centroïde, le SOM organise ses prototypes sur une grille. 
+Cette structure permet de projeter les données sur une carte de prototypes, où la proximité entre nœuds cherche à refléter les similarités entre les données.
 Donc, pour les SOM, le codebook est organisé sur une grille régulière cela induit une contrainte sur la manière dont les poids sont mis à jour. 
 Il est également important de savoir que lorsque la fonction de voisinage $h_{ci} \rightarrow 0$, l'algorithme SOM se comportent de manière similaire au k-means, car seul le BMU est mis à jour\cite{Kohonen2012SOM}. 
 
-Un échelonnage multidimensionnel, pour être plus précis, est une transformation $\Phi: \mathbb{R}^n \rightarrow \mathbb{R}^m$ qui préserve les similarités ou distances dans l'espace de départ 
-lors de la projection dans $\mathbb{R}^m$. Il existe plusieurs techniques d'échelonnage multidimensionnel, chacune avec ses propres avantages et inconvénients. 
-Par exemple, le Sammon mapping, le PCA ou encore les cartes auto-organisées. Le sammon mapping, en pariculier, permet l'echelonnage multidimensionnel en minimisant la fonction de coût 
+Un reduction de dimension, pour être plus précis, est une transformation $\Phi: \mathbb{R}^n \rightarrow \mathbb{R}^m$ qui préserve les similarités ou distances dans l'espace de départ 
+lors de la projection dans $\mathbb{R}^m$. Il existe plusieurs techniques de reduction de dimension, chacune avec ses propres avantages et inconvénients. 
+Par exemple, le Sammon mapping, le Umap, tsne ou encore les cartes auto-organisées. Le sammon mapping, en pariculier, permet la reduction de dimension en minimisant la fonction de coût 
 qui pondère les différences de distances entre les points de données et leurs projections. Cela est optimisé par la méthode de la decente de gradient \cite{Limitations_SOM}.
 Soit $d_{ij}$ la distance entre les points $x_i$ et $x_j$ dans l'espace d'origine, et $\hat{d}_{ij}$ la distance entre leurs projections $\Phi(x_i)$ et $\Phi(x_j)$ dans l'espace réduit. 
 La fonction de coût s'écrit :
@@ -563,7 +571,7 @@ $$\frac{1}{\sum_{i=0}^{n-1} \sum_{j < i} d_{ij}} \sum_{i=0}^{n-1} \sum_{j < i}  
 Enfin, il est important de remarquer que le codebook d'un SOM est limité en nombre de noeuds, cela entraine une discrétisation de l'espace d'entrée, 
 ce qui peut conduire à une perte d'information si le nombre de noeuds est insuffisant et à une représentation moins précise des données \cite{Limitations_SOM}.
 
-Dans \cite{Limitations_SOM}, nous trouvons une approche qui consiste à faire d'abord une quantification vectorielle avec le k-means, puis à appliquer un échelonnage multidimensionnel avec le Sammon mapping.
+Dans \cite{Limitations_SOM}, nous trouvons une approche qui consiste à faire d'abord une quantification vectorielle avec le k-means, puis à appliquer une reduction de dimension avec le Sammon mapping.
 Les performances de cette approche sont comparées à celles des SOM pour différentes configurations, comme illustré dans le tableau \ref{tab:comparison_som_kmeans}.
 
 
@@ -616,8 +624,8 @@ algorithm & no. clusters & dimension & msqe & Rand & corr. \\
 \item une corrélation plus forte pour la mesure de la qualité de préservation de la topologie. 
 \end{itemize}
 
-Cela montre une limite importante des SOM, leurs performances est inférieure par rapport à des méthodes spécialisées pour la quantification vectorielle et l'échelonnage multidimensionnel.
-Les resultats suggèrent que les SOM peuvent ne pas être la meilleure option pour des tâches de clustering ou de réduction de dimensionnalité, surtout lorsque la qualité de la quantification ou de l'échelonnage est cruciale.
+Cela montre une limite importante des SOM, leurs performances est inférieure par rapport à des méthodes spécialisées pour la quantification vectorielle et la reduction de dimension.
+Les resultats suggèrent que les SOM peuvent ne pas être la meilleure option pour des tâches de clustering ou de réduction de dimensionnalité, surtout lorsque la qualité de la quantification ou de la reduction de dimension est cruciale.
 
 \subsection{Autres limitations}
 
@@ -678,7 +686,7 @@ Ainsi, cette extension est un avencement pour les SOM dans le cadre de données 
 pour lesquelles l'approches classique n'est pas applicables.
 
 \subsection{FlowSOM}
-Une autre extension intéressante utilisée notament dans le domaine de la biologie et plus précisément pour l'analyse de données de cytométrie est le Flow self-organizing maps (FlowSOM) \cite{FlowSOM}.
+FlowSOM n'est pas vraiment une extension mais une application intéressante utilisée notament dans le domaine de la biologie et plus précisément pour l'analyse de données de cytométrie est le Flow self-organizing maps (FlowSOM) \cite{FlowSOM}.
 Cette approche en réalité ne propose pas une nouvelle variante de SOM, mais plutôt une nouvelle manière d'utiliser les SOM pour l'analyse de données de cytométrie avec une structure spécifique.
 Elle a comme objectif de faciliter la visualisation et l'interprétation des données de cytométrie, au lieu d'utiliser des scatter plots traditionnels, 
 qui peuvent être difficiles à interpréter lorsque nous avons un grand nombre de dimensions et de points de données \cite{FlowSOM}.
