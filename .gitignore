@@ -23,6 +23,5 @@ venv_som/
 *.fdb_latexmk
 *.fls
 *.log
-*.pdf
 *synctex.gz
 *.toc
