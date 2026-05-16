@@ -17,8 +17,14 @@
 \usepackage{booktabs}
 
 
-\usetikzlibrary{arrows, positioning, shapes, decorations.pathreplacing, decorations.pathmorphing, arrows.meta, calc}
+\usetikzlibrary{arrows, positioning, shapes, decorations.pathreplacing,
+                 decorations.pathmorphing, arrows.meta, calc, patterns, 
+                 fit, backgrounds}
 
+\definecolor{InputRed}{rgb}{0.8, 0, 0}
+\definecolor{MapPurple}{rgb}{0.5, 0, 0.5}
+\definecolor{WeightGreen}{rgb}{0, 0.5, 0}
+\definecolor{NbhOrange}{rgb}{1, 0.65, 0} 
 
 \begin{document}
 
@@ -75,7 +81,7 @@
 Durant les dernières décennies, plusieurs méthodes d'apprentissage automatique ont fait leur apparition. 
 Cela s'est produit grâce à une croissance exponentielle des données récoltées avec lesquelles nous tentons de répondre à 
 des questions dans plusieurs domaines. Plusieurs méthodes s'inspirent directement du cerveau humain et une d'entre elles 
-se nomme les cartes auto-organisées (self organizing-maps: SOM). Cette méthode s'inspire directement des brain maps. 
+se nomme les cartes auto-organisées (self organizing-maps: SOM). Cette méthode s'inspire des cartes cérébrales. 
 Certaines cellules du cerveau répondent de manière sélective à un stimulus sensoriel spécifique et ces cellules ont tendance 
 à s'assembler formant une topographie particulière en fonction du stimulus spécifique \cite{Kohonen2012SOM}.
 Les SOM permettent la projection des données de grande dimension dans une grille à petite dimension tout en essayant de préserver leur topologie locale en tenant compte 
@@ -83,7 +89,7 @@ de leur voisinage.
 
 \section{Contexte}
 Actuellement, les réseaux de neurones ont une place centrale dans le domaine de l'apprentissage automatique. 
-Insipirée aussi des neurones biologiques, des cellues nerveuses dont la fonction est de agréger et transmettre 
+Insipirée aussi des neurones biologiques, des cellues nerveuses dont la fonction est d'agréger et transmettre 
 des informations via des sigaux chimiques et électriques \cite{Neurone_wikipedia}, ces modèles consistent à former des interconnexions entre 
 couches des neurones artificiels. 
 
@@ -100,18 +106,19 @@ $$
 a_k = \sum_{i=0}^{m} w_{ki} x_i
 $$
 
-À cela, une fonction d'activation $\varphi(.)$ \cite{Artificial_neuron_wikipedia} est appliqué pour avoir la sortie du neurone :
+À cela, une fonction d'activation $\phi(.)$ \cite{Artificial_neuron_wikipedia} est appliqué pour avoir la sortie du neurone :
 $$
-\hat{y}_k = \varphi(a_k)
+\hat{y}_k = \phi(a_k)
 $$
 
-Cette valeur va devenir l'entrée de la couche suivante (si ce n'est la dernière). 
-Les réseaux de neurones, qui ont ce type de neurones et au moins une couche cachée, sont entrainés à travers une fonction de coût $\mathcal{L}$ (loss function) dont le but est de la minimiser. 
-Cette correction est réalisée à travers un algorithme d'optimisation tel que la descente de gradient (gradient descent) appelé "Backpropagation" dans ce domaine \cite{Cours_IA_UNIGE}.
-L'agorithme réduit les erreurs de prédiction entre $\hat{y}_k$ et $y_k$ en ajustant les poids $w_{ki}$. 
+Cette valeur va devenir l'entrée de la couche suivante, sauf s'il s'agit de la dernière couche. 
+Les réseaux de neurones, qui ont ce type de neurones et au moins une couche cachée, sont entraînés à travers une fonction de coût $\mathcal{L}$ (loss function) dont le but est de la minimiser. 
+Cette correction est réalisée à travers un algorithme d'optimisation, tel que la descente de gradient (gradient descent), appliqué après le calcul du gradient par l'algorithme
+de rétropropagation (backpropagation) \cite{Cours_IA_UNIGE}.
+L'algorithme réduit les erreurs de prédiction entre $\hat{y}_k$ et $y_k$ en ajustant les poids $w_{ki}$. 
 Dans ce contexte, nous avons un apprentissage supervisé, car la fonction se repose sur la connaissance des labels $y_k$.  
 Ainsi, un neurone artificiel est une analogie qui interprète mathématiquement 
-le fonctionnement d'un neurone avec des méthodes d'apprentissage du machine learning (apprentissage automatique).
+le fonctionnement d'un neurone avec des méthodes d'apprentissage automatique (machine learning).
 
 \begin{figure}[H]
 \centering
@@ -130,7 +137,7 @@ le fonctionnement d'un neurone avec des méthodes d'apprentissage du machine lea
 
     \node at (8,1) {$\hat{y}$};
     
-    \node[neuron] (n) at (4,1) {$a \Bigg{|} \varphi$};
+    \node[neuron] (n) at (4,1) {$a \Bigg{|} \phi$};
 
     \draw[->] (x0) -- node[midway, above ] {$w_0$} (n);
     \draw[->] (x1) -- node[midway, above left] {$w_1$} (n);
@@ -142,22 +149,36 @@ le fonctionnement d'un neurone avec des méthodes d'apprentissage du machine lea
 \label{fig:neurone}
 \end{figure}
 
-Dans ce contexte, le but du réseau de neurones est d'approximer une fonction de prédiction du type $y = \phi(x)$ par une fonction $\phi_\theta$ represenntée
+Dans ce contexte, le but du réseau de neurones est d'approximer une fonction de prédiction du type $y = \phi(x)$ par une fonction $\phi_\theta$, represenntée
 par le réseau et paramétrée par $\theta = [w_{ij}^k]$ l'ensemble des poids.
 
-Le document d'approximatio universelle montre que cela est possible avec un certain niveau d'approximation \cite{Approx_cap_multilayers}.
+Le document d'approximation universelle montre que cela est possible avec un certain niveau d'approximation \cite{Approx_cap_multilayers}.
 
 \subsection{Neurone du SOM}
-Par contraste, étant donné un ensemble de données d'entrée,
+Par contraste, étant donné un ensemble de données $\mathcal{X} = \{x_i\}_{i=1}^N$ où $x_i \in \mathbb{R}^d$, une SOM cherche à établir une construction de l'ensemble des données
+("vector quantization" cf. section \ref{sec:VQ}) en associant à chaque position d'une topologie donnée (la cache) un sous ensemble de données de départ.
 
-un "neurone" d'un SOM est un vecteur prototype représentant une région de l'espace des données.
-Il est associé à un vecteur de poids $w_i \in \mathbb{R}^d$ de même dimension que les données d'entrée $x \in \mathbb{R}^d$. 
-Son vecteur de poids est mis à jour en fonction de la distance entre les données d'entrée et son vecteur de poids. 
+Dans la suite, nous aurons:
+\begin{itemize}
+    \item $\mathcal{X} = \{x_1, x_2, \ldots, x_N\}$ avec $x_i \in \mathbb{R}^d$ sont l'ensemble de données d'entrée 
+    \item $\mathcal{S} = \{S_1, S_2, \ldots, S_M\}$ sont les noeuds de la carte
+    \item Chaque noeud $S_j$ est associé à un vecteur de poids $w_j \in \mathbb{R}^d$ (prototype)
+    \item Chaque noeud a une position $p_j \in \mathbb{R}^D$
+    \item Chaque noeud $S_j$ a un voisinage $N_j$ dans la topologie de la carte avec $S_j \in N_j$
+\end{itemize}
 
-Le neurone $S_c$ qui est le plus proche de la donnée d'entrée est appelé \textit{Best Matching Unit} (BMU), associé au vecteur de poids $w_c$, et c'est lui qui est mis à jour
-ainsi que ses voisins en fonction de la formule suivante : 
-$$w_i(t+1) = w_i(t) + h_{ci}(t)[x(t) - w_i(t)]$$ 
-Où, $h_{ci}(t)$ est la fonction de voisinage qui diminue avec la distance entre le neurone $S_i$ et le BMU $S_c$, ainsi que du temps $t$ \cite{Kohonen2012SOM}.
+Dans le texte, nous assimilerons le noeud a son vecteur de poids: $S_j \leftrightarrow w_j$.
+
+Un "neurone" d'un SOM est un prototype représentant une région de l'espace des données.
+Il est associé à un vecteur de poids $w \in \mathbb{R}^d$, de même dimension que les données d'entrée $x \in \mathbb{R}^d$. 
+Son vecteur de poids est mis à jour en fonction de la distance entre les données d'entrée et son prope vecteur de poids. 
+
+Les données d'entrée sont visitées itérativement. À l'itération $t+1$ pour la donnée $x_i \in \mathbb{R}^d$, 
+le neurone $S_c$ le plus proche de la donnée d'entrée $x_i$ est appelé \textit{Best Matching Unit} (BMU) et est associé au vecteur de poids $w_c$. 
+Le vecteur poids $w_c$, ainsi que les vecteurs de poids $w_j$ des noeuds de son voisinage, sont mis à jour en fonction de la formule suivante : 
+$$w_j^{(t+1)} = w_j^{(t)} + h_{cj}(t)[x_i - w_j^{(t)}]$$ 
+
+Où, $h_{cj}(t)$ est la fonction de voisinage qui diminue avec la distance entre le neurone $S_j$ et le BMU $S_c$, ainsi que du temps $t$ \cite{Kohonen2012SOM} cf. section \ref{SOM_base}.
 
 Dans ce contexte, nous avons un apprentissage dit non supervisé et compétitif, car les "neurones" sont en compétition pour représenter les données d'entrée, et sans labels pour guider l'apprentissage.
 Cela est une différence fondamentale avec les neurones formels, car les SOM sont utilisés pour la visualisation et la réduction de la dimensionnalité, 
@@ -170,36 +191,141 @@ une fonction de coût basée sur l'erreur de prédiction. Donc, la fonction de c
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
-  neu_som/.style={circle, draw, minimum size=2.3cm},
+  neu_som/.style={circle, draw, minimum size=2.3cm, text width=2.1cm, align=center},
   >=latex
 ]   
-    
-    % neurone d'un SOM
-    \node[neu_som] (x) at (0,-6) {$x(t)$};
-    
-    \node[neu_som] (wc) at (5,-6) {$w_c(t+1)$};
-    \node[] (noeudSc) at (5,-7.5) { noeud $S_c$};
+ 
+% neurone d'un SOM
+\node[neu_som] (x) at (0,0) {$x_i$};
 
-    \draw[->] (x) -- node[midway, above] {$BMU(x(t))$} (wc);
-    \draw[->, thick, dashed, loop above] (wc) to [out=60, in=120, looseness=5] node[above, rotate=0] {$w_c(t) + h_{ci}(t)[x(t) - w_c(t)] $} (wc);
+\node[neu_som] (wc) at (5,0) {$w_c^{(t+1)}$};
+
+\node[] (noeudSc) at (5,-1.75) { noeud $S_c$};
+
+\draw[->] (x) -- node[midway, above] {$BMU(x_i)$} (wc);
+
+\draw[->, thick, dashed, loop above] (wc) to [out=60, in=120, looseness=5] node[above, rotate=0] {$w_c^{(t+1)} = w_c^{(t)} + h_{cc}(t)[x_i - w_c^{(t)}] $} (wc);
+
+\node[neu_som] (wj) at (12,0) {$w_j^{(t+1)}$};
+\node[] (noeudSj) at (12,-1.75) { noeud $S_j$};
+
+% Flèche entre Sc et Sj
+\draw[<->, dashed, ultra thick] (wc) -- node[midway, above, sloped] {Voisinage $h_{cj}$} (wj);
+
+\draw[->, thick, dashed, loop above] (wj) to [out=60, in=120, looseness=5] node[above, rotate=0] {$w_j^{(t+1)} = w_j^{(t)} + h_{cj}(t)[x_i - w_j^{(t)}] $} (wj);
+
 \end{tikzpicture}
-\caption{Noeud d'un SOM}
-\label{fig:noeudSOM}
+\caption{Structure d'interaction de voisinage dans un SOM : mise à jour du BMU ($S_c$) et d'un voisin ($S_j$).}
+\label{fig:noeudSOM_voisinage}
 \end{figure}
-
-Dans la suite nous ferons l'analogie entre les noeuds $S_i$ et le vecteur de poids $w_i$ qu'il porte.
 
 Même s'ils partagent une inspiration biologique commune, les SOM présentent des caractéristiques uniques qui les distinguent des réseaux de neurones traditionnels.
 Ainsi, même si historiquement les cartes auto-organisées sont classées comme des réseaux de neurones, par les différences que nous avons citées,
 il est raisonnable de les considérer comme des structures différentes. 
 
-Par la suite de ce rapport et pour éviter toutes confusions, nous allons utiliser "noeud" pour les unités de calcul d'un SOM.
+Par la suite de ce rapport et pour éviter toutes confusions, nous allons utiliser "noeud" ou "prototypes" pour les unités de calcul d'un SOM.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=1.25, transform shape,
+    % Styles des nœuds
+    node_dot/.style={circle, draw=MapPurple, fill=MapPurple!30, inner sep=0pt, minimum size=7pt},
+    input_dot/.style={circle, draw=InputRed, fill=InputRed, inner sep=0pt, minimum size=8pt},
+    % Style des rectangles de poids avec hachures
+    weight_box/.style={rectangle, draw=WeightGreen, fill=WeightGreen!10, inner sep=0pt, minimum width=0.8cm, minimum height=0.5cm},
+    % Styles des lignes
+    line_som/.style={MapPurple, thick},
+    line_weight/.style={WeightGreen},
+    % Styles des flèches
+    arrow_input/.style={->, >=stealth, InputRed, ultra thick},
+    arrow_nbh/.style={->, >=stealth, NbhOrange, dashed, thick},
+    % Styles de texte
+    text_red/.style={text=InputRed, font=\small},
+    text_purple/.style={text=MapPurple, font=\small},
+    text_green/.style={text=WeightGreen, font=\small}
+]
+
+    % --- Légende (en haut à droite) ---
+    \node[anchor=east, text_red] at (10, 7.5) {Donnée d'entrée};
+    \node[anchor=east, text_purple] at (10, 6.8) {Carte SOM};
+    \node[anchor=east, text_green] at (10, 6.1) {Vecteurs de poids};
+
+    % --- Point d'entrée x(t) ---
+    \node[input_dot, label={[InputRed]above:$x_i$}] (xt) at (2.5, 8) {};
+
+    % --- Nœuds de la Carte SOM (positions estimées pour un aspect organique) ---
+    \node[node_dot] (Sc) at (3, 3.5) {};     % Centre (BMU)
+    \node[node_dot] (Sj) at (1, 4.5) {};   % Gauche
+    \node[node_dot] (Si) at (1, 1.25) {};   % Bas-gauche
+    \node[node_dot] (Sm) at (5, 1.5) {}; % Bas-droite
+    \node[node_dot] (Se) at (5.5, 4.5) {}; % Haut-droite
+    \node[node_dot] (Sk) at (5.5, 6) {};     % Haut-centre
+
+    % --- Lignes de la Grille SOM (Structure) ---
+    \draw[line_som] (Sj) -- (Sc);
+    \draw[line_som] (Si) -- (Sc);
+    \draw[line_som] (Sm) -- (Sc);
+    \draw[line_som] (Se) -- (Sc);
+    \draw[line_som] (Sk) -- (Sc);
+
+    % Lignes déformées s'étendant à partir des nœuds périphériques
+    \draw[line_som] (Sj) -- (0.5, 5.5);
+    \draw[line_som] (Sj) -- (0, 5);
+    \draw[line_som] (Sj) -- (0, 3.5);
+
+    \draw[line_som] (Si) -- (2, 0.5);
+    \draw[line_som] (Si) -- (0, 0.5);
+
+    \draw[line_som] (Sm) -- (4, 0.5);
+    \draw[line_som] (Sm) -- (5.5, 1);
+    \draw[line_som] (Sm) -- (6, 1.5);
+
+    \draw[line_som] (Se) -- (6.5, 5);
+    \draw[line_som] (Se) -- (6.5, 4);
+
+    \draw[line_som] (Sk) -- (4, 6.5);
+    \draw[line_som] (Sk) -- (5.25, 6.8);
+    \draw[line_som] (Sk) -- (6.5, 5.5);
+
+    % --- Vecteurs de Poids et Lignes de Connexion ---
+   
+    \node[weight_box, below=0.5cm] (wj) at (Sj) {\tiny $w_j$}; \draw[line_weight] (Sj) -- (wj);
+    \node[weight_box, below=0.5cm] (wi) at (Si) {\tiny $w_i$}; \draw[line_weight] (Si) -- (wi);
+    \node[weight_box, below=0.5cm] (wc) at (Sc) {\tiny $w_c$}; \draw[line_weight] (Sc) -- (wc);
+    \node[weight_box, below=0.5cm] (wm) at (Sm) {\tiny $w_m$}; \draw[line_weight] (Sm) -- (wm);
+    \node[weight_box, below=0.5cm] (we) at (Se) {\tiny $w_l$}; \draw[line_weight] (Se) -- (we);
+    \node[weight_box, below=0.5cm] (wk) at (Sk) {\tiny $w_k$}; \draw[line_weight] (Sk) -- (wk);
+
+
+    % Flèche solide rouge vers le BMU (S_c)
+    \draw[arrow_input] (xt) -- (Sc);
+
+    % Flèches en pointillés orange vers les voisins
+    \draw[arrow_nbh] (xt) to[out=-120, in=60] (Sj);
+    \draw[arrow_nbh] (xt) to[out=-100, in=80] (Si);
+    \draw[arrow_nbh] (xt) to[out=-60, in=120] (Sk);
+    \draw[arrow_nbh] (xt) to[out=-40, in=140] (Se);
+    \draw[arrow_nbh] (xt) to[out=-80, in=100] (Sm);
+
+    % --- Étiquettes de Nœuds (Placées pour éviter les chevauchements) ---
+    \node[text_purple, right=0.1cm of Sc, font=\small\bfseries] {$S_c$ \tiny(BMU)};
+    \node[text_purple, above right=0.1cm of Sj] {$S_j$};
+    \node[text_purple, above right=0.1cm of Sk] {$S_k$};
+    \node[text_purple, right=0.2cm of Se] {$S_e$};
+    \node[text_purple, above right=0.1cm of Sm] {$S_m$};
+    \node[text_purple, left=0.1cm of Si] {$S_i$};
+
+\end{tikzpicture}
+\caption{Schéma illustrant la structure d'une carte auto-organisée (SOM) avec un point d'entrée $x_i$, 
+les nœuds de la carte (dont le BMU $S_c$), les vecteurs de poids associés, et les interactions de voisinage.}
+\label{fig:som_dessin}
+\end{figure}
 
 \section{Objectifs du projet}
 
 L'objectif de ce projet consiste à comprendre les cartes auto-organisées, leurs limites ainsi que 
 les extensions proposées dans la littérature pour y remédier. Dans la suite de ce rapport, un état de l'art sur les SOM sera présenté. 
-Ensuite, nous ferons une étude empirique en modélisant et implémentant un SOM de zéro et en comparant avec un SOM d'une bibliothèque existante ainsi qu'avec l'extension DESOM. 
+Ensuite, nous ferons une étude empirique en modélisant et implémentant un SOM de zéro et en comparant avec l'extension DESOM. 
 Enfin, nous analyserons et discuterons de leurs performances, afin de mettre en évidence leurs avantages et inconvénients.
 
 
@@ -218,17 +344,20 @@ Ce type d'apprentissage est utilisé notamment pour le clustering sous le nom de
 
 \subsection{Quantification vectorielle (VQ)} \label{sec:VQ}
 La quantification vectorielle (VQ) est une technologie utilisée surtout dans le traitement moderne de la numérisation des signaux \cite{Kohonen2012SOM}.
-Elle consite à partitionner en régions distinctes et contiguës dont chacune est représentée par un vecteur.
+Elle consite à partitionner l'espace d'origine en régions distinctes et contiguës dont chacune est représentée par un vecteur.
 Dans cette méthode, les données d'entrées fonctionnent comme des features qui sont représentées dans un espace fini par 
 d'autres vecteurs de même dimension. Cet ensemble de vecteurs se nomme codebook. 
-Une VQ s'interprète de la manière suivante: Soit $x \in \mathbb{R}^d$ une donnée d'entrée et soit le codebook avec $w_i$ vecteurs de même dimension et $w_c$, le vecteur gagnant (apprentissage compétitif),
+Une VQ s'interprète de la manière suivante: Soit $x \in \mathbb{R}^d$ une donnée d'entrée et soit le codebook avec $w_j$ vecteurs de même dimension et $w_{c(x)}$, le vecteur gagnant (apprentissage compétitif),
 le plus proche de $x$ \cite{SOM1990}.
 
 $$ c(x) = \arg\min_{i} ||x - w_i||^2 $$
 
 Admettons que $p(x)$ soit la densité de probabilité de $x$ sur $V$, alors l'erreur moyen de la quantification $E$ est définie par:
 
-$$ \mathcal{E} = \int_V ||x - w_{c(x)}||^2 p(x) dV $$
+\begin{equation}
+    \mathcal{E} = \int_V ||x - w_{c(x)}||^2 p(x) dV
+    \label{eq:quant_E}
+\end{equation}
 
 où $V$ est l'espace d'entrée et donc $dV$ est le volume différentiel. La fonction $E$ est une fonction d'energie qui peut être minimisée par 
 l'algorithme de descente de gradient \cite{Kohonen2012SOM}. Par simplification, nous avons pris une distance euclidienne, mais d'autres mesures de distance peuvent être utilisées.
@@ -237,7 +366,9 @@ La variante que nous avons présentée est connue sous le nom de "k-means" \cite
 Dans la pratique, $p(x)$ est inconnue, mais nous avons un ensemble de données $\{x_i \in \mathbb{R}^d\}_{1 \leq i \leq n}$. Pour avoir une estimation de  $E$, 
 il faut approximer $p(x)$ par une distribution empirique à partir de l'ensemble de données. Donc, nous avons :
 
-$$ p(x) \approx \frac{1}{n} \sum_{i=1}^{n} \delta(x - x_i) $$
+
+$$p(x) \approx \frac{1}{n} \sum_{i=1}^{n} \delta(x - x_i)$$
+
 
 Où la fonction $\delta$ est la fonction de Dirac concentrant la densité de probabilité en un point \cite{Dirac_wikipedia} :
 $$\delta(x) =
@@ -250,7 +381,7 @@ $$
 La particularité de cette fonction qui nous intéresse est la suivante \cite{Dirac_wikipedia}:
 $$\int_{-\infty}^{\infty} f(x) \delta(x - a) dx = f(a)$$
 
-En supossons que $f(x) = ||x - w_{c(x)}||^2$, alors nous avons :
+Suivant l'equation \eqref{eq:quant_E}, alors nous avons :
 $$ \mathcal{E} \approx \int_V  f(x)\frac{1}{n} \sum_{i=1}^{n} \delta(x - x_i)dV \Leftrightarrow$$
 $$ \mathcal{E} \approx \frac{1}{n} \sum_{i=1}^{n} \int_V  f(x) \delta(x - x_i)dV  =  \frac{1}{n} \sum_{i=1}^{n} f(x_i) \Leftrightarrow $$
 $$ \mathcal{E} \approx \frac{1}{n} \sum_{i=1}^{n} ||x_i - w_{c(x_i)}||^2 $$
@@ -259,41 +390,138 @@ $$ \mathcal{E} \approx \frac{1}{n} \sum_{i=1}^{n} ||x_i - w_{c(x_i)}||^2 $$
 Ainsi, la quantification vectorielle minimise l'énergie $\mathcal{E}$ en associant chaque donnée d'entrée a son prototype (BMU) le plus proche.
 Les SOM suivent cette même approche d'apprentissage compétitive. Cependant, contrairement à la VQ classique, les SOM imposent une topologie sur les prototypes (la grille), 
 de manière à ce que les prototypes voisins dans la grille soient aussi proches dans l'espace des données d'entrée. 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    prototype/.style={circle, fill=MapPurple, inner sep=2pt},
+    input_dot/.style={circle, draw=InputRed, thick, inner sep=1.2pt}, 
+    region_line/.style={MapPurple, thick, densely dotted},
+    arrow_rep/.style={->, >=stealth, MapPurple, thick, densely dotted, shorten >=2pt, shorten <=2pt}
+]
+
+    % Titre
+    \node[font=\Large] at (6, 7.6) {\textbf{VQ sans contrainte (eg k-Means)}};
+
+    % Cadre de la figure 
+    \draw[MapPurple, thick] (0,0) rectangle (12,7);
+
+   % lignes de la grille VQ (sans topologie)
+    \draw[region_line] (2.6, 7) -- (3, 4.5) -- (0, 3.8);
+    \draw[region_line] (3, 4.5) -- (4.5, 2.5) -- (2, 0);
+    \draw[region_line] (3, 4.5) -- (6, 4.8) -- (8, 7);
+    \draw[region_line] (4.5, 2.5) -- (6.5, 3) -- (6, 4.8);
+    \draw[region_line] (6.5, 3) -- (7.5, 0);
+    \draw[region_line] (6, 4.8) -- (9, 4) -- (12, 4.2);
+    \draw[region_line] (9, 4) -- (8.5, 2.2) -- (12, 2.5);
+    \draw[region_line] (6.5, 3) -- (8.5, 2.2);
+
+  
+    % Prototypes et données d'entrée  
+    % Haut-Gauche 
+    \node[prototype] (C1) at (1.5, 5.5) {};
+    \node[input_dot] (d1a) at (0.7, 6.5) {}; \draw[arrow_rep] (d1a) to[bend right=15] (C1);
+    \node[input_dot] (d1b) at (2.2, 6.4) {}; \draw[arrow_rep] (d1b) to[bend left=10] (C1);
+    \node[input_dot] (d1c) at (0.6, 4.8) {}; \draw[arrow_rep] (d1c) to[bend left=15] (C1);
+    \node[input_dot] (d1d) at (2.4, 4.8) {}; \draw[arrow_rep] (d1d) to[bend right=10] (C1);
+
+    % Bas-Gauche 
+    \node[prototype] (C2) at (1.8, 2.2) {};
+    \node[input_dot] (d2a) at (0.8, 3.3) {}; \draw[arrow_rep] (d2a) to[bend left=10] (C2);
+    \node[input_dot] (d2b) at (2.8, 3.2) {}; \draw[arrow_rep] (d2b) to[bend right=10] (C2);
+    \node[input_dot] (d2c) at (1.0, 1.3) {}; \draw[arrow_rep] (d2c) to[bend right=15] (C2);
+    \node[input_dot] (d2d) at (3.0, 1.5) {}; \draw[arrow_rep] (d2d) to[bend left=10] (C2);
+
+    % Haut-Milieu 
+    \node[prototype] (C3) at (5.5, 6.2) {};
+    \node[input_dot] (d3a) at (3.5, 6.4) {}; \draw[arrow_rep] (d3a) to[bend right=10] (C3);
+    \node[input_dot] (d3b) at (4.2, 5.5) {}; \draw[arrow_rep] (d3b) to[bend left=5] (C3);
+    \node[input_dot] (d3c) at (7.0, 6.5) {}; \draw[arrow_rep] (d3c) to[bend left=15] (C3);
+    \node[input_dot] (d3d) at (6.5, 5.5) {}; \draw[arrow_rep] (d3d) to[bend right=5] (C3);
+
+    % Région Centre 
+    \node[prototype] (C4) at (4.7, 4.0) {};
+    \node[input_dot] (d4a) at (3.4, 4.8) {}; \draw[arrow_rep] (d4a) to[bend right=5] (C4);
+    \node[input_dot] (d4b) at (5.5, 4.9) {}; \draw[arrow_rep] (d4b) to[bend left=10] (C4);
+    \node[input_dot] (d4c) at (3.8, 3.0) {}; \draw[arrow_rep] (d4c) to[bend left=15] (C4);
+    \node[input_dot] (d4d) at (5.8, 3.2) {}; \draw[arrow_rep] (d4d) to[bend right=10] (C4);
+
+    % Région Bas-Milieu 
+    \node[prototype] (C5) at (5.8, 1.5) {};
+    \node[input_dot] (d5a) at (4.5, 2.0) {}; \draw[arrow_rep] (d5a) to[bend right=10] (C5);
+    \node[input_dot] (d5b) at (6.8, 2.2) {}; \draw[arrow_rep] (d5b) to[bend left=10] (C5);
+    \node[input_dot] (d5c) at (5.2, 0.6) {}; \draw[arrow_rep] (d5c) to[bend left=5] (C5);
+    \node[input_dot] (d5d) at (4.0, 0.8) {}; \draw[arrow_rep] (d5d) to[bend left=15] (C5);
+
+    % Droite-Milieu
+    \node[prototype] (C6) at (10.2, 5.5) {};
+    \node[input_dot] (d6a) at (8.5, 6.5) {}; \draw[arrow_rep] (d6a) to[bend right=10] (C6);
+    \node[input_dot] (d6b) at (11.5, 6.2) {}; \draw[arrow_rep] (d6b) to[bend left=15] (C6);
+    \node[input_dot] (d6c) at (9.0, 4.8) {}; \draw[arrow_rep] (d6c) to[bend left=5] (C6);
+    \node[input_dot] (d6d) at (11.0, 4.5) {}; \draw[arrow_rep] (d6d) to[bend right=5] (C6);
+
+    % Droite-Centre
+    \node[prototype] (C7) at (8.0, 3.2) {};
+    \node[input_dot] (d7a) at (7.0, 3.8) {}; \draw[arrow_rep] (d7a) to[bend right=5] (C7);
+    \node[input_dot] (d7b) at (9.2, 3.5) {}; \draw[arrow_rep] (d7b) to[bend left=10] (C7);
+    \node[input_dot] (d7c) at (7.5, 2.0) {}; \draw[arrow_rep] (d7c) to[bend left=15] (C7);
+
+    % Bas-Droite
+    \node[prototype] (C8) at (10.5, 2.0) {};
+    \node[input_dot] (d8a) at (9.5, 3.0) {}; \draw[arrow_rep] (d8a) to[bend right=10] (C8);
+    \node[input_dot] (d8b) at (11.5, 2.8) {}; \draw[arrow_rep] (d8b) to[bend left=10] (C8);
+    \node[input_dot] (d8c) at (9.0, 1.2) {}; \draw[arrow_rep] (d8c) to[bend left=5] (C8);
+    \node[input_dot] (d8d) at (11.2, 1.0) {}; \draw[arrow_rep] (d8d) to[bend right=15] (C8);
+
+    % Légende
+    \begin{scope}[yshift=-1.8cm, xshift=1.5cm]
+        \draw[arrow_rep] (0, 0) -- (1.5, 0) node[right, text=MapPurple, font=\large] {"représente"};
+        \draw[region_line] (0, -0.8) -- (1.5, -0.8) node[right, text=MapPurple, font=\large] {région de la VQ};
+        \node[input_dot, fill=InputRed] at (0.75, -1.6) {}; 
+        \node[right, text=InputRed, font=\large] at (1.5, -1.6) {donnée d'entrée};
+    \end{scope}
+
+\end{tikzpicture}
+\caption{Illustration d'une quantification vectorielle sans contrainte (k-means) : les prototypes (cercles violets) représentent des régions,
+et les données d'entrée (cercles rouges) sont associées à leur prototype le plus proche. Les lignes pointillées indiquent les frontières de ces régions.}
+\label{fig:vq_kmeans}
+\end{figure}
 
 
-\subsection{SOM de base}
+\subsection{SOM de base} \label{SOM_base}
 Les SOM créent une structure qui préserve la topologie locale dans un voisinage défini. Ce "calibrage" ou mise à jour des noeuds voisins dépend du Best Matching Unit(BMU), le noeud gagnant, et du temps $t$ \cite{SOM1990}.
 Les cartes auto-organisées ne dérivent pas de manière explicite d'une fonction de coût globale, mais d'une règle de mise à jour locale qui est appliquée à chaque noeud en fonction de sa proximité avec le BMU.
 
-Soit un ensemble de données d'entrée $ \{x_i\in \mathbb{R}^d \}_{1 \leq i \leq n} $ et un codebook $ \{w_i \in \mathbb{R}^d\}_{1 \leq i \leq m} $.
+Soit un ensemble de données d'entrée $ \mathcal{X} = \{x_i\in \mathbb{R}^d \}_{1 \leq i \leq n} $ et un codebook $ \{w_j \in \mathbb{R}^d\}_{1 \leq j \leq m} $.
 Le BMU suit le même principe que celui de la VQ, c'est à dire le noeud le plus proche d'un certain $x$ :
-$$ c = \arg\min_{i} ||x - w_i||^2 $$
-$$ BMU(x) = w_c $$
+$$ c(x) = \arg\min_{j} ||x - w_j||^2 $$
+$$ BMU(x) = w_{c(x)} $$
 
-L'entier $c$ représente l'indice du noeud gagnant pour les donnée $x$. En partant de la quantification vectorielle, l'équation de mise à jour d'un noeud $w_i$ est la suivante \cite{SOM1990}:
-$$w_i(t+1) = \begin{cases}
-    w_i(t) + \alpha(t)[x(t) - w_i(t)] & \text{si } i = c \\
-    w_i(t) & \text{sinon}
+L'entier $c(x)$ représente l'indice du noeud gagnant pour les donnée $x$. En partant de la quantification vectorielle, l'équation de mise à jour d'un noeud $w_j$ est la suivante \cite{SOM1990}:
+$$w_j^{(t+1)} = \begin{cases}
+    w_j^{(t)} + \alpha(t)[x - w_j^{(t)}] & \text{si } j = c(x) \\
+    w_j^{(t)} & \text{sinon}
 \end{cases}$$
 
 Où $\alpha(t)$ est le taux d'apprentissage qui diminue avec le temps $t$. Nous observons que dans cette formule, seul le noeud gagnant est mis à jour, il est "attiré" vers la donnée d'entrée.
 Dans le VQ classique, seulement le noeud gagnant est mis à jour et sans interaction avec ses voisins. Cependant, dans les SOM, les noeuds voisins du BMU sont aussi mis à jour.
 
-Admettons l'ensemble de noeuds voisins du BMU $N_c(t)$ qui décroit avec le temps, alors la formule de mise à jour devient \cite{SOM1990} (le BMU fait partie de $N_c(t)$):
-$$w_i(t+1) = \begin{cases}
-    w_i(t) + \alpha(t)[x(t) - w_i(t)] & \text{si } w_i \in N_c(t) \\
-    w_i(t) & \text{sinon}
+Admettons l'ensemble de noeuds voisins du BMU $N_c(t)$ qui décroit avec le temps, alors la formule de mise à jour devient \cite{SOM1990} (rappelons que $w_{c(x)} \in N_c(t)$):
+$$w_j^{(t+1)} = \begin{cases}
+    w_j^{(t)} + \alpha(t)[x - w_j^{(t)}] & \text{si } w_j \in N_c(t) \\
+    w_j^{(t)} & \text{sinon}
 \end{cases}$$
 
 Avec cette nouvelle approche, les noeuds voisins du BMU sont aussi mis à jour. Cependant, le taux de mise à jour pour les noeuds voisins est la même que celui du BMU, 
 ce qui peut poser des problèmes de convergence, des transitions plus brusques qui peuvent provoquer des cartes moins lisses et organisées. Donc nous dégradons la propriété
 la plus importante des SOM qui est la préservation de la topologie locale.
 
-Un choix plus standard et efficace est de prendre la fonction gaussienne de voisinage $h_{ci}(t)$ qui diminue avec la distance entre le noeud $w_i$ et le BMU $w_c$ 
+Un choix plus standard et efficace est de prendre la fonction gaussienne de voisinage $h_{cj}(t)$ qui diminue avec la distance entre le noeud $w_j$ et le BMU $w_{c(x)}$ 
 ainsi que du temps $t$ \cite{Kohonen2012SOM}:
-$$ h_{ci}(t) = \alpha(t) e^{-\frac{||idx(w_c) - idx(w_i)||^2}{2\sigma(t)^2}} $$
+$$ h_{cj}(t) = \alpha(t) e^{-\frac{||p_{c(x)} - p_j||^2}{2\sigma(t)^2}} $$
 
-Où $idx(w_c)$ et $idx(w_i)$ sont les indices de position du BMU et du noeud $w_i$ dans la grille. Donc, nous avons $h_{cc}(t) = \alpha(t) \, \forall t$.
+Où $p_{c(x)}$ et $p_j$ sont les positions du BMU et du noeud $w_j$ dans la grille. Lors de la mise à jour de $w_{c(x)}$, nous avons pour tout $t$: 
+$$ h_{cc}(t) = \alpha(t)$$
+
 La fonction $\sigma(t)$ est le calcul du rayon de voisinage qui diminue avec $t$ 
 et qui contrôle l'étendue de la mise à jour des noeuds voisins. Elle peut être définie de la manière suivante, avec T le nombre total d'itérations \cite{SurveySOM}:
 $$\sigma(t) = \sigma_0 e^{-\frac{t}{T}} $$
@@ -301,20 +529,21 @@ $$\sigma(t) = \sigma_0 e^{-\frac{t}{T}} $$
 Donc, la distance entre les noeuds dans la grille influence la mise à jour, plus un noeud est éloigné du BMU, moins il sera mis à jour. Cette approche permet 
 d'avoir des cartes plus lisses et organisées avec des transitions plus douces.
 
-Cela nous mène à la formule de mise à jour finale d'un noeud $w_i$ dans un SOM:
-$$w_i(t+1) = w_i(t) + h_{ci}(t)[x(t) - w_i(t)]$$
+Cela nous mène à la formule de mise à jour finale d'un noeud $w_j$ dans un SOM:
+$$w_j^{(t+1)} = w_j^{(t)} + h_{cj}(t)[x - w_j^{(t)}]$$
 
 Nous pouvons aussi interpréter la mise à jour en deux termes de variation de poids.
 Pour le noeud gagnant (BMU):
-$$ \Delta w_c(t) = h_{cc}(t)\,[x(t) - w_c(t)] = \alpha(t)\,[x(t) - w_c(t)]$$
+$$ \Delta w_{c(x)}^{(t)} = h_{cc}(t)\,[x - w_{c(x)}^{(t)}] = \alpha(t)\,[x - w_{c(x)}^{(t)}]$$
 
-Pour un noeud voisin $w_i$ :
-$$ \Delta w_i(t) = h_{ci}(t)\,[x(t) - w_i(t)]$$
+Pour un noeud voisin $w_j$ :
+$$ \Delta w_j^{(t)} = h_{cj}(t)\,[x - w_j^{(t)}]$$
 
 Ainsi, la mise à jour des poids peut s'écrire de manière équivalente :
-$$w_i(t+1) = w_i(t) + \Delta w_i(t)$$
+$$w_j^{(t+1)} = w_j^{(t)} + \Delta w_j^{(t)}$$
 
-De manière plus schématique, nous avons la figure \ref{fig:som_schema} qui illustre la mise à jour d'un noeud $w_i$ en fonction du BMU $w_c$ et de la distance entre eux dans la grille.
+De manière plus schématique, nous avons la figure \ref{fig:som_schema} qui illustre la mise à jour des noeuds en fonction du BMU $w_{c(x)}$ et de la distance entre 
+la donnée $x$ et les noeuds voisins de $w_{c(x)}$.
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
@@ -322,35 +551,36 @@ space/.style={draw, rectangle, shape border rotate=90, minimum width=9cm, minimu
 input/.style={circle, draw, minimum size=1.5cm},
 bmu/.style={circle, draw, fill=red!20, minimum size=1.5cm},
 noeud/.style={circle, draw, fill=blue!20, minimum size=1.5cm},
+text_red/.style={text=InputRed, font=\small},
 >=latex
 ]
 % noeuds + input x:
 \node[input] (xi) at (2,0) {$x$};
 
-\node[bmu] (wc) at (2,-3) {$w_c$};
+\node[bmu] (wc) at (2,-3) {$w_{c(x)}$};
 
 \node[noeud] (w1) at (-1,-6) {$w_1$};
 \node[noeud] (w2) at (2,-6) {$w_2$};
 \node at (4,-6) {$\dots$};
-\node[noeud] (wi) at (6,-6) {$w_i$};
+\node[noeud] (wi) at (6,-6) {$w_M$};
 
 % espace de voisinage:
 \node[space,dashed, thick, rounded corners=4pt, draw=red!50] (Nc) at (2.5,-6) {};
-\node[] (N_label) at (9,-7.5) {$N_c$: voisinage de $w_c$};
+\node[text_red] (N_label) at (9,-8) {$N_{c(x)}$: voisinage de $w_{c(x)}$};
 
 % lignes:
 \draw[->, thick, loop] (xi) -- (wc) node[midway, right] {$BMU(x)$};
 
 \draw[->, thick, dashed] (wc) -- (Nc);
 
-\draw[->, thick, loop] (xi) to [out=180, in=180, looseness=1] node[left, rotate=0] {$\Delta w_1(t)$} (w1);
-\draw[->, thick, loop] (xi) to [out=0, in=30, looseness=1] node[right, rotate=0]{$\Delta w_2(t)$} (w2);
-\draw[->, thick, loop] (xi) to [out=30, in=0, looseness=1] node[right, rotate=0] {$\Delta w_i(t)$} (wi);
+\draw[->, thick, loop] (xi) to [out=180, in=180, looseness=1] node[left, rotate=0] {$\Delta w_1^{(t)}$} (w1);
+\draw[->, thick, loop] (xi) to [out=0, in=30, looseness=1] node[right, rotate=0]{$\Delta w_2^{(t)}$} (w2);
+\draw[->, thick, loop] (xi) to [out=30, in=0, looseness=1] node[right, rotate=0] {$\Delta w_M^{(t)}$} (wi);
 
-\draw[->, thick, loop] (wc) to [out=120, in=180, looseness=5] node[left, rotate=0] {$\Delta w_c(t)$} (wc);
+\draw[->, thick, loop] (wc) to [out=120, in=180, looseness=5] node[left, rotate=0] {$\Delta w_{c(x)}^{(t)}$} (wc);
 
 \end{tikzpicture}
-\caption{Mise à jour des noeuds voisins $w_1, w_2, \dots, w_i$ en fonction du BMU $w_c$ et de la distance dans la grille}
+\caption{Mise à jour des noeuds voisins $w_1, w_2, \dots, w_M$ en fonction du BMU $w_{c(x)}$ et de la distance dans la grille}
 \label{fig:som_schema}
 \end{figure}
 
@@ -360,24 +590,143 @@ Cela nous donne une première idée d'algorithme d'apprentissage:
 \caption{Algorithme d'apprentissage d'un SOM (stepwise)}
 \label{alg:SOM_stepwise}
 \begin{algorithmic}[1]
-    \State Initialiser les poids $w_i$ de manière aléatoire ou avec PCA
+    \State Initialiser les poids $w_j$ de manière aléatoire ou avec PCA
     \State Initialiser le taux d'apprentissage $\alpha(0)$ et la largeur de voisinage $\sigma(0)$
     \State Définir le nombre d'itérations maximum $T$
     \For{$t = 1$ \textbf{à} $T$}
-        \State Sélectionner un échantillon d'entrée $x(t)$
-        \State $c = \arg\min_{i} ||x(t) - w_i||^2$ \Comment{indice du BMU}
+        \State Sélectionner un échantillon d'entrée $x$
+        \State $c = \arg\min_{j} ||x - w_j^{(t)}||^2$ \Comment{indice du BMU}
         \State $\alpha(t) = \alpha(0) \cdot e^{-t/T}$ \Comment{décroissance du taux d'apprentissage}
         \State $\sigma(t) = \sigma(0) \cdot e^{-t/T}$ \Comment{décroissance de la largeur de voisinage}
-        \For{tous les noeuds $i$}
-            \State $h_{ci}(t) = \alpha(t) \cdot e^{\left(-\frac{\|c - i\|^2}{2\sigma(t)^2}\right)}$ \Comment{calcul de la fonction de voisinage}
-            \State $w_i(t+1) = w_i(t) + h_{ci}(t) \cdot [x(t) - w_i(t)]$ \Comment{mise à jour du poids du noeud $i$}
+        \For{tous les noeuds $j$}
+            \State $h_{cj}(t) = \alpha(t) \cdot e^{\left(-\frac{\|c - j\|^2}{2\sigma(t)^2}\right)}$ \Comment{calcul de la fonction de voisinage}
+            \State $w_j^{(t+1)} = w_j^{(t)} + h_{cj}(t) \cdot [x - w_j^{(t)}]$ \Comment{mise à jour du poids du noeud $j$}
         \EndFor
     \EndFor
 \end{algorithmic}
 \end{algorithm}
 
-Ainsi, nous avons présenté les étapes de l'agorithme d'apprentissage d'un SOM de manière détaillée. Neanmoins, il existe un autre variante plus efficace en
-pratique appelée \textit{batch SOM} \cite{SOM1990}.
+Ainsi, nous avons présenté les étapes de l'algorithme d'apprentissage d'un SOM de manière détaillée. Neanmoins, il existe un autre variante plus efficace en
+pratique appelée \textbf{batch SOM} \cite{SOM1990}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=1.2, transform shape,
+    neuron/.style={circle, fill=MapPurple, minimum size=6pt, inner sep=0pt},
+    data/.style={circle, draw=InputRed, fill=InputRed, thick, minimum size=4pt, inner sep=0pt},
+    som_link/.style={MapPurple, thick},
+    region/.style={MapPurple, thick, densely dotted},
+    represent/.style={->, >=stealth, MapPurple, thick, densely dotted, shorten >=2pt, shorten <=2pt}
+]
+
+    % Titre
+    \node[font=\Large] at (4.5, 8.2) {\textbf{VQ avec contrainte topologique (SOM)}};
+
+    % noeuds de la carte SOM
+    \node[neuron] (N1) at (1, 6) {};
+    \node[neuron] (N2) at (4, 6.2) {};
+    \node[neuron] (N3) at (8, 5.8) {};
+    \node[neuron] (N4) at (1.5, 3) {};
+    \node[neuron] (N5) at (3.5, 4.5) {};
+    \node[neuron] (N6) at (6, 4.3) {};
+    \node[neuron] (N7) at (7.5, 2.5) {};
+    \node[neuron] (N8) at (4.5, 2.8) {};
+    \node[neuron] (N9) at (3.2, 1.8) {};
+
+    %  carte SOM (liens entre les noeuds)
+    \draw[som_link] (N1) -- (N2) -- (N3);
+    \draw[som_link] (N1) -- (N4) -- (N5) -- (N2);
+    \draw[som_link] (N5) -- (N6) -- (N3);
+    \draw[som_link] (N4) -- (N9) -- (N8) -- (N5);
+    \draw[som_link] (N8) -- (N6) -- (N7) -- (N8);
+    \draw[som_link] (N3) -- (N7);
+
+    % Limites des cellules
+    \draw[region] (2.5, 7) -- (2.5, 4.5) -- (0, 4.2);
+    \draw[region] (2.5, 4.5) -- (4, 3.5) -- (3, 1);
+    \draw[region] (5, 7) -- (4.5, 5.5) -- (6.5, 4.8) -- (8.5, 4.6);
+    \draw[region] (4.5, 5.5) -- (2.5, 4.5);
+    \draw[region] (6.5, 4.8) -- (5.5, 2) -- (8, 1);
+    \draw[region] (4, 3.5) -- (5.5, 2) -- (4.5, 0.5);
+    \draw[region] (2.5, 4.5) -- (1.5, 2) -- (0, 1.5);
+    \draw[region] (1.5, 2) -- (3, 1) -- (3, 0.5);
+
+
+    % Autour de N1
+    \node[data] (d1) at (0.5, 6.8) {}; \draw[represent] (d1) to[bend right=10] (N1);
+    \node[data] (d2) at (1.2, 6.8) {}; \draw[represent] (d2) to[bend left=10] (N1);
+    \node[data] (d3) at (0.2, 5.8) {}; \draw[represent] (d3) to[bend right=10] (N1);
+    \node[data] (d4) at (1.5, 5.2) {}; \draw[represent] (d4) to[bend right=10] (N1);
+
+    % Autour de N2
+    \node[data] (d5) at (3, 6.5) {};   \draw[represent] (d5) to[bend left=10] (N2);
+    \node[data] (d6) at (3.5, 6.8) {}; \draw[represent] (d6) to[bend left=10] (N2);
+    \node[data] (d7) at (4.8, 6.6) {}; \draw[represent] (d7) to[bend left=10] (N2);
+    
+    % Autour de N3
+    \node[data] (d8) at (7.5, 6.5) {}; \draw[represent] (d8) to[bend right=10] (N3);
+    \node[data] (d9) at (8.5, 6.2) {}; \draw[represent] (d9) to[bend left=10] (N3);
+    \node[data] (d10) at (8.8, 5.5) {}; \draw[represent] (d10) to[bend left=10] (N3);
+
+    % Autour de N4
+    \node[data] (d11) at (0.5, 3.5) {}; \draw[represent] (d11) to[bend right=10] (N4);
+    \node[data] (d12) at (0.8, 2.5) {}; \draw[represent] (d12) to[bend right=10] (N4);
+    \node[data] (d13) at (2.2, 3.5) {}; \draw[represent] (d13) to[bend left=10] (N4);
+
+    % Autour de N5
+    \node[data] (d14) at (2.8, 5) {};   \draw[represent] (d14) to[bend right=10] (N5);
+    \node[data] (d15) at (4, 5.2) {};   \draw[represent] (d15) to[bend left=10] (N5);
+    \node[data] (d16) at (3.2, 3.8) {}; \draw[represent] (d16) to[bend left=10] (N5);
+
+    % Autour de N6
+    \node[data] (d17) at (5.5, 5) {};   \draw[represent] (d17) to[bend right=10] (N6);
+    \node[data] (d18) at (6.8, 4.5) {}; \draw[represent] (d18) to[bend left=10] (N6);
+    \node[data] (d19) at (5.5, 3.8) {}; \draw[represent] (d19) to[bend right=10] (N6);
+
+    % Autour de N7
+    \node[data] (d20) at (7, 3) {};     \draw[represent] (d20) to[bend right=10] (N7);
+    \node[data] (d21) at (8.2, 3.2) {}; \draw[represent] (d21) to[bend left=10] (N7);
+    \node[data] (d22) at (8.5, 2.2) {}; \draw[represent] (d22) to[bend left=10] (N7);
+    \node[data] (d23) at (7.8, 1.8) {}; \draw[represent] (d23) to[bend left=10] (N7);
+
+    % Autour de N8
+    \node[data] (d24) at (4.5, 3.5) {}; \draw[represent] (d24) to[bend right=10] (N8);
+    \node[data] (d25) at (5, 2) {};     \draw[represent] (d25) to[bend left=10] (N8);
+    \node[data] (d26) at (4, 2) {};     \draw[represent] (d26) to[bend left=10] (N8);
+
+    % Autour de N9
+    \node[data] (d27) at (2.5, 2.2) {}; \draw[represent] (d27) to[bend right=10] (N9);
+    \node[data] (d28) at (2.8, 1.2) {}; \draw[represent] (d28) to[bend right=10] (N9);
+    \node[data] (d29) at (3.8, 1.5) {}; \draw[represent] (d29) to[bend left=10] (N9);
+
+
+    % --- Boîte globale (Cadre) ---
+    \draw[MapPurple, thick] (0, 0.5) rectangle (9, 7.5);
+
+
+    % --- Légende ---
+    \begin{scope}[shift={(1.5, -1)}]
+        \draw[represent] (0, 0) -- (1, 0);
+        \node[right, text=MapPurple, font=\large] at (1.2, 0) {"Représente};
+
+        \draw[som_link] (0, -0.6) -- (1, -0.6);
+        \node[neuron] at (0, -0.6) {};
+        \node[neuron] at (1, -0.6) {};
+        \node[right, text=MapPurple, font=\large] at (1.2, -0.6) {Carte SOM};
+
+        \draw[region] (0, -1.2) -- (1, -1.2);
+        \node[right, text=MapPurple, font=\large] at (1.2, -1.2) {Région de la VQ};
+
+        \node[data] at (0.5, -1.8) {};
+        \node[right, text=InputRed, font=\large] at (1.2, -1.8) {Donnée d'entrée};
+    \end{scope}
+
+\end{tikzpicture}
+\caption{Quantification Vectorielle (VQ) par SOM avec contrainte topologique. Les noeuds de la carte SOM (cercles bleus) représentent des prototypes, 
+et les données d'entrée (cercles rouges) sont associées à leur BMU. Les lignes pointillées indiquent les régions de quantification associées à chaque prototype, 
+tandis que les lignes continues représentent les connexions entre les noeuds de la grille SOM.}
+\label{fig:vq_som}
+\end{figure}
 
 
 \subsection{Batch SOM}
@@ -387,117 +736,167 @@ Cette approche permet la parallélisation des calculs, ce qui peut accélérer l
 
 Nous partons de la supposition que la convergence vers un état stable d'un SOM existe \cite{Kohonen2012SOM}. Nous avons quelques exigences pour que cela soit possible:
 \begin{itemize}
-    \item lorsque $t \to \infty$, alors l'espérance de $w_i(t)$ est égale à l'espérance de $w_i(t+1)$
-    \item $h_{ci} \neq 0$ 
-    \item $c$ est l'indice du BMU pour $x(t)$
+    \item lorsque $t \to \infty$, alors l'espérance de $w_j^{(t)}$ est égale à l'espérance de $w_j^{(t+1)}$
+    \item $h_{cj} \neq 0$ 
+    \item $c$ est l'indice du BMU pour $x$
 \end{itemize} 
 
 
-Cela peut être vu comme la recherche d'un point fixe des poids $w_i$, où les mise à jour sont en moyenne nulles. 
-Nous pouvons l'écrire avec $E_t$ l'opérateur d'espérance sur $t$ \cite{Kohonen2012SOM}:
-$$ \forall i, \ \  E_t(h_{ci}[x(t) - w_i(t)]) = 0 $$
+Cela peut être vu comme la recherche d'un point fixe des poids $w_j$, où les mise à jour sont en moyenne nulles. 
+Nous pouvons l'écrire avec $\mathbb{E}_t$ l'opérateur d'espérance sur $t$ \cite{Kohonen2012SOM}:
+$$ \forall j, \ \  \mathbb{E}_t(h_{cj}[x - w_j^{(t)}]) = 0 $$
 
-Remarquons que $w_i(t)$ est indépendant de $t$ lorsque $t \to \infty$, nous allons le noter $w_i^*$. Si l'espérance $E_t$ est calculée à partir de la distribution empirique des données d'entrée, 
+Remarquons que $w_j^{(t)}$ est indépendant de $t$ lorsque $t \to \infty$, nous allons le noter $w_j^*$. Si l'espérance $\mathbb{E}_t$ est calculée à partir de la distribution empirique des données d'entrée, 
 alors nous avons (pour un horizon $T$) :
-$$ E_t(h_{ci}(t)[x(t) - w_i^*]) = \frac{1}{T} \sum_{t=1}^{T} h_{ci}(t)[x(t) - w_i^*] = 0$$
+$$ \mathbb{E}_t(h_{cj}(t)[x - w_j^*]) = \frac{1}{T} \sum_{t=1}^{T} h_{cj}(t)[x - w_j^*] = 0$$
 
 En développant cette expression, nous obtenons :
-$$ \frac{1}{T} \sum_{t=1}^{T} h_{ci}(t)[x(t) - w_i^*] = 0 \Leftrightarrow $$
-$$ \sum_{t=1}^{T} h_{ci}(t)x(t) - w_i^*\sum_{t=1}^{T} h_{ci}(t)  = 0 \Leftrightarrow $$
-$$ w_i^* = \frac{\sum_{t=1}^{T} h_{ci}(t)x(t)}{\sum_{t=1}^{T} h_{ci}(t)} $$
+$$ \frac{1}{T} \sum_{t=1}^{T} h_{cj}(t)[x - w_j^*] = 0 \Leftrightarrow $$
+$$ \sum_{t=1}^{T} h_{cj}(t)x - w_j^*\sum_{t=1}^{T} h_{cj}(t)  = 0 \Leftrightarrow $$
+$$ w_j^* = \frac{\sum_{t=1}^{T} h_{cj}(t)x}{\sum_{t=1}^{T} h_{cj}(t)} $$
 
 
-L'expression actuelle peut être écrite en regroupant leur $BMU$. Soit $C_j$ l'ensemble des données dont le BMU est $w_j$, $n_j$ le nombre de points dans ce groupe, 
-et $x_{w,j}$ la moyenne de ces points. Alors, la mise à jour peut s'écrire \cite{Kohonen2012SOM} :
-$$w_i^* = \frac{\sum_{j} h_{ji} \, n_j \, x_{w,j}}{\sum_{j} h_{ji} \, n_j}$$
+L'expression actuelle peut être écrite en regroupant leur $BMU$. Soit $C_k$ l'ensemble des données dont le BMU est $w_k$, $n_k$ le nombre de points dans ce groupe, 
+et $x_{w,k}$ la moyenne de ces points. Alors, la mise à jour peut s'écrire \cite{Kohonen2012SOM} :
+$$w_j^* = \frac{\sum_{k} h_{kj} \, n_k \, x_{w,k}}{\sum_{k} h_{kj} \, n_k}$$
 
-Avec cette nouvelle interprétation, chaque noeud $w_i$ est mise à jour comme une moyenne pondérée des données qui lui sont associées. Nous avons donc une première approche de comment batch SOM fonctionne. 
-Comme déjà mentionné, cette variante traite l'ensemble des données d'entrée à chaque itération et pour cela les noeuds du SOM sont associés à une liste des copies des $x(t)$ dont ils sont le BMU \cite{Kohonen2012SOM}.
+Avec cette nouvelle interprétation, chaque noeud $w_j$ est mise à jour comme une moyenne pondérée des données qui lui sont associées. Nous avons donc une première approche de comment batch SOM fonctionne. 
+Comme déjà mentionné, cette variante traite l'ensemble des données d'entrée à chaque itération et pour cela les noeuds du SOM sont associés à une liste des copies des $x$ dont ils sont le BMU \cite{Kohonen2012SOM}.
 Schématiquement, la figure \ref{fig:batch_som} illustre la mise à jour des noeuds dans le batch SOM.
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
-space/.style={draw, rectangle, shape border rotate=90, minimum width=8cm, minimum height=5cm, align=center},
-input/.style={circle, draw, minimum size=0.25cm},
-noeud/.style={circle, draw, fill=blue!20, minimum size=3cm},
-poids/.style={circle, draw, fill=red!20, minimum size=0.75cm},
->=latex
+    >=latex,
+    % Styles pour l'espace d'entrée
+    input_space/.style={draw=NbhOrange, thick, rounded corners=8pt, fill=NbhOrange!5, minimum width=10cm, minimum height=3cm, align=center},
+    input_dot/.style={circle, draw=NbhOrange!80!black, fill=NbhOrange!20, inner sep=1.5pt, font=\small},
+    % Styles pour la carte SOM
+    som_node/.style={circle, draw=MapPurple, thick, fill=MapPurple!10, minimum size=2.8cm, align=center},
+    weight_dot/.style={circle, fill=WeightGreen, inner sep=2pt, label={[text=WeightGreen, font=\bfseries]above:#1}},
+    % Style pour les tableaux de données dans les noeuds
+    data_table/.style={font=\footnotesize, inner sep=0pt},
+    % Voisinage
+    nbh_zone/.style={draw=InputRed, ultra thick, dashed, rounded corners=15pt, fill=InputRed!10, fill opacity=0.4}
 ]
 
-% Espace d'entrée
-\node[space] (V) at (0,0) {};
+    % Espace d'entrée
+    \node[input_space] (Space) at (0, 0) {};
+    \node[text=InputRed, font=\bfseries] at (0, 1.15) {Espace des données d'entrée $\mathcal{X}$};
+    
+    % Données
+    \node[input_dot] (x1) at (-3.5, 0) {$x_1$};
+    \node[input_dot] (x2) at (-2, -0.5) {$x_2$};
+    \node[input_dot] (x3) at (-0.5, 0.2) {$x_3$};
+    \node[input_dot] (x4) at (1, -0.6) {$x_4$};
+    \node[input_dot] (x5) at (2.5, 0.1) {$x_5$};
+    \node[input_dot] (x6) at (3.5, -0.4) {$x_6$};
+    \node[input_dot] (x7) at (-1.5, 0.5) {$x_7$};
+    \node[input_dot] (x8) at (1.5, 0.6) {$x_8$};
 
-\node[input] (x1) at (-3,1.5) {$x_1$};
-\node[input] (x2) at (0,1.5) {$x_2$};
-\node[input] (x3) at (3,1.5) {$x_3$};
+   % Flèche d'affectation des données au BMU
+    \draw[-{Stealth[length=3mm]}, double, double distance=2pt, thick, MapPurple] 
+        (0, -1.5) -- (0, -3.5) 
+        
+        node[midway, right=0.2cm, text=MapPurple, align=left, font=\small] {
+            \textbf{Étape 1 : Affectation} \\
+            Chaque donnée $x_i$ est assignée\\
+            à son BMU
+        };
 
-\node[input] (x4) at (3,0) {$x_4$};
-\node[input] (x5) at (0,0) {$x_5$};
-\node[input] (x6) at (-3,0) {$x_6$};
+    % grille de la carte SOM
+    \begin{scope}[yshift=-8cm]
+        
+        % Nœud Supérieur Gauche
+        \node[som_node] (n1) at (-4, 2.5) {
+            \begin{tabular}{c}
+                 $x_1$ \\ $x_7$ 
+            \end{tabular}
+        };
+        \node[weight_dot={$w_1$}] at (n1.north) {};
 
-\node[input] (x7) at (-3,-1.5) {$x_7$};
-\node[input] (x8) at (0,-1.5) {$x_8$};
-\node[] (xd) at (3,-1.5) {\textbf{\dots}};
+        % Nœud Supérieur Centre (BMU cible pour l'exemple)
+        \node[som_node] (nj) at (0, 2.5) {
+            \begin{tabular}{c}
+                 \textbf{$x_3$} \\ \textbf{$x_8$} 
+            \end{tabular}
+        };
+        \node[weight_dot={$w_j$}] at (nj.north) {};
 
-% Noeuds du SOM:
-\node[noeud] (w1) at (-6,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline $x_1$ \\ \hline $x_4$ \\ \hline $x_7$ \end{tabular}};
-\node[poids] (w1p) at (-6.75,-7) {$w_1$};
+        % Nœud Supérieur Droit
+        \node[som_node] (n3) at (4, 2.5) {
+            \begin{tabular}{c}
+                 $x_5$ \\ $x_6$ 
+            \end{tabular}
+        };
+        \node[weight_dot={$w_3$}] at (n3.north) {};
 
-\node[noeud] (w2) at (-2.75,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline $x_2$ \\ \hline $x_6$ \\ \hline $x_8$ \end{tabular}};
-\node[poids] (w2p) at (-3.5,-7) {$w_2$};
-% w_i
-\node[noeud] (w3) at (0.5,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline $x_3$ \\ \hline $x_5$ \\ \hline \textbf{\dots} \end{tabular}};
-\node[poids] (w3p) at (-0.25,-7) {$w_i$};
+        % Nœud Inférieur Gauche
+        \node[som_node] (n4) at (-4, -1.5) {
+            \begin{tabular}{c}
+                 $x_2$
+            \end{tabular}
+        };
+        \node[weight_dot={$w_4$}] at (n4.north) {};
 
-\node[noeud] (w4) at (3.75,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
-\node[poids] (w4p) at (3,-7) {$w_4$};
+        % Nœud Inférieur Centre
+        \node[som_node] (n5) at (0, -1.5) {
+            \begin{tabular}{c}
+                 $x_4$
+            \end{tabular}
+        };
+        \node[weight_dot={$w_5$}] at (n5.north) {};
 
-\node[noeud] (w5) at (7,-7) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
-\node[poids] (w5p) at (6.25,-7) {$w_5$};
+        % Nœud Inférieur Droit
+        \node[som_node] (n6) at (4, -1.5) {
+            \begin{tabular}{c}
+                 \dots
+            \end{tabular}
+        };
+        \node[weight_dot={$w_6$}] at (n6.north) {};
 
-% 2-ème ligne
-\node[noeud] (w6) at (-6,-10.5) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
-\node[poids] (w6p) at (-6.75,-10.5) {$w_6$};
+        % Liens de la grille (visuels)
+        \begin{scope}[on background layer]
+            \draw[MapPurple!50, thick] (n1) -- (nj) -- (n3);
+            \draw[MapPurple!50, thick] (n4) -- (n5) -- (n6);
+            \draw[MapPurple!50, thick] (n1) -- (n4);
+            \draw[MapPurple!50, thick] (nj) -- (n5);
+            \draw[MapPurple!50, thick] (n3) -- (n6);
+        \end{scope}
 
-\node[noeud] (w7) at (-2.75,-10.5) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
-\node[poids] (w7p) at (-3.5,-10.5) {$w_7$};
+        
+        % Dessin du voisinage Nc autour de wc (inclut n1, nc, n3, n5 par exemple)
+        \node[nbh_zone, fit=(n1)(nj)(n3)(n5)] (Neighborhood) {};
+        \node[text=InputRed, font=\bfseries,  above right= 0.15cm of Neighborhood.south east, anchor=north east, yshift=-0.1cm] 
+            {\small $N_j$ : Voisinage du BMU $w_j$};
 
-\node[noeud] (w8) at (0.5,-10.5) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
-\node[poids] (w8p) at (-0.25,-10.5) {};
+        % Flèches de convergence vers la mise à jour
+        \node[draw=WeightGreen, thick, fill=WeightGreen!10, rounded corners, align=center, minimum width=8cm, minimum height=1.5cm] 
+            (UpdateBox) at (0, -5.5) {
+                \textbf{Étape 2 : Mise à jour Batch pour $w_j$}\\
+                $w_j^{(t+1)} = \frac{\sum_{k} h_{kj} \, n_k \, x_{w,k}}{\sum_{k} h_{kj} \, n_k}$
+            };
+            
+        % Flèches montrant que les données des voisins participent au calcul
+        \draw[-{Stealth}, NbhOrange, thick, dashed] (n1.west) to[out=-90, in=160, looseness=1.5] (UpdateBox.north west);
+        \draw[-{Stealth}, NbhOrange, thick, dashed] (nj.east) to[out=0, in=80] (UpdateBox);
+        \draw[-{Stealth}, NbhOrange, thick, dashed] (n3.east) to[out=-90, in=20, looseness=1.5] (UpdateBox.north east);
+        \draw[-{Stealth}, NbhOrange, thick, dashed] (n4.south) to[out=-90, in=120] (UpdateBox.north);
+        \draw[-{Stealth}, NbhOrange, thick, dashed] (n5.south) to[out=-90, in=120] (UpdateBox.north);
+        \draw[-{Stealth}, NbhOrange, thick, dashed] (n6.south) to[out=-90, in=60] (UpdateBox.north);
 
-\node[noeud] (w9) at (3.75,-10.5) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
-\node[poids] (w9p) at (3,-10.5) {};
-
-\node[noeud] (w10) at (7,-10.5) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
-\node[poids] (w10p) at (6.25,-10.5) {};
-
-% 3-ème ligne
-\node[noeud] (w11) at (-6,-14) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
-\node[poids] (w11p) at (-6.75,-14) {};
-
-\node[noeud] (w12) at (-2.75,-14) {\hspace{7mm} \begin{tabular}{|c|} \hline \textbf{\dots} \\ \hline  \textbf{\dots}  \end{tabular}};
-\node[poids] (w12p) at (-3.5,-14) {};
-
-\node[] (w15) at (0.25,-14) {\textbf{\dots}};
-
-% zone de voisinage:
-\node[space, dashed, thick, rounded corners=4pt, minimum width=9.5cm, minimum height=7cm, draw=red!50] (N) at (0.5,-8.75) {};
-\node[] (N_label) at (5.5,-12.5) {$N_c$: voisinage du BMU $w_c$};
-
-% lignes:
-\draw[double, double distance=4pt, thick, -implies] (V) -- (0,-5) node[pos=0.25,right] {Repartition des inputs dans les noeuds};
-\draw[->, thick, loop] (N) to [out=270, in=300, looseness=3]node[pos=0.4,right] {$w_i^{new}$} (w3);
+    \end{scope}
 
 \end{tikzpicture}
-\caption{Illustration du fonctionnement du batch SOM. Les données d'entrée sont associées à leur BMU, puis les prototypes sont mise à jour comme des moyennes pondérées des données, 
-en tenant compte de la fonction de voisinage.}
+\caption{Illustration du fonctionnement du \textbf{Batch SOM}. 
+\textbf{Étape 1 :} L'ensemble des données d'entrée est réparti dans les nœuds correspondants. 
+\textbf{Étape 2 :} Les vecteurs de poids (ex: $w_j$) sont mis à jour simultanément comme la moyenne pondérée de toutes les données tombant dans leur voisinage temporel $N_j$.}
 \label{fig:batch_som}
 \end{figure}
 
 L'algorithme suit l'idée présentée dans la figure \ref{fig:batch_som}. Nous avons une notions de regroupement de données pour chaque noeud.
-L'implémentation est faite à l'aide d'un dictionnaire qui associe au noeud $w_j$ l'ensemble $C_{j} =\{x_i \in \mathbb{R}^d : BMU(x_i) = w_j\}$.
+L'implémentation est faite à l'aide d'un dictionnaire qui associe au noeud $w_j$ l'ensemble $C_{j} =\{x \in \mathbb{R}^d : BMU(x) = w_j\}$.
 L'algorithme d'apprentissage du batch SOM est présenté dans l'algorithme \ref{alg:SOM_batch}, où la fonction de voisinage est définie par :
-$$h_{ji}(t) = \exp\left(-\frac{\|idx_j - idx_i\|^2}{2\sigma(t)^2}\right)$$
+$$h_{ji}(t) = \exp\left(-\frac{\|p_j - p_i\|^2}{2\sigma(t)^2}\right)$$
 
 \begin{algorithm}[H]
 \caption{Algorithme d'apprentissage d'un batch SOM}
@@ -511,8 +910,8 @@ $$h_{ji}(t) = \exp\left(-\frac{\|idx_j - idx_i\|^2}{2\sigma(t)^2}\right)$$
         \State nodes = \{\} \Comment{Dictionnaire pour stocker les données associées à chaque noeud}
         \State $\sigma(t) = \sigma(0) e^{-t/T}$ \Comment{Calcul de la largeur de voisinage}
         \For{chaque $x_i$ dans les données}
-            \State $c = \arg\min_{j} \|x_i - w_j\|^2$
-            \State nodes[$c$].append($x_i$) \Comment{Ajouter $x_i$ à la liste des données associées au noeud $w_c$}
+            \State $c(x_i) = \arg\min_{j} \|x_i - w_j\|^2$
+            \State nodes[$c(x_i)$].append($x_i$) \Comment{Ajout de $x_i$ à la liste de $w_{c(x_i)}$}
         \EndFor
         \For{chaque noeud $j$}
             \State $x_{w,j} = mean(nodes[j])$ \Comment{Moyenne des données dans $C_j$}
@@ -520,7 +919,7 @@ $$h_{ji}(t) = \exp\left(-\frac{\|idx_j - idx_i\|^2}{2\sigma(t)^2}\right)$$
         \EndFor
         \For{chaque noeud $i$}
             \State calculer $h_{ji}(t)$ pour tout $j$
-            \State $w_i(t+1) = \frac{\sum_{j} h_{ji}(t)\, n_j\, x_{w,j}}{\sum_{j} h_{ji}(t)\, n_j}$ \Comment{Mise à jour du poids du noeud $i$}
+            \State $w_i^{(t+1)} = \frac{\sum_{j} h_{ji}(t)\, n_j\, x_{w,j}}{\sum_{j} h_{ji}(t)\, n_j}$ \Comment{Mise à jour du poids du noeud $i$}
         \EndFor
     \EndFor
 \end{algorithmic}
@@ -534,8 +933,7 @@ Enfin, nous avons présenté deux variantes d'apprentissage pour un SOM classiqu
 Cependant, malgré ses avantages, le batch SOM présente certaines limites, notamment en termes de complexité computationnelle et de mémoire requise \cite{SurveySOM}.
 
 \section{Limites}
-
-Les cartes auto-organisées possède la capacité de réaliser simultanément une quantification vectorielle et un reduction de dimension. 
+Les cartes auto-organisées possèdent la capacité de réaliser simultanément une quantification vectorielle et un reduction de dimension. 
 Cependant, certains travaux on montré que, du point de vue de l'erreur de la quantification ou de la préservation des distances, les SOM peuvent être moins performant que 
 la combinaison de deux méthodes spécialisées \cite{Limitations_SOM}. En particulier, l'association d'une méthode de quantification vectorielle telle que le k-means, 
 suivie d'une technique de reduction de dimension comme le Sammon mapping, permet d'optimiser séparément ces deux objectifs.
@@ -650,7 +1048,7 @@ Nous allons présenter les extensions suivantes : K-SOM, flow-SOM, hybride SOM (
 Cette extension, présentée dans \cite{sto_K_SOM} propose une approche pour d'accélération d'une autre extension nommée Kernel self-organizing maps (KSOM).
 K-SOM est une extension des SOM qui utilise des fonctions de noyau pour permettre la modélisation de relations non linéaires entre les données d'entrée et les prototypes du SOM.
 Cependant, l'apprentissage d'un K-SOM peut être plus coûteux en termes de temps de calcul que celui d'un SOM classique, en particulier pour les grands ensembles de données.
-Pour avoir une convergeance correcte, l'agorithme d'apprentissage aura besoin de $\beta n$ itérations, où $\beta$ est un facteur de proportionnalité pour le nombre d'itérations qui dépend 
+Pour avoir une convergeance correcte, l'algorithme d'apprentissage aura besoin de $\beta n$ itérations, où $\beta$ est un facteur de proportionnalité pour le nombre d'itérations qui dépend 
 de la complexité du modèle et de la nature des données d'entrée. Cela nous donne une complexité de $O(\beta n^3 \cdot m)$ \cite{sto_K_SOM}, ce qui peut être prohibitif pour les grands ensembles de données.
 
 L'approche proposée dans \cite{sto_K_SOM} consiste à faire un une reformulation des calculs effectués lors des étapes d'affectation et de mise à jour.
@@ -686,15 +1084,15 @@ Ainsi, cette extension est un avencement pour les SOM dans le cadre de données 
 pour lesquelles l'approches classique n'est pas applicables.
 
 \subsection{FlowSOM}
-FlowSOM n'est pas vraiment une extension mais une application intéressante utilisée notament dans le domaine de la biologie et plus précisément pour l'analyse de données de cytométrie est le Flow self-organizing maps (FlowSOM) \cite{FlowSOM}.
+FlowSOM n'est pas une extension mais plutôt une application intéressante utilisée notament dans le domaine de la biologie et plus précisément pour l'analyse de données de cytométrie \cite{FlowSOM}.
 Cette approche en réalité ne propose pas une nouvelle variante de SOM, mais plutôt une nouvelle manière d'utiliser les SOM pour l'analyse de données de cytométrie avec une structure spécifique.
 Elle a comme objectif de faciliter la visualisation et l'interprétation des données de cytométrie, au lieu d'utiliser des scatter plots traditionnels, 
 qui peuvent être difficiles à interpréter lorsque nous avons un grand nombre de dimensions et de points de données \cite{FlowSOM}.
 
-Basiquement, flowSOM suit l'algorithme d'apprentissage d'un SOM classique, mais le modèle est intégré dans un pipeline d'analyse de données de cytométrie pour optimiser le clustering, 
+Basiquement, flowSOM suit l'algorithme d'apprentissage d'un SOM classique, mais le modèle est intégré dans un pipeline d'analyse de données pour optimiser le clustering, 
 qui comprend des étapes de prétraitement, de clustering et de visualisation.
 
-L'agorithme de flowSOM peut être résumé comme suit \cite{FlowSOM}:
+L'algorithme de flowSOM peut être résumé comme suit \cite{FlowSOM}:
 \begin{itemize}
     \item \textbf{Prétraitement des données} : nettoyage, normalisation et suppression des valeurs aberrantes.
     \item \textbf{Apprentissage du SOM} : un SOM est entraîné afin de projeter les données dans une grille structurée.
@@ -788,7 +1186,7 @@ est de reconstruire les données d'entrée tout en apprenant une représentation
 Ils permettent ainsi d'extraire des caractéristiques pertinentes en minimisant la perte d'information entre l'entrée et sa reconstruction.
 
 Un AE est composé de deux parties principales: un encodeur, qui transforme les données d'entrée $x$ en une représentation de plus faible dimension appelée espace latent $z$,
-et un décodeur, qui reconstruit les données d'entrée à partir de cette représentation latente \cite{DESOM}. L'architecture d'un AE est illustrée à la figure \ref{fig:autoencoder}.
+et un décodeur, qui reconstruit les données d'entrée à partir de cette représentation latente \cite{DESOM}. La figure \ref{fig:autoencoder} illustre cette architecture.
 
 \begin{figure}[H]
 \centering
@@ -961,33 +1359,33 @@ Le rôle de la fonction de perte dans le DESOM est central pour l'apprentissage 
 La fonction de perte du DESOM, $ \mathcal{L}_{\text{DESOM}} $, est une combinaison de deux composantes principales : 
 la perte de reconstruction de l'AE, $ \mathcal{L}_{\text{R}} $, et la perte du SOM, $ \mathcal{L}_{\text{SOM}} $ \cite{DESOM}. Il faut donc définir explicitement $\mathcal{L}_{\text{SOM}}$.
 
-Pour un SOM classique, soit $\mathcal{L}_{\text{SOM}}^i$ la fonction de perte du SOM pour un échantillon d'entrée $x_i$, avec $w_{c_i}$ comme son noeud gagant (BMU). 
-Alors, la fonction de perte du SOM pour cet échantillon est donnée par :
-$$ \mathcal{L}_{\text{SOM}}^i(x_i, \{w_k\}) = \sum_{k=1}^{m} h_{c_i k} \cdot \| x_i - w_k \|^2 $$
+Pour un SOM classique, soit $\mathcal{L}_{\text{SOM}}^i$ la fonction de perte du SOM pour un échantillon d'entrée $x_i$, avec $w_{c(x_i)}$ comme noeud gagant (BMU),
+alors la fonction de perte du SOM pour cet échantillon est donnée par :
+$$ \mathcal{L}_{\text{SOM}}^i(x_i, \{w_j\}) = \sum_{j=1}^{M} h_{c(x_i) j} \| x_i - w_j \|^2 $$
 
-Cette expression est donc la somme des distances au carré entre $x_i$ et les prototypes, où $c_i$ est l'indice du BMU pour l'échantillon $x_i$, 
-$h_{c_i k}$ est la fonction de voisinage entre $w_k$ et le BMU.
+Cette expression est donc la somme des distances au carré entre $x_i$ et les prototypes, où $c(x_i)$ est l'indice du BMU pour l'échantillon $x_i$, 
+$h_{c(x_i) j}$ est la fonction de voisinage entre $w_j$ et le BMU.
 
 Donc, la fonction de perte d'un SOM de manière générale est donnée par :
-$$ \mathcal{L}_{\text{SOM}} = \sum_{i=1}^{n} \mathcal{L}_{\text{SOM}}^i(x_i, c_i, \{w_k\}) \Leftrightarrow $$
-$$ \mathcal{L}_{\text{SOM}} = \sum_{i=1}^{n} \sum_{k=1}^{m} h_{c_i k} \cdot \| x_i - w_k \|^2 $$
+$$ \mathcal{L}_{\text{SOM}} = \sum_{i=1}^{N} \mathcal{L}_{\text{SOM}}^i(x_i, c_i, \{w_j\}) \Leftrightarrow $$
+$$ \mathcal{L}_{\text{SOM}} = \sum_{i=1}^{N} \sum_{j=1}^{M} h_{c(x_i) j} \| x_i - w_j \|^2 $$
 
 La seconde composante pour $ \mathcal{L}_{\text{DESOM}} $ est la fonction de perte de reconstruction $\mathcal{L}_{\text{R}}$ de l'auto-encodeur.
 
 Soit $W_e$ les poids de l'encodeur, $W_{de}$ les poids du décodeur, $x_i \in \mathbb{R}^d$ les données d'entrée et $\tilde{x}_i \in \mathbb{R}^d$ la reconstruction de $x_i$ par l'auto-encodeur, notons
 $f_{W_e}: \mathbb{R}^d \to \mathbb{R}^L$ la fonction d'encodage et $g_{W_{de}}: \mathbb{R}^L \to \mathbb{R}^d$ la fonction de décodage, avec $z_i = f_{W_e}(x_i)$ et $\tilde{x}_i = g_{W_{de}}(z_i)$.
 La fonction de perte de reconstruction $\mathcal{L}_{\text{R}}$ est généralement définie comme la moyenne de l'erreur quadratique (MSE) \cite{DESOM}:
-$$ \mathcal{L}_{\text{R}}(W_e, W_{de}) = \frac{1}{n} \sum_{i=1}^{n} \mathcal{L}_{\text{R}}^i =\frac{1}{n} \sum_{i=1}^{n} \| x_i - \tilde{x}_i \|^2 \Leftrightarrow$$
+$$ \mathcal{L}_{\text{R}}(W_e, W_{de}) = \frac{1}{N} \sum_{i=1}^{N} \mathcal{L}_{\text{R}}^i =\frac{1}{N} \sum_{i=1}^{N} \| x_i - \tilde{x}_i \|^2 \Leftrightarrow$$
 
-En remplaçant $\tilde{x}_i$ par son expression, on obtient :
-$$ \mathcal{L}_{\text{R}}(W_e, W_{de}) = \frac{1}{n} \sum_{i=1}^{n} \| x_i - g_{W_{de}}(f_{W_e}(x_i)) \|^2 $$
+En remplaçant $\tilde{x}_i$ par son expression, nous obtenons :
+$$ \mathcal{L}_{\text{R}}(W_e, W_{de}) = \frac{1}{N} \sum_{i=1}^{N} \| x_i - g_{W_{de}}(f_{W_e}(x_i)) \|^2 $$
 
 Finalement, avec les deux fonctions de perte, nous pouvons définir la fonction de perte hybride du DESOM \cite{DESOM}:
-$$ \mathcal{L}_{\text{DESOM}}(W_e, W_{de}, \{w_k\}) = \mathcal{L}_{\text{R}}(W_e, W_{de}) + \gamma  \mathcal{L}_{\text{SOM}}(W_e, \{w_k\}) $$
+$$ \mathcal{L}_{\text{DESOM}}(W_e, W_{de}, \{w_j\}) = \mathcal{L}_{\text{R}}(W_e, W_{de}) + \gamma  \mathcal{L}_{\text{SOM}}(W_e, \{w_j\}) $$
 
-Il est important de noter que la fonction de perte du SOM, $\mathcal{L}_{\text{SOM}}$, dépend à la fois des poids de l'encodeur $W_e$ et les poids $w_k$ de ses noeuds.
-Ces données d'entrée ne sont plus les données d'origine $x_i$, mais plutôt les représentations latentes $z_i \in \mathbb{R}^L$. Nous aurons donc pour un noeud $S_i$ 
-son vecteur de poids $w_i \in \mathbb{R}^L$.
+Il est important de noter que la fonction de perte du SOM, $\mathcal{L}_{\text{SOM}}$, dépend à la fois des poids de l'encodeur $W_e$ et les poids $w_j$ de ses noeuds.
+Ces données d'entrée ne sont plus les données d'origine $x_i$, mais plutôt les représentations latentes $z_i \in \mathbb{R}^L$. Nous aurons donc pour un noeud $S_j$ 
+son vecteur de poids $w_j \in \mathbb{R}^L$.
 
 Le paramètre $\gamma$ est un hyperparamètre qui équilibre l'importance relative de la perte de reconstruction et de la perte du SOM lors de l'apprentissage conjoint du DESOM.
 Une valeur élevée de $\gamma$ donne plus d'importance à l'organisation topologique et au clustering dans l'espace latent, 
@@ -1005,9 +1403,9 @@ $$\mathcal{L}_{DESOM} = \mathcal{L}_{R} + \gamma \mathcal{L}_{SOM}$$
 Cette optimisation permet à l'autoencodeur d'apprendre une représentation latente informative, 
 tout en contraignant cet espace latent à être adapté à l'organisation topologique du SOM (SOM-friendly).
 
-Pour effectuer cette optimisation il faut calculer les gradients de $\mathcal{L}_{\text{DESOM}}$ par rapport aux poids de l'encodeur $W_e$, du décodeur $W_{de}$ et des noeuds du SOM $\{w_k\}$.
+Pour effectuer cette optimisation, il faut calculer les gradients de $\mathcal{L}_{\text{DESOM}}$ par rapport aux poids de l'encodeur $W_e$, du décodeur $W_{de}$ et des noeuds du SOM $\{w_j\}$.
 Cependant, le calcul du BMU (via l'opération d'argmin) dont dépend la fonction de voisinage n'est pas différentiable. Pour remédier ce problème,
-nous considérons $h_{c_i k}$ comme des coefficients constants à chaque étape d'optimisation \cite{DESOM}.
+nous considérons $h_{c(x_i) j}$ comme des coefficients constants à chaque étape d'optimisation \cite{DESOM}.
 
 Cette contrainte, nous permet d'utiliser la rétropropagation et la descente de gradient pour mettre à jour les paramètres du modèle.
 
@@ -1015,7 +1413,7 @@ Les gradients de perte globale s'ecrivent alors \cite{DESOM}:
 \begin{align*}
 \frac{\partial \mathcal{L}_{\text{DESOM}}}{\partial W_e} &= \frac{\partial \mathcal{L}_{\text{R}}}{\partial W_e} + \gamma \frac{\partial \mathcal{L}_{\text{SOM}}}{\partial W_e} \\
 \frac{\partial \mathcal{L}_{\text{DESOM}}}{\partial W_{de}} &= \frac{\partial \mathcal{L}_{\text{R}}}{\partial W_{de}} \\
-\frac{\partial \mathcal{L}_{\text{DESOM}}}{\partial w_k} &= \gamma \frac{\partial \mathcal{L}_{\text{SOM}}}{\partial w_k}
+\frac{\partial \mathcal{L}_{\text{DESOM}}}{\partial w_j} &= \gamma \frac{\partial \mathcal{L}_{\text{SOM}}}{\partial w_j}
 \end{align*}
 
 En calculant pour un point de données $x_i$, les gradients associés à la perte de reconstruction sont donnés par:
@@ -1026,8 +1424,8 @@ En calculant pour un point de données $x_i$, les gradients associés à la pert
 
 Les gradients associés à la perte SOM sont :
 \begin{align*}
-\frac{\partial \mathcal{L}_{\text{SOM}}^i}{\partial W_e} &= 2 \sum_{k=1}^{m} h_{c_i k} (f_{W_e}(x_i) - w_k) \frac{\partial f_{W_e}(x_i)}{\partial W_e} \\
-\frac{\partial \mathcal{L}_{\text{SOM}}^i}{\partial w_k} &= 2 h_{c_i k} (w_k - f_{W_e}(x_i))
+\frac{\partial \mathcal{L}_{\text{SOM}}^i}{\partial W_e} &= 2 \sum_{j=1}^{m} h_{c(x_i) j} (f_{W_e}(x_i) - w_j) \frac{\partial f_{W_e}(x_i)}{\partial W_e} \\
+\frac{\partial \mathcal{L}_{\text{SOM}}^i}{\partial w_j} &= 2 h_{c(x_i) j} (w_j - f_{W_e}(x_i))
 \end{align*} 
 
 Avec ces gradients, nous pouvons mettre à jour les poids de l'encodeur, du décodeur et des prototypes du SOM à chaque itération de l'apprentissage 
@@ -1039,13 +1437,13 @@ W_{de} &\leftarrow W_{de} - \frac{\eta}{n_b} \sum_{i \in \beta} \frac{\partial \
 \end{align*}
 
 La règle de mise à jour pour les prototypes du SOM est donnée par \cite{DESOM}:
-$$w_k \leftarrow w_k - \frac{\eta}{n_b} \sum_{i \in \beta} \gamma \frac{\partial \mathcal{L}_{\text{SOM}}^i}{\partial w_k}$$
+$$w_j \leftarrow w_j - \frac{\eta}{n_b} \sum_{i \in \beta} \gamma \frac{\partial \mathcal{L}_{\text{SOM}}^i}{\partial w_j}$$
 
-En développant $\frac{\partial \mathcal{L}_{\text{SOM}}^i}{\partial w_k}$ avec 
+En développant $\frac{\partial \mathcal{L}_{\text{SOM}}^i}{\partial w_j}$ avec 
 $$z_i = f_{W_e}(x_i)$$ 
 
 La règle de mise à jour devient:
-$$w_k \leftarrow w_k + \frac{2\eta\gamma}{n_b} \sum_{i \in \beta} h_{c_i k} (z_i - w_k)$$
+$$w_j \leftarrow w_j + \frac{2\eta\gamma}{n_b} \sum_{i \in \beta} h_{c(x_i) j} (z_i - w_j)$$
 
 Cette règle montre que chaque noeuds est déplacé vers les représentations latentes du mini-batch, avec une intensité pondérée par la fonction de voisinage du SOM.
 
@@ -1169,25 +1567,25 @@ Les affectations aux BMU et les coefficients de voisinage sont considérés comm
 \caption{Algorithme d'apprentissage du DESOM}
 \label{alg:DESOM_alg}
 \begin{algorithmic}[1]
-\Require Données d'entrée $\{x_i\}_{i=1}^n$,
-            nombre de prototypes $m$,
+\Require Données d'entrée $\{x_i\}_{i=1}^N$,
+            nombre de prototypes $M$,
             taux d'apprentissage $\eta$,
             hyperparamètre de régularisation $\gamma$,
             nombre d'itérations $T$.
-\State Initialiser les poids de l'encodeur $W_e$, du décodeur $W_{de}$ et des prototypes du SOM $\{w_k\}_{k=1}^m$ de manière aléatoire.
+\State Initialiser les poids de l'encodeur $W_e$, du décodeur $W_{de}$ et des prototypes du SOM $\{w_j\}_{j=1}^M$ de manière aléatoire.
 \For{$t = 1$ to $T$}
     \State Sélectionner un mini-batch $\beta$ de $n_b$ échantillons de données d'entrée.
     \For{chaque échantillon $x_i$ dans le mini-batch $\beta$}
         \State Calculer la représentation latente $z_i = f_{W_e}(x_i)$.
-        \State Trouver le BMU $c_i = \arg\min_k \|z_i - w_k\|^2$.
-        \State Calculer les coefficients de voisinage $h_{c_i,k}$ pour chaque prototype $w_k$.
+        \State Trouver le BMU $c(z_i) = \arg\min_j \|z_i - w_j\|^2$.
+        \State Calculer les coefficients de voisinage $h_{c(z_i) j}$ pour chaque prototype $w_j$.
         \State Calculer la reconstruction $\tilde{x}_i = g_{W_{de}}(z_i)$.
         \State Calculer les pertes $\mathcal{L}_{R}^{i}$ et $\mathcal{L}_{SOM}^{i}$
     \EndFor
     \State Calculer la fonction de coût totale du mini-batch :
     \State $\mathcal{L}_{\text{DESOM}} = \frac{1}{n_b} \sum_{x_i \in \beta} (\mathcal{L}_{\text{R}}^i + \gamma \mathcal{L}_{\text{SOM}}^i)$
     \State Calculer les gradients de $\mathcal{L}_{DESOM}^{\beta}$ par rétropropagation.
-    \State Mettre à jour $W_e$, $W_{de}$ et $\{w_k\}_{k=1}^{m}$ par descente de gradient stochastique à mini-batch.
+    \State Mettre à jour $W_e$, $W_{de}$ et $\{w_j\}_{j=1}^{M}$ par descente de gradient stochastique à mini-batch.
 \EndFor
 \end{algorithmic}
 \end{algorithm}
