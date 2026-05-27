@@ -8,12 +8,21 @@ import scripts.utils_desom as utils_desom
 class DESOM(nn.Module):
     """Deep Embedded Self-Organizing Map (DESOM)"""
 
-    def __init__(self, grid_size : tuple, input_dim : int, latent_dim : int, gamma: float = 1.0, device: str = None):
+    def __init__(self, grid_size : tuple, 
+                 input_dim : int, latent_dim : int,
+                 n_epochs: int, batch_size: int = 32, 
+                 lr: float = 1e-3, sigma_init: float = 1.0, sigma_final: float = 0.1, 
+                 gamma: float = 1.0, device: str = None):
         """Initialisation du DESOM
         Args:
             grid_size (tuple): Taille de la grille du SOM
             input_dim (int): Dimension de l'entrée
             latent_dim (int): Dimension de l'espace latent
+            n_epochs (int): Nombre d'époques pour l'entraînement
+            batch_size (int): Taille des lots pour l'entraînement
+            lr (float): Taux d'apprentissage pour l'optimiseur
+            sigma_init (float): Largeur initiale de la fonction de voisinage pour le SOM
+            sigma_final (float): Largeur finale de la fonction de voisinage pour le SOM
             gamma (float): Poids de la perte du SOM dans la perte totale
         """
         super().__init__()
@@ -21,6 +30,11 @@ class DESOM(nn.Module):
         self.grid_size = grid_size
         self.input_dim = input_dim
         self.latent_dim = latent_dim
+        self.n_epochs = n_epochs
+        self.batch_size = batch_size
+        self.lr = lr
+        self.sigma_init = sigma_init
+        self.sigma_final = sigma_final
         self.gamma = gamma
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -44,15 +58,10 @@ class DESOM(nn.Module):
 
         return x_hat, z, loss_som, bmu_indices
 
-    def embedded_train(self, data, n_epochs=100, batch_size=32, lr=1e-3, sigma_init=1.0, sigma_final=0.1):
+    def embedded_train(self, data):
         """Entraîne le DESOM conjointement
         Args:
             data (torch.Tensor): Données d'entrée pour l'entraînement du DESOM
-            n_epochs (int): Nombre d'époques pour l'entraînement
-            batch_size (int): Taille des lots pour l'entraînement
-            lr (float): Taux d'apprentissage pour l'optimiseur
-            sigma_init (float): Largeur initiale de la fonction de voisinage pour le SOM
-            sigma_final (float): Largeur finale de la fonction de voisinage pour le SOM
         returns:
             losses (list): Liste des pertes totales d'entraînement par époque
         """
@@ -63,9 +72,9 @@ class DESOM(nn.Module):
         data = data.float().to(self.device)
 
         dataset = TensorDataset(data)
-        dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+        dataloader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
 
-        optimizer = optim.Adam(self.parameters(), lr=lr)
+        optimizer = optim.Adam(self.parameters(), lr=self.lr)
         criterion = nn.MSELoss()
 
         losses = {
@@ -75,17 +84,17 @@ class DESOM(nn.Module):
 
         self.train()
 
-        for epoch in range(n_epochs):
+        for epoch in range(self.n_epochs):
 
             epoch_loss = 0.0 # Perte totale
             epoch_rec = 0.0 # Reconstruction loss
             epoch_som = 0.0 # SOM loss
 
             # Calcul du sigma pour cette époque
-            if n_epochs == 1:
-                sigma = sigma_final
+            if self.n_epochs == 1:
+                sigma = self.sigma_final
             else:
-                sigma = sigma_init * (sigma_final / sigma_init) ** (epoch / (n_epochs - 1))
+                sigma = self.sigma_init * (self.sigma_final / self.sigma_init) ** (epoch / (self.n_epochs - 1))
 
             for batch in dataloader:
                 x = batch[0]
@@ -115,12 +124,12 @@ class DESOM(nn.Module):
 
         return losses
     
-    def encode(self, data, batch_size: int = 256):
+    def encode(self, data, enc_batch_size: int = 256):
         """
         Encode toutes les données dans l'espace latent.
         Args:            
             data (torch.Tensor): Données d'entrée à encoder
-            batch_size (int): Taille des lots pour l'encodage
+            enc_batch_size (int): Taille des lots pour l'encodage
         returns:                
             np.ndarray: Représentations latentes de toutes les données
         """
@@ -131,7 +140,7 @@ class DESOM(nn.Module):
         data = data.float().to(self.device)
 
         dataset = TensorDataset(data)
-        dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
+        dataloader = DataLoader(dataset, batch_size=enc_batch_size, shuffle=False)
 
         self.eval()
 
@@ -144,24 +153,3 @@ class DESOM(nn.Module):
                 z_all.append(z.cpu())
 
         return torch.cat(z_all, dim=0)
-
-    def predict_bmu(self, data, batch_size: int = 256):
-        """
-        Retourne le BMU de chaque donnée.
-        Args:
-            data (torch.Tensor): Données d'entrée pour lesquelles prédire les BMU
-            batch_size (int): Taille des lots pour la prédiction
-        returns:
-            np.ndarray: Indices des BMU pour chaque donnée
-        """
-
-        z = self.encode(data, batch_size=batch_size).to(self.device)
-
-        self.eval()
-
-        with torch.no_grad():
-            dist = torch.cdist(z, self.som.weights) ** 2
-            bmu_indices = torch.argmin(dist, dim=1)
-
-        return bmu_indices.cpu()
-

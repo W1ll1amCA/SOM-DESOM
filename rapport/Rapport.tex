@@ -91,7 +91,7 @@ de leur voisinage.
 Actuellement, les réseaux de neurones ont une place centrale dans le domaine de l'apprentissage automatique. 
 Insipirée aussi des neurones biologiques, des cellues nerveuses dont la fonction est d'agréger et transmettre 
 des informations via des sigaux chimiques et électriques \cite{Neurone_wikipedia}, ces modèles consistent à former des interconnexions entre 
-couches des neurones artificiels. 
+couches de neurones artificiels. 
 
 Dans la littérature, nous observons une tendance à appeler les SOM des réseaux 
 de neurones. Cependant, certaines différences remarquables entre les réseaux de neurones au sens du perceptron et les cartes 
@@ -101,7 +101,7 @@ puis nous comparerons ce modèle avec le “neurone” d'un SOM.
 \subsection{Neurone artificiel}
 Un neurone artificiel ou plus communément un neurone formel est une représentation d'une combinaison linéaire suivie d'une fonction d'activation \cite{Cours_IA_UNIGE}. 
 Pour un neurone $k$, considérons $m+1$ entrées  $x_0,\dots, x_m$ et des poids associés $w_{k0}, \dots, w_{km}$. Généralement, $x_0$ est une entrée de biais qui est fixée à 1.
-Son fonctionnent commence par une somme pondérée de ses entrées:   
+Son fonctionnement commence par une somme pondérée de ses entrées, l'activation:   
 $$
 a_k = \sum_{i=0}^{m} w_{ki} x_i
 $$
@@ -152,11 +152,11 @@ le fonctionnement d'un neurone avec des méthodes d'apprentissage automatique (m
 Dans ce contexte, le but du réseau de neurones est d'approximer une fonction de prédiction du type $y = \phi(x)$ par une fonction $\phi_\theta$, represenntée
 par le réseau et paramétrée par $\theta = [w_{ij}^k]$ l'ensemble des poids.
 
-Le document d'approximation universelle montre que cela est possible avec un certain niveau d'approximation \cite{Approx_cap_multilayers}.
+Le théorème d'approximation universelle montre que cela est possible avec un certain niveau d'approximation \cite{Approx_cap_multilayers}.
 
 \subsection{Neurone du SOM}
 Par contraste, étant donné un ensemble de données $\mathcal{X} = \{x_i\}_{i=1}^N$ où $x_i \in \mathbb{R}^d$, une SOM cherche à établir une construction de l'ensemble des données
-("vector quantization" cf. section \ref{sec:VQ}) en associant à chaque position d'une topologie donnée (la cache) un sous ensemble de données de départ.
+("vector quantization" cf. section \ref{sec:VQ}) en associant à chaque position d'une topologie donnée (la carte) un sous ensemble de données de départ.
 
 Dans la suite, nous aurons:
 \begin{itemize}
@@ -174,8 +174,8 @@ Il est associé à un vecteur de poids $w \in \mathbb{R}^d$, de même dimension 
 Son vecteur de poids est mis à jour en fonction de la distance entre les données d'entrée et son prope vecteur de poids. 
 
 Les données d'entrée sont visitées itérativement. À l'itération $t+1$ pour la donnée $x_i \in \mathbb{R}^d$, 
-le neurone $S_c$ le plus proche de la donnée d'entrée $x_i$ est appelé \textit{Best Matching Unit} (BMU) et est associé au vecteur de poids $w_c$. 
-Le vecteur poids $w_c$, ainsi que les vecteurs de poids $w_j$ des noeuds de son voisinage, sont mis à jour en fonction de la formule suivante : 
+le neurone $S_c$ le plus proche de la donnée d'entrée $x_i$ est appelé \textit{Best Matching Unit} (BMU) dont le vecteur de poids est $w_c$. 
+Le vecteur de poids $w_c$, ainsi que les vecteurs de poids $w_j$ des noeuds de son voisinage, sont mis à jour en fonction de la formule suivante : 
 $$w_j^{(t+1)} = w_j^{(t)} + h_{cj}(t)[x_i - w_j^{(t)}]$$ 
 
 Où, $h_{cj}(t)$ est la fonction de voisinage qui diminue avec la distance entre le neurone $S_j$ et le BMU $S_c$, ainsi que du temps $t$ \cite{Kohonen2012SOM} cf. section \ref{SOM_base}.
@@ -183,7 +183,7 @@ Où, $h_{cj}(t)$ est la fonction de voisinage qui diminue avec la distance entre
 Dans ce contexte, nous avons un apprentissage dit non supervisé et compétitif, car les "neurones" sont en compétition pour représenter les données d'entrée, et sans labels pour guider l'apprentissage.
 Cela est une différence fondamentale avec les neurones formels, car les SOM sont utilisés pour la visualisation et la réduction de la dimensionnalité, 
 tandis que les neurones formels sont utilisés plutôt pour la classification et la régression. 
-De plus, les SOM préservent la topologie des données d'entrée, c'est-à-dire qu'ils conservent les relations de voisinage dans la projection de l'espace à dimension réduite, ce qui n'est pas le sujet pour les neurones formels. 
+De plus, les SOM préservent la topologie des données d'entrée, c'est-à-dire qu'ils conservent au maximum les relations de voisinage dans la projection de l'espace à dimension réduite, ce qui n'est pas le sujet pour les neurones formels. 
 Nous remarquons également une différence dans la fonction de coût, elles n'ont pas la même finalité.
 Les SOM utilisent une fonction de coût basée sur la minimisation d'une mesure de distance entre les données d'entrée et les prototypes, tandis que les neurones formels ont 
 une fonction de coût basée sur l'erreur de prédiction. Donc, la fonction de coût d'une carte auto-organisées ne produit pas de manière explicite de sortie ou de prédiction. 
@@ -258,14 +258,14 @@ Par la suite de ce rapport et pour éviter toutes confusions, nous allons utilis
     \node[node_dot] (Sj) at (1, 4.5) {};   % Gauche
     \node[node_dot] (Si) at (1, 1.25) {};   % Bas-gauche
     \node[node_dot] (Sm) at (5, 1.5) {}; % Bas-droite
-    \node[node_dot] (Se) at (5.5, 4.5) {}; % Haut-droite
+    \node[node_dot] (Sl) at (5.5, 4.5) {}; % Haut-droite
     \node[node_dot] (Sk) at (5.5, 6) {};     % Haut-centre
 
     % --- Lignes de la Grille SOM (Structure) ---
     \draw[line_som] (Sj) -- (Sc);
     \draw[line_som] (Si) -- (Sc);
     \draw[line_som] (Sm) -- (Sc);
-    \draw[line_som] (Se) -- (Sc);
+    \draw[line_som] (Sl) -- (Sc);
     \draw[line_som] (Sk) -- (Sc);
 
     % Lignes déformées s'étendant à partir des nœuds périphériques
@@ -280,8 +280,8 @@ Par la suite de ce rapport et pour éviter toutes confusions, nous allons utilis
     \draw[line_som] (Sm) -- (5.5, 1);
     \draw[line_som] (Sm) -- (6, 1.5);
 
-    \draw[line_som] (Se) -- (6.5, 5);
-    \draw[line_som] (Se) -- (6.5, 4);
+    \draw[line_som] (Sl) -- (6.5, 5);
+    \draw[line_som] (Sl) -- (6.5, 4);
 
     \draw[line_som] (Sk) -- (4, 6.5);
     \draw[line_som] (Sk) -- (5.25, 6.8);
@@ -293,7 +293,7 @@ Par la suite de ce rapport et pour éviter toutes confusions, nous allons utilis
     \node[weight_box, below=0.5cm] (wi) at (Si) {\tiny $w_i$}; \draw[line_weight] (Si) -- (wi);
     \node[weight_box, below=0.5cm] (wc) at (Sc) {\tiny $w_c$}; \draw[line_weight] (Sc) -- (wc);
     \node[weight_box, below=0.5cm] (wm) at (Sm) {\tiny $w_m$}; \draw[line_weight] (Sm) -- (wm);
-    \node[weight_box, below=0.5cm] (we) at (Se) {\tiny $w_l$}; \draw[line_weight] (Se) -- (we);
+    \node[weight_box, below=0.5cm] (wl) at (Sl) {\tiny $w_l$}; \draw[line_weight] (Sl) -- (wl);
     \node[weight_box, below=0.5cm] (wk) at (Sk) {\tiny $w_k$}; \draw[line_weight] (Sk) -- (wk);
 
 
@@ -304,14 +304,14 @@ Par la suite de ce rapport et pour éviter toutes confusions, nous allons utilis
     \draw[arrow_nbh] (xt) to[out=-120, in=60] (Sj);
     \draw[arrow_nbh] (xt) to[out=-100, in=80] (Si);
     \draw[arrow_nbh] (xt) to[out=-60, in=120] (Sk);
-    \draw[arrow_nbh] (xt) to[out=-40, in=140] (Se);
+    \draw[arrow_nbh] (xt) to[out=-40, in=140] (Sl);
     \draw[arrow_nbh] (xt) to[out=-80, in=100] (Sm);
 
     % --- Étiquettes de Nœuds (Placées pour éviter les chevauchements) ---
     \node[text_purple, right=0.1cm of Sc, font=\small\bfseries] {$S_c$ \tiny(BMU)};
     \node[text_purple, above right=0.1cm of Sj] {$S_j$};
     \node[text_purple, above right=0.1cm of Sk] {$S_k$};
-    \node[text_purple, right=0.2cm of Se] {$S_e$};
+    \node[text_purple, right=0.2cm of Sl] {$S_l$};
     \node[text_purple, above right=0.1cm of Sm] {$S_m$};
     \node[text_purple, left=0.1cm of Si] {$S_i$};
 
@@ -352,23 +352,24 @@ le plus proche de $x$ \cite{SOM1990}.
 
 $$ c(x) = \arg\min_{i} ||x - w_i||^2 $$
 
-Admettons que $p(x)$ soit la densité de probabilité de $x$ sur $V$, alors l'erreur moyen de la quantification $E$ est définie par:
+Admettons que $p(x)$ soit la densité de probabilité de $x$ sur $V$, alors l'erreur moyenne de la quantification $\mathcal{E}$ est définie par:
 
 \begin{equation}
     \mathcal{E} = \int_V ||x - w_{c(x)}||^2 p(x) dV
     \label{eq:quant_E}
 \end{equation}
 
-où $V$ est l'espace d'entrée et donc $dV$ est le volume différentiel. La fonction $E$ est une fonction d'energie qui peut être minimisée par 
+où $V$ est l'espace d'entrée et donc $dV$ est le volume différentiel. La fonction $\mathcal{E}$ est une fonction d'energie qui peut être minimisée par 
 l'algorithme de descente de gradient \cite{Kohonen2012SOM}. Par simplification, nous avons pris une distance euclidienne, mais d'autres mesures de distance peuvent être utilisées.
 La variante que nous avons présentée est connue sous le nom de "k-means" \cite{Kohonen2012SOM}.
 
-Dans la pratique, $p(x)$ est inconnue, mais nous avons un ensemble de données $\{x_i \in \mathbb{R}^d\}_{1 \leq i \leq n}$. Pour avoir une estimation de  $E$, 
+Dans la pratique, $p(x)$ est inconnue, mais nous avons un ensemble de données $\{x_i \in \mathbb{R}^d\}_{1 \leq i \leq n}$. Pour avoir une estimation de  $\mathcal{E}$, 
 il faut approximer $p(x)$ par une distribution empirique à partir de l'ensemble de données. Donc, nous avons :
 
-
-$$p(x) \approx \frac{1}{n} \sum_{i=1}^{n} \delta(x - x_i)$$
-
+\begin{equation}
+    p(x) \approx \frac{1}{n} \sum_{i=1}^{n} \delta(x - x_i)
+    \label{eq:quant_p}
+\end{equation}
 
 Où la fonction $\delta$ est la fonction de Dirac concentrant la densité de probabilité en un point \cite{Dirac_wikipedia} :
 $$\delta(x) =
@@ -381,7 +382,7 @@ $$
 La particularité de cette fonction qui nous intéresse est la suivante \cite{Dirac_wikipedia}:
 $$\int_{-\infty}^{\infty} f(x) \delta(x - a) dx = f(a)$$
 
-Suivant l'equation \eqref{eq:quant_E}, alors nous avons :
+Suivant l'equation \eqref{eq:quant_E} et \eqref{eq:quant_p}, alors nous avons, avec $f(x) = ||x - w_{c(x)}||^2$ :
 $$ \mathcal{E} \approx \int_V  f(x)\frac{1}{n} \sum_{i=1}^{n} \delta(x - x_i)dV \Leftrightarrow$$
 $$ \mathcal{E} \approx \frac{1}{n} \sum_{i=1}^{n} \int_V  f(x) \delta(x - x_i)dV  =  \frac{1}{n} \sum_{i=1}^{n} f(x_i) \Leftrightarrow $$
 $$ \mathcal{E} \approx \frac{1}{n} \sum_{i=1}^{n} ||x_i - w_{c(x_i)}||^2 $$
@@ -392,9 +393,9 @@ Les SOM suivent cette même approche d'apprentissage compétitive. Cependant, co
 de manière à ce que les prototypes voisins dans la grille soient aussi proches dans l'espace des données d'entrée. 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[
-    prototype/.style={circle, fill=MapPurple, inner sep=2pt},
-    input_dot/.style={circle, draw=InputRed, thick, inner sep=1.2pt}, 
+\begin{tikzpicture}[ transform shape,
+    prototype/.style={circle, fill=MapPurple, minimum size=6pt, inner sep=0pt},
+    input_dot/.style={circle, draw=InputRed, thick, minimum size=4pt, inner sep=0pt}, 
     region_line/.style={MapPurple, thick, densely dotted},
     arrow_rep/.style={->, >=stealth, MapPurple, thick, densely dotted, shorten >=2pt, shorten <=2pt}
 ]
@@ -405,84 +406,84 @@ de manière à ce que les prototypes voisins dans la grille soient aussi proches
     % Cadre de la figure 
     \draw[MapPurple, thick] (0,0) rectangle (12,7);
 
-   % lignes de la grille VQ (sans topologie)
-    \draw[region_line] (2.6, 7) -- (3, 4.5) -- (0, 3.8);
-    \draw[region_line] (3, 4.5) -- (4.5, 2.5) -- (2, 0);
-    \draw[region_line] (3, 4.5) -- (6, 4.8) -- (8, 7);
-    \draw[region_line] (4.5, 2.5) -- (6.5, 3) -- (6, 4.8);
-    \draw[region_line] (6.5, 3) -- (7.5, 0);
-    \draw[region_line] (6, 4.8) -- (9, 4) -- (12, 4.2);
-    \draw[region_line] (9, 4) -- (8.5, 2.2) -- (12, 2.5);
-    \draw[region_line] (6.5, 3) -- (8.5, 2.2);
+    % Lignes de la grille VQ (Diagramme de Voronoï mathématiquement exact)
+    \draw[region_line] (0, 3.5) -- (3.17, 3.5) -- (3.93, 1.21) -- (3.63, 0);
+    \draw[region_line] (3.17, 3.5) -- (4.14, 4.96) -- (3.63, 7);
+    \draw[region_line] (4.14, 4.96) -- (7.0, 4.0) -- (7.0, 2.75) -- (3.93, 1.21);
+    \draw[region_line] (7.0, 4.0) -- (7.83, 4.83) -- (8.38, 7);
+    \draw[region_line] (7.83, 4.83) -- (11.5, 3.0) -- (12, 3.0);
+    \draw[region_line] (11.5, 3.0) -- (8.0, 1.25) -- (8.0, 0);
+    \draw[region_line] (8.0, 1.25) -- (7.0, 2.75);
 
-  
     % Prototypes et données d'entrée  
-    % Haut-Gauche 
-    \node[prototype] (C1) at (1.5, 5.5) {};
-    \node[input_dot] (d1a) at (0.7, 6.5) {}; \draw[arrow_rep] (d1a) to[bend right=15] (C1);
-    \node[input_dot] (d1b) at (2.2, 6.4) {}; \draw[arrow_rep] (d1b) to[bend left=10] (C1);
-    \node[input_dot] (d1c) at (0.6, 4.8) {}; \draw[arrow_rep] (d1c) to[bend left=15] (C1);
-    \node[input_dot] (d1d) at (2.4, 4.8) {}; \draw[arrow_rep] (d1d) to[bend right=10] (C1);
+    
+    % Région 1 (Haut-Gauche) : Prototype à (2, 5)
+    \node[prototype] (C1) at (2, 5) {};
+    \node[input_dot] (d1a) at (1.2, 5.8) {}; \draw[arrow_rep] (d1a) to[bend right=15] (C1);
+    \node[input_dot] (d1b) at (2.8, 5.8) {}; \draw[arrow_rep] (d1b) to[bend left=10] (C1);
+    \node[input_dot] (d1c) at (1.5, 4.2) {}; \draw[arrow_rep] (d1c) to[bend left=15] (C1);
+    \node[input_dot] (d1d) at (2.6, 4.2) {}; \draw[arrow_rep] (d1d) to[bend right=10] (C1);
 
-    % Bas-Gauche 
-    \node[prototype] (C2) at (1.8, 2.2) {};
-    \node[input_dot] (d2a) at (0.8, 3.3) {}; \draw[arrow_rep] (d2a) to[bend left=10] (C2);
-    \node[input_dot] (d2b) at (2.8, 3.2) {}; \draw[arrow_rep] (d2b) to[bend right=10] (C2);
-    \node[input_dot] (d2c) at (1.0, 1.3) {}; \draw[arrow_rep] (d2c) to[bend right=15] (C2);
-    \node[input_dot] (d2d) at (3.0, 1.5) {}; \draw[arrow_rep] (d2d) to[bend left=10] (C2);
+    % Région 2 (Bas-Gauche) : Prototype à (2, 2)
+    \node[prototype] (C2) at (2, 2) {};
+    \node[input_dot] (d2a) at (1.2, 2.8) {}; \draw[arrow_rep] (d2a) to[bend left=10] (C2);
+    \node[input_dot] (d2b) at (2.8, 2.8) {}; \draw[arrow_rep] (d2b) to[bend right=10] (C2);
+    \node[input_dot] (d2c) at (1.5, 1.2) {}; \draw[arrow_rep] (d2c) to[bend right=15] (C2);
+    \node[input_dot] (d2d) at (2.5, 1.0) {}; \draw[arrow_rep] (d2d) to[bend left=10] (C2);
 
-    % Haut-Milieu 
-    \node[prototype] (C3) at (5.5, 6.2) {};
-    \node[input_dot] (d3a) at (3.5, 6.4) {}; \draw[arrow_rep] (d3a) to[bend right=10] (C3);
-    \node[input_dot] (d3b) at (4.2, 5.5) {}; \draw[arrow_rep] (d3b) to[bend left=5] (C3);
-    \node[input_dot] (d3c) at (7.0, 6.5) {}; \draw[arrow_rep] (d3c) to[bend left=15] (C3);
-    \node[input_dot] (d3d) at (6.5, 5.5) {}; \draw[arrow_rep] (d3d) to[bend right=5] (C3);
+    % Région 3 (Haut-Milieu) : Prototype à (6, 6)
+    \node[prototype] (C3) at (6, 6) {};
+    \node[input_dot] (d3a) at (4.8, 6.5) {}; \draw[arrow_rep] (d3a) to[bend right=10] (C3);
+    \node[input_dot] (d3b) at (5.2, 5.4) {}; \draw[arrow_rep] (d3b) to[bend left=5] (C3);
+    \node[input_dot] (d3c) at (7.2, 6.5) {}; \draw[arrow_rep] (d3c) to[bend left=15] (C3);
+    \node[input_dot] (d3d) at (6.8, 5.5) {}; \draw[arrow_rep] (d3d) to[bend right=5] (C3);
 
-    % Région Centre 
-    \node[prototype] (C4) at (4.7, 4.0) {};
-    \node[input_dot] (d4a) at (3.4, 4.8) {}; \draw[arrow_rep] (d4a) to[bend right=5] (C4);
-    \node[input_dot] (d4b) at (5.5, 4.9) {}; \draw[arrow_rep] (d4b) to[bend left=10] (C4);
-    \node[input_dot] (d4c) at (3.8, 3.0) {}; \draw[arrow_rep] (d4c) to[bend left=15] (C4);
-    \node[input_dot] (d4d) at (5.8, 3.2) {}; \draw[arrow_rep] (d4d) to[bend right=10] (C4);
+    % Région 4 (Centre) : Prototype à (5, 3)
+    \node[prototype] (C4) at (5, 3) {};
+    \node[input_dot] (d4a) at (4.0, 3.8) {}; \draw[arrow_rep] (d4a) to[bend right=5] (C4);
+    \node[input_dot] (d4b) at (5.8, 3.8) {}; \draw[arrow_rep] (d4b) to[bend left=10] (C4);
+    \node[input_dot] (d4c) at (4.2, 2.2) {}; \draw[arrow_rep] (d4c) to[bend left=15] (C4);
+    \node[input_dot] (d4d) at (5.5, 2.2) {}; \draw[arrow_rep] (d4d) to[bend right=10] (C4);
 
-    % Région Bas-Milieu 
-    \node[prototype] (C5) at (5.8, 1.5) {};
-    \node[input_dot] (d5a) at (4.5, 2.0) {}; \draw[arrow_rep] (d5a) to[bend right=10] (C5);
-    \node[input_dot] (d5b) at (6.8, 2.2) {}; \draw[arrow_rep] (d5b) to[bend left=10] (C5);
-    \node[input_dot] (d5c) at (5.2, 0.6) {}; \draw[arrow_rep] (d5c) to[bend left=5] (C5);
-    \node[input_dot] (d5d) at (4.0, 0.8) {}; \draw[arrow_rep] (d5d) to[bend left=15] (C5);
+    % Région 5 (Bas-Milieu) : Prototype à (6, 1)
+    \node[prototype] (C5) at (6, 1) {};
+    \node[input_dot] (d5a) at (5.0, 1.6) {}; \draw[arrow_rep] (d5a) to[bend right=10] (C5);
+    \node[input_dot] (d5b) at (6.6, 1.8) {}; \draw[arrow_rep] (d5b) to[bend left=10] (C5);
+    \node[input_dot] (d5c) at (5.5, 0.4) {}; \draw[arrow_rep] (d5c) to[bend left=5] (C5);
+    \node[input_dot] (d5d) at (6.5, 0.4) {}; \draw[arrow_rep] (d5d) to[bend left=15] (C5);
 
-    % Droite-Milieu
-    \node[prototype] (C6) at (10.2, 5.5) {};
-    \node[input_dot] (d6a) at (8.5, 6.5) {}; \draw[arrow_rep] (d6a) to[bend right=10] (C6);
-    \node[input_dot] (d6b) at (11.5, 6.2) {}; \draw[arrow_rep] (d6b) to[bend left=15] (C6);
-    \node[input_dot] (d6c) at (9.0, 4.8) {}; \draw[arrow_rep] (d6c) to[bend left=5] (C6);
-    \node[input_dot] (d6d) at (11.0, 4.5) {}; \draw[arrow_rep] (d6d) to[bend right=5] (C6);
+    % Région 6 (Droite-Haut) : Prototype à (10, 5)
+    \node[prototype] (C6) at (10, 5) {};
+    \node[input_dot] (d6a) at (9.2, 5.8) {}; \draw[arrow_rep] (d6a) to[bend right=10] (C6);
+    \node[input_dot] (d6b) at (11.2, 5.8) {}; \draw[arrow_rep] (d6b) to[bend left=15] (C6);
+    \node[input_dot] (d6c) at (9.5, 4.4) {}; \draw[arrow_rep] (d6c) to[bend left=5] (C6);
+    \node[input_dot] (d6d) at (10.8, 4.2) {}; \draw[arrow_rep] (d6d) to[bend right=5] (C6);
 
-    % Droite-Centre
-    \node[prototype] (C7) at (8.0, 3.2) {};
-    \node[input_dot] (d7a) at (7.0, 3.8) {}; \draw[arrow_rep] (d7a) to[bend right=5] (C7);
-    \node[input_dot] (d7b) at (9.2, 3.5) {}; \draw[arrow_rep] (d7b) to[bend left=10] (C7);
-    \node[input_dot] (d7c) at (7.5, 2.0) {}; \draw[arrow_rep] (d7c) to[bend left=15] (C7);
+    % Région 7 (Droite-Centre) : Prototype à (9, 3)
+    \node[prototype] (C7) at (9, 3) {};
+    \node[input_dot] (d7a) at (7.8, 3.6) {}; \draw[arrow_rep] (d7a) to[bend right=5] (C7);
+    \node[input_dot] (d7b) at (10.0, 3.6) {}; \draw[arrow_rep] (d7b) to[bend left=10] (C7);
+    \node[input_dot] (d7c) at (8.5, 2.2) {}; \draw[arrow_rep] (d7c) to[bend left=15] (C7);
 
-    % Bas-Droite
-    \node[prototype] (C8) at (10.5, 2.0) {};
-    \node[input_dot] (d8a) at (9.5, 3.0) {}; \draw[arrow_rep] (d8a) to[bend right=10] (C8);
-    \node[input_dot] (d8b) at (11.5, 2.8) {}; \draw[arrow_rep] (d8b) to[bend left=10] (C8);
-    \node[input_dot] (d8c) at (9.0, 1.2) {}; \draw[arrow_rep] (d8c) to[bend left=5] (C8);
-    \node[input_dot] (d8d) at (11.2, 1.0) {}; \draw[arrow_rep] (d8d) to[bend right=15] (C8);
+    % Région 8 (Bas-Droite) : Prototype à (10, 1)
+    \node[prototype] (C8) at (10, 1) {};
+    \node[input_dot] (d8a) at (9.2, 1.8) {}; \draw[arrow_rep] (d8a) to[bend right=10] (C8);
+    \node[input_dot] (d8b) at (11.0, 1.8) {}; \draw[arrow_rep] (d8b) to[bend left=10] (C8);
+    \node[input_dot] (d8c) at (9.5, 0.4) {}; \draw[arrow_rep] (d8c) to[bend left=5] (C8);
+    \node[input_dot] (d8d) at (11.2, 0.4) {}; \draw[arrow_rep] (d8d) to[bend right=15] (C8);
 
     % Légende
     \begin{scope}[yshift=-1.8cm, xshift=1.5cm]
-        \draw[arrow_rep] (0, 0) -- (1.5, 0) node[right, text=MapPurple, font=\large] {"représente"};
-        \draw[region_line] (0, -0.8) -- (1.5, -0.8) node[right, text=MapPurple, font=\large] {région de la VQ};
-        \node[input_dot, fill=InputRed] at (0.75, -1.6) {}; 
-        \node[right, text=InputRed, font=\large] at (1.5, -1.6) {donnée d'entrée};
+        \draw[arrow_rep] (0, 0) -- (1.5, 0) node[right, text=MapPurple, font=\large] {"Représente"};
+        \draw[region_line] (0, -0.8) -- (1.5, -0.8) node[right, text=MapPurple, font=\large] {Frontière de Voronoï};
+        \node[prototype] (legend_p) at (0.75, -1.6) {};
+        \node[right, text=MapPurple, font=\large] at (1.5, -1.6) {Prototype};
+        \node[input_dot] at (0.75, -2.2) {};
+        \node[right, text=InputRed, font=\large] at (1.5, -2.2) {Donnée d'entrée};
     \end{scope}
 
 \end{tikzpicture}
-\caption{Illustration d'une quantification vectorielle sans contrainte (k-means) : les prototypes (cercles violets) représentent des régions,
-et les données d'entrée (cercles rouges) sont associées à leur prototype le plus proche. Les lignes pointillées indiquent les frontières de ces régions.}
+\caption{Illustration schématique d'une quantification vectorielle sans contrainte (k-means) vue comme un diagramme de Voronoi : chaque prototype délimite une cellule, et chaque donnée d'entrée est associée au prototype le plus proche. Les frontières et les positions des points sont représentées à titre indicatif.}
 \label{fig:vq_kmeans}
 \end{figure}
 
@@ -611,9 +612,9 @@ pratique appelée \textbf{batch SOM} \cite{SOM1990}.
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[scale=1.2, transform shape,
-    neuron/.style={circle, fill=MapPurple, minimum size=6pt, inner sep=0pt},
-    data/.style={circle, draw=InputRed, fill=InputRed, thick, minimum size=4pt, inner sep=0pt},
+\begin{tikzpicture}[transform shape,
+    prototype/.style={circle, fill=MapPurple, minimum size=6pt, inner sep=0pt},
+    data/.style={circle, draw=InputRed, thick, minimum size=4pt, inner sep=0pt},
     som_link/.style={MapPurple, thick},
     region/.style={MapPurple, thick, densely dotted},
     represent/.style={->, >=stealth, MapPurple, thick, densely dotted, shorten >=2pt, shorten <=2pt}
@@ -622,109 +623,124 @@ pratique appelée \textbf{batch SOM} \cite{SOM1990}.
     % Titre
     \node[font=\Large] at (4.5, 8.2) {\textbf{VQ avec contrainte topologique (SOM)}};
 
-    % noeuds de la carte SOM
-    \node[neuron] (N1) at (1, 6) {};
-    \node[neuron] (N2) at (4, 6.2) {};
-    \node[neuron] (N3) at (8, 5.8) {};
-    \node[neuron] (N4) at (1.5, 3) {};
-    \node[neuron] (N5) at (3.5, 4.5) {};
-    \node[neuron] (N6) at (6, 4.3) {};
-    \node[neuron] (N7) at (7.5, 2.5) {};
-    \node[neuron] (N8) at (4.5, 2.8) {};
-    \node[neuron] (N9) at (3.2, 1.8) {};
+    % Nœuds de la carte SOM (Coordonnées mathématiquement ajustées)
+    % Ligne du haut
+    \node[prototype] (p1) at (2.0, 6.5) {};
+    \node[prototype] (p2) at (4.5, 6.0) {};
+    \node[prototype] (p3) at (7.0, 6.5) {};
+    % Ligne du milieu
+    \node[prototype] (p4) at (1.5, 4.0) {};
+    \node[prototype] (p5) at (4.5, 4.0) {};
+    \node[prototype] (p6) at (7.5, 4.0) {};
+    % Ligne du bas
+    \node[prototype] (p9) at (2.0, 1.5) {}; % Bas-gauche
+    \node[prototype] (p8) at (4.5, 2.0) {}; % Bas-milieu
+    \node[prototype] (p7) at (7.0, 1.5) {}; % Bas-droite
 
-    %  carte SOM (liens entre les noeuds)
-    \draw[som_link] (N1) -- (N2) -- (N3);
-    \draw[som_link] (N1) -- (N4) -- (N5) -- (N2);
-    \draw[som_link] (N5) -- (N6) -- (N3);
-    \draw[som_link] (N4) -- (N9) -- (N8) -- (N5);
-    \draw[som_link] (N8) -- (N6) -- (N7) -- (N8);
-    \draw[som_link] (N3) -- (N7);
+    % Carte SOM (liens topologiques stricts : grille 3x3)
+    % Connexions horizontales
+    \draw[som_link] (p1) -- (p2) -- (p3);
+    \draw[som_link] (p4) -- (p5) -- (p6);
+    \draw[som_link] (p9) -- (p8) -- (p7);
+    % Connexions verticales
+    \draw[som_link] (p1) -- (p4) -- (p9);
+    \draw[som_link] (p2) -- (p5) -- (p8);
+    \draw[som_link] (p3) -- (p6) -- (p7);
 
-    % Limites des cellules
-    \draw[region] (2.5, 7) -- (2.5, 4.5) -- (0, 4.2);
-    \draw[region] (2.5, 4.5) -- (4, 3.5) -- (3, 1);
-    \draw[region] (5, 7) -- (4.5, 5.5) -- (6.5, 4.8) -- (8.5, 4.6);
-    \draw[region] (4.5, 5.5) -- (2.5, 4.5);
-    \draw[region] (6.5, 4.8) -- (5.5, 2) -- (8, 1);
-    \draw[region] (4, 3.5) -- (5.5, 2) -- (4.5, 0.5);
-    \draw[region] (2.5, 4.5) -- (1.5, 2) -- (0, 1.5);
-    \draw[region] (1.5, 2) -- (3, 1) -- (3, 0.5);
+    % Limites des cellules de Voronoï (Calculées par les médiatrices)
+    % Segments internes
+    \draw[region] (3, 5) -- (6, 5); % p2 vs p5
+    \draw[region] (3, 3) -- (6, 3); % p8 vs p5
+    \draw[region] (3, 5) -- (3, 3); % p4 vs p5
+    \draw[region] (6, 5) -- (6, 3); % p6 vs p5
+    % Segments vers le haut
+    \draw[region] (3, 5) -- (3.5, 7.5);
+    \draw[region] (6, 5) -- (5.5, 7.5);
+    % Segments vers la gauche
+    \draw[region] (3, 5) -- (0, 5.6);
+    \draw[region] (3, 3) -- (0, 2.4);
+    % Segments vers la droite
+    \draw[region] (6, 5) -- (9, 5.6);
+    \draw[region] (6, 3) -- (9, 2.4);
+    % Segments vers le bas
+    \draw[region] (3, 3) -- (3.5, 0.5);
+    \draw[region] (6, 3) -- (5.5, 0.5);
 
+    % Données d'entrée et attributions au BMU
+    % Autour de p1
+    \node[data] (d1) at (1.0, 7.0) {}; \draw[represent] (d1) to[bend left=10] (p1);
+    \node[data] (d2) at (2.5, 7.2) {}; \draw[represent] (d2) to[bend right=10] (p1);
+    \node[data] (d3) at (0.8, 6.0) {}; \draw[represent] (d3) to[bend right=10] (p1);
+    \node[data] (d4) at (2.2, 5.5) {}; \draw[represent] (d4) to[bend left=10] (p1);
 
-    % Autour de N1
-    \node[data] (d1) at (0.5, 6.8) {}; \draw[represent] (d1) to[bend right=10] (N1);
-    \node[data] (d2) at (1.2, 6.8) {}; \draw[represent] (d2) to[bend left=10] (N1);
-    \node[data] (d3) at (0.2, 5.8) {}; \draw[represent] (d3) to[bend right=10] (N1);
-    \node[data] (d4) at (1.5, 5.2) {}; \draw[represent] (d4) to[bend right=10] (N1);
-
-    % Autour de N2
-    \node[data] (d5) at (3, 6.5) {};   \draw[represent] (d5) to[bend left=10] (N2);
-    \node[data] (d6) at (3.5, 6.8) {}; \draw[represent] (d6) to[bend left=10] (N2);
-    \node[data] (d7) at (4.8, 6.6) {}; \draw[represent] (d7) to[bend left=10] (N2);
+    % Autour de p2
+    \node[data] (d5) at (3.8, 7.0) {}; \draw[represent] (d5) to[bend right=10] (p2);
+    \node[data] (d6) at (4.8, 6.8) {}; \draw[represent] (d6) to[bend left=10] (p2);
+    \node[data] (d7) at (5.2, 5.5) {}; \draw[represent] (d7) to[bend left=10] (p2);
     
-    % Autour de N3
-    \node[data] (d8) at (7.5, 6.5) {}; \draw[represent] (d8) to[bend right=10] (N3);
-    \node[data] (d9) at (8.5, 6.2) {}; \draw[represent] (d9) to[bend left=10] (N3);
-    \node[data] (d10) at (8.8, 5.5) {}; \draw[represent] (d10) to[bend left=10] (N3);
+    % Autour de p3
+    \node[data] (d8) at (6.5, 7.2) {}; \draw[represent] (d8) to[bend right=10] (p3);
+    \node[data] (d9) at (8.0, 7.0) {}; \draw[represent] (d9) to[bend left=10] (p3);
+    \node[data] (d10) at (8.2, 5.8) {}; \draw[represent] (d10) to[bend left=10] (p3);
 
-    % Autour de N4
-    \node[data] (d11) at (0.5, 3.5) {}; \draw[represent] (d11) to[bend right=10] (N4);
-    \node[data] (d12) at (0.8, 2.5) {}; \draw[represent] (d12) to[bend right=10] (N4);
-    \node[data] (d13) at (2.2, 3.5) {}; \draw[represent] (d13) to[bend left=10] (N4);
+    % Autour de p4
+    \node[data] (d11) at (0.5, 4.5) {}; \draw[represent] (d11) to[bend right=10] (p4);
+    \node[data] (d12) at (0.8, 3.2) {}; \draw[represent] (d12) to[bend right=10] (p4);
+    \node[data] (d13) at (2.2, 3.5) {}; \draw[represent] (d13) to[bend left=10] (p4);
 
-    % Autour de N5
-    \node[data] (d14) at (2.8, 5) {};   \draw[represent] (d14) to[bend right=10] (N5);
-    \node[data] (d15) at (4, 5.2) {};   \draw[represent] (d15) to[bend left=10] (N5);
-    \node[data] (d16) at (3.2, 3.8) {}; \draw[represent] (d16) to[bend left=10] (N5);
+    % Autour de p5
+    \node[data] (d14) at (3.5, 4.5) {}; \draw[represent] (d14) to[bend right=10] (p5);
+    \node[data] (d15) at (5.2, 4.5) {}; \draw[represent] (d15) to[bend left=10] (p5);
+    \node[data] (d16) at (4.0, 3.5) {}; \draw[represent] (d16) to[bend left=10] (p5);
 
-    % Autour de N6
-    \node[data] (d17) at (5.5, 5) {};   \draw[represent] (d17) to[bend right=10] (N6);
-    \node[data] (d18) at (6.8, 4.5) {}; \draw[represent] (d18) to[bend left=10] (N6);
-    \node[data] (d19) at (5.5, 3.8) {}; \draw[represent] (d19) to[bend right=10] (N6);
+    % Autour de p6
+    \node[data] (d17) at (6.8, 4.6) {}; \draw[represent] (d17) to[bend right=10] (p6);
+    \node[data] (d18) at (8.5, 4.5) {}; \draw[represent] (d18) to[bend left=10] (p6);
+    \node[data] (d19) at (7.0, 3.4) {}; \draw[represent] (d19) to[bend right=10] (p6);
 
-    % Autour de N7
-    \node[data] (d20) at (7, 3) {};     \draw[represent] (d20) to[bend right=10] (N7);
-    \node[data] (d21) at (8.2, 3.2) {}; \draw[represent] (d21) to[bend left=10] (N7);
-    \node[data] (d22) at (8.5, 2.2) {}; \draw[represent] (d22) to[bend left=10] (N7);
-    \node[data] (d23) at (7.8, 1.8) {}; \draw[represent] (d23) to[bend left=10] (N7);
+    % Autour de p7 (Bas-Droite)
+    \node[data] (d20) at (6.5, 2.4) {}; \draw[represent] (d20) to[bend right=10] (p7);
+    \node[data] (d21) at (8.0, 2.0) {}; \draw[represent] (d21) to[bend left=10] (p7);
+    \node[data] (d22) at (7.5, 0.8) {}; \draw[represent] (d22) to[bend left=10] (p7);
+    \node[data] (d23) at (6.2, 1.0) {}; \draw[represent] (d23) to[bend right=10] (p7);
 
-    % Autour de N8
-    \node[data] (d24) at (4.5, 3.5) {}; \draw[represent] (d24) to[bend right=10] (N8);
-    \node[data] (d25) at (5, 2) {};     \draw[represent] (d25) to[bend left=10] (N8);
-    \node[data] (d26) at (4, 2) {};     \draw[represent] (d26) to[bend left=10] (N8);
+    % Autour de p8 (Bas-Milieu)
+    \node[data] (d24) at (3.8, 2.5) {}; \draw[represent] (d24) to[bend right=10] (p8);
+    \node[data] (d25) at (5.2, 2.2) {}; \draw[represent] (d25) to[bend left=10] (p8);
+    \node[data] (d26) at (4.5, 1.0) {}; \draw[represent] (d26) to[bend left=10] (p8);
 
-    % Autour de N9
-    \node[data] (d27) at (2.5, 2.2) {}; \draw[represent] (d27) to[bend right=10] (N9);
-    \node[data] (d28) at (2.8, 1.2) {}; \draw[represent] (d28) to[bend right=10] (N9);
-    \node[data] (d29) at (3.8, 1.5) {}; \draw[represent] (d29) to[bend left=10] (N9);
-
+    % Autour de p9 (Bas-Gauche)
+    \node[data] (d27) at (1.0, 2.2) {}; \draw[represent] (d27) to[bend right=10] (p9);
+    \node[data] (d28) at (1.5, 0.8) {}; \draw[represent] (d28) to[bend right=10] (p9);
+    \node[data] (d29) at (2.5, 1.0) {}; \draw[represent] (d29) to[bend left=10] (p9);
 
     % --- Boîte globale (Cadre) ---
     \draw[MapPurple, thick] (0, 0.5) rectangle (9, 7.5);
 
-
     % --- Légende ---
     \begin{scope}[shift={(1.5, -1)}]
         \draw[represent] (0, 0) -- (1, 0);
-        \node[right, text=MapPurple, font=\large] at (1.2, 0) {"Représente};
+        \node[right, text=MapPurple, font=\large] at (1.2, 0) {"Représente"};
 
         \draw[som_link] (0, -0.6) -- (1, -0.6);
-        \node[neuron] at (0, -0.6) {};
-        \node[neuron] at (1, -0.6) {};
+        \node[prototype] at (0, -0.6) {};
+        \node[prototype] at (1, -0.6) {};
         \node[right, text=MapPurple, font=\large] at (1.2, -0.6) {Carte SOM};
 
         \draw[region] (0, -1.2) -- (1, -1.2);
-        \node[right, text=MapPurple, font=\large] at (1.2, -1.2) {Région de la VQ};
+        \node[right, text=MapPurple, font=\large] at (1.2, -1.2) {Région de Voronoï};
 
-        \node[data] at (0.5, -1.8) {};
-        \node[right, text=InputRed, font=\large] at (1.2, -1.8) {Donnée d'entrée};
+        \node[prototype] (legend_p) at (0.5, -1.8) {};
+        \node[right, text=MapPurple, font=\large] at (1.2, -1.8) {Prototype};
+
+        \node[data] at (0.5, -2.4) {};
+        \node[right, text=InputRed, font=\large] at (1.2, -2.4) {Donnée d'entrée};
     \end{scope}
 
 \end{tikzpicture}
-\caption{Quantification Vectorielle (VQ) par SOM avec contrainte topologique. Les noeuds de la carte SOM (cercles bleus) représentent des prototypes, 
-et les données d'entrée (cercles rouges) sont associées à leur BMU. Les lignes pointillées indiquent les régions de quantification associées à chaque prototype, 
-tandis que les lignes continues représentent les connexions entre les noeuds de la grille SOM.}
+\caption{Quantification Vectorielle (VQ) par SOM avec contrainte topologique. Les nœuds de la carte SOM (cercles violets) représentent des prototypes, 
+et les données d'entrée (cercles rouges) sont associées à leur BMU. Les lignes pointillées indiquent les frontières de Voronoï entre les prototypes, 
+tandis que les lignes continues représentent les connexions entre les nœuds de la grille SOM.}
 \label{fig:vq_som}
 \end{figure}
 
@@ -756,7 +772,7 @@ $$ \sum_{t=1}^{T} h_{cj}(t)x - w_j^*\sum_{t=1}^{T} h_{cj}(t)  = 0 \Leftrightarro
 $$ w_j^* = \frac{\sum_{t=1}^{T} h_{cj}(t)x}{\sum_{t=1}^{T} h_{cj}(t)} $$
 
 
-L'expression actuelle peut être écrite en regroupant leur $BMU$. Soit $C_k$ l'ensemble des données dont le BMU est $w_k$, $n_k$ le nombre de points dans ce groupe, 
+L'expression actuelle peut être écrite en regroupant leur $BMU$. Soit $B_k$ l'ensemble des données dont le BMU est $w_k$, $n_k$ le nombre de points dans ce groupe, 
 et $x_{w,k}$ la moyenne de ces points. Alors, la mise à jour peut s'écrire \cite{Kohonen2012SOM} :
 $$w_j^* = \frac{\sum_{k} h_{kj} \, n_k \, x_{w,k}}{\sum_{k} h_{kj} \, n_k}$$
 
@@ -894,7 +910,7 @@ Schématiquement, la figure \ref{fig:batch_som} illustre la mise à jour des noe
 \end{figure}
 
 L'algorithme suit l'idée présentée dans la figure \ref{fig:batch_som}. Nous avons une notions de regroupement de données pour chaque noeud.
-L'implémentation est faite à l'aide d'un dictionnaire qui associe au noeud $w_j$ l'ensemble $C_{j} =\{x \in \mathbb{R}^d : BMU(x) = w_j\}$.
+L'implémentation est faite à l'aide d'un dictionnaire qui associe au noeud $w_j$ l'ensemble $B_{j} =\{x \in \mathbb{R}^d : BMU(x) = w_j\}$.
 L'algorithme d'apprentissage du batch SOM est présenté dans l'algorithme \ref{alg:SOM_batch}, où la fonction de voisinage est définie par :
 $$h_{ji}(t) = \exp\left(-\frac{\|p_j - p_i\|^2}{2\sigma(t)^2}\right)$$
 
@@ -914,8 +930,8 @@ $$h_{ji}(t) = \exp\left(-\frac{\|p_j - p_i\|^2}{2\sigma(t)^2}\right)$$
             \State nodes[$c(x_i)$].append($x_i$) \Comment{Ajout de $x_i$ à la liste de $w_{c(x_i)}$}
         \EndFor
         \For{chaque noeud $j$}
-            \State $x_{w,j} = mean(nodes[j])$ \Comment{Moyenne des données dans $C_j$}
-            \State $n_j = len(nodes[j])$ \Comment{Nombre de données dans $C_j$}
+            \State $x_{w,j} = mean(nodes[j])$ \Comment{Moyenne des données dans $B_j$}
+            \State $n_j = len(nodes[j])$ \Comment{Nombre de données dans $B_j$}
         \EndFor
         \For{chaque noeud $i$}
             \State calculer $h_{ji}(t)$ pour tout $j$
@@ -946,7 +962,7 @@ Dans le cas de la quantification vectorielle, la méthode k-means a tendance à 
 tandis que les SOM doivent également satisfaire une contrainte d'organisation topologique. Cela limite la capacité de répresentation des structures de données complexes, 
 en particulier lorsque nous avons un nombre plus élevé de clusters \cite{Limitations_SOM}.
 
-Concernant la reduction de dimension, les technique traditionnellles ont tendance à mieux préserver les distances entre les points de données, tandis que les SOM peuvent introduire des distorsions dans la représentation 
+Concernant la reduction de dimension, les techniques traditionnellles ont tendance à mieux préserver les distances entre les points de données, tandis que les SOM peuvent introduire des distorsions dans la représentation 
 des distances à cause de leur structure en grille et de la manière dont ils mettent à jour les poids. Cela s'accentue particulièrement avec l'augmentation de dimensionnalité des données d'entrée.
 
 \subsection{Quantification vectorielle et reduction de dimension}
@@ -958,9 +974,9 @@ Cette structure permet de projeter les données sur une carte de prototypes, où
 Donc, pour les SOM, le codebook est organisé sur une grille régulière cela induit une contrainte sur la manière dont les poids sont mis à jour. 
 Il est également important de savoir que lorsque la fonction de voisinage $h_{ci} \rightarrow 0$, l'algorithme SOM se comportent de manière similaire au k-means, car seul le BMU est mis à jour\cite{Kohonen2012SOM}. 
 
-Un reduction de dimension, pour être plus précis, est une transformation $\Phi: \mathbb{R}^n \rightarrow \mathbb{R}^m$ qui préserve les similarités ou distances dans l'espace de départ 
-lors de la projection dans $\mathbb{R}^m$. Il existe plusieurs techniques de reduction de dimension, chacune avec ses propres avantages et inconvénients. 
-Par exemple, le Sammon mapping, le Umap, tsne ou encore les cartes auto-organisées. Le sammon mapping, en pariculier, permet la reduction de dimension en minimisant la fonction de coût 
+Un reduction de dimension, pour être plus précis, est une transformation $\Phi: \mathbb{R}^D \rightarrow \mathbb{R}^d$ qui préserve les similarités ou distances dans l'espace de départ 
+lors de la projection dans $\mathbb{R}^d$. Il existe plusieurs techniques de reduction de dimension, chacune avec ses propres avantages et inconvénients. 
+Par exemple, le Sammon mapping, le Umap, tsne ou encore les cartes auto-organisées. Le sammon mapping, en particulier, permet la reduction de dimension en minimisant la fonction de coût 
 qui pondère les différences de distances entre les points de données et leurs projections. Cela est optimisé par la méthode de la decente de gradient \cite{Limitations_SOM}.
 Soit $d_{ij}$ la distance entre les points $x_i$ et $x_j$ dans l'espace d'origine, et $\hat{d}_{ij}$ la distance entre leurs projections $\Phi(x_i)$ et $\Phi(x_j)$ dans l'espace réduit. 
 La fonction de coût s'écrit :
@@ -977,7 +993,7 @@ Les performances de cette approche sont comparées à celles des SOM pour diffé
 \centering
 \begin{tabular}{lccccc}
 \toprule
-algorithm & no. clusters & dimension & msqe & Rand & corr. \\
+algorithm & no. clusters & dimension & msqe $\uparrow$ & Rand $\downarrow$ & corr.$\uparrow$ \\
 \midrule
 
 \multirow{6}{*}{SOM}
@@ -1048,7 +1064,7 @@ Nous allons présenter les extensions suivantes : K-SOM, flow-SOM, hybride SOM (
 Cette extension, présentée dans \cite{sto_K_SOM} propose une approche pour d'accélération d'une autre extension nommée Kernel self-organizing maps (KSOM).
 K-SOM est une extension des SOM qui utilise des fonctions de noyau pour permettre la modélisation de relations non linéaires entre les données d'entrée et les prototypes du SOM.
 Cependant, l'apprentissage d'un K-SOM peut être plus coûteux en termes de temps de calcul que celui d'un SOM classique, en particulier pour les grands ensembles de données.
-Pour avoir une convergeance correcte, l'algorithme d'apprentissage aura besoin de $\beta n$ itérations, où $\beta$ est un facteur de proportionnalité pour le nombre d'itérations qui dépend 
+Pour avoir une convergence correcte, l'algorithme d'apprentissage aura besoin de $\beta n$ itérations, où $\beta$ est un facteur de proportionnalité pour le nombre d'itérations qui dépend 
 de la complexité du modèle et de la nature des données d'entrée. Cela nous donne une complexité de $O(\beta n^3 \cdot m)$ \cite{sto_K_SOM}, ce qui peut être prohibitif pour les grands ensembles de données.
 
 L'approche proposée dans \cite{sto_K_SOM} consiste à faire un une reformulation des calculs effectués lors des étapes d'affectation et de mise à jour.
@@ -1080,7 +1096,7 @@ ordres de grandeur pour les jeux de données ``polblogs'' et ``cowrie''. Cependa
 Cela peut être dû au fait aux manipulations de la matrice des similarités que le K-SOM doit effectuer et qui peuvent être plus coûteuses.
 L'approche accélérée est particulièrement efficace pour les données non numériques, tandis que pour les données numériques, le SOM classique reste plus rapide. 
 
-Ainsi, cette extension est un avencement pour les SOM dans le cadre de données non vectorielles ou complexes, 
+Ainsi, cette extension est un avancement pour les SOM dans le cadre de données non vectorielles ou complexes, 
 pour lesquelles l'approches classique n'est pas applicables.
 
 \subsection{FlowSOM}
@@ -1101,7 +1117,7 @@ L'algorithme de flowSOM peut être résumé comme suit \cite{FlowSOM}:
 \end{itemize}
 
 L'étape de meta-clustering repose sur une sur-segmentation initiale des données via le SOM, où un nombre élevé de prototypes est utilisé pour ainsi capturer des plus petites structures dans les données, 
-puis regrouper en un nombre réduit de clusters plus interprétables. Dans \cite{FlowSOM} pour avoir le nombre de clusters final, ils utilisent la méthode de l'élbow 
+puis regrouper en un nombre réduit de clusters plus interprétables. Dans \cite{FlowSOM} pour avoir le nombre de clusters final, ils utilisent la méthode de l'elbow 
 pour déterminer le nombre optimal de clusters à partir du MST. Elle consiste à detecter le point où la variation de la distance entre les clusters devient moins significative, 
 cela correspond à un point d'inflexion dans la courbe de la distance entre les clusters en fonction du nombre de clusters.
 
@@ -1120,7 +1136,7 @@ Nous allons présenter deux type de SOM hybrides : SOM-CNN et SOM-MLP. Il en exi
 Cette extension combine les capacités de représentation des réseaux de neurones convolutionnels (CNN) avec les propriétés de structuration topologique des SOM.
 Selon les approches, les caractéristiques extraites par le CNN peuvent être utilisées comme entrée d'un SOM pour effectuer un clustering, ou inversement, 
 les sorties d'un SOM peuvent servir d'entrée à un CNN pour des tâches supervisées.
-Ce type de réseau, employer notament dans l'analyse d'images, utilise l'opération de convolution pour extraire des caractéristiques à partir des données d'entrée, ce qui est particulièrement 
+Ce type de réseau, employé notament dans l'analyse d'images, utilise l'opération de convolution pour extraire des caractéristiques à partir des données d'entrée, ce qui est particulièrement 
 efficace pour les données structurées en grille, comme les images.
 
 Opération de convolution est définie de manière \textbf{discrète} comme suit:
@@ -1133,7 +1149,7 @@ Comme pour FlowSOM, cette approche ne propose pas une nouvelle variante de SOM, 
 Le SOM est utilisé pour effectuer un clustering des données et produire une représentation structurée, qui est ensuite exploitée par un modèle supervisé 
 tel qu'un CNN, afin d'améliorer les performances de prédiction.
 
-Dans le document \cite{CNN_SOM}, ce type d'approche est testée pour savoir si la présicion de detection de la resistance phénotypique des vecteurs de malaria est améliorée. 
+Dans le document \cite{CNN_SOM}, ce type d'approche est testée pour savoir si la précision de detection de la resistance phénotypique des vecteurs de malaria est améliorée. 
 Les résultats expérimentaux montrent une amélioration des performances en termes de précision de classification par rapport à un CNN seul, 
 suggérant que l'intégration du SOM permet de mieux capturer la structure des données.
 
@@ -1315,7 +1331,7 @@ L'architecture du DESOM est illustrée à la figure \ref{fig:desom_architecture_
 \node[below=0.1cm of Latent, font=\bfseries] {$\mathbf{z}$};
 
 % Décodeur W_d
-\node[decoderblock] (Decoder) at (5.8,1.5) {\rotatebox{-90}{\begin{tabular}{c} decoder \\ $\mathbf{W}_d$ \end{tabular}}};
+\node[decoderblock] (Decoder) at (5.8,1.5) {\rotatebox{-90}{\begin{tabular}{c} decoder \\ $\mathbf{W}_{de}$ \end{tabular}}};
 
 % Reconstruction 
 \node[vectorblock] (Output) at (7.8,1.5) {\rotatebox{90}{reconstruction}};
@@ -1342,8 +1358,8 @@ L'architecture du DESOM est illustrée à la figure \ref{fig:desom_architecture_
 
 \end{tikzpicture}
 \caption{Architecture du DESOM inspirée du document \cite{DESOM}. Les flèches noires indiquent la propagation avant (forward pass). 
-L'encodeur $ \mathbf{W}_e $ apprend à encoder les données d'entrée $\mathbf{x}$ dans un espace latent $\mathbf{z}$, qui est ensuite utilisé par le décodeur $ \mathbf{W}_d $, 
-pour la reconstruction de $\mathbf{x}$ et par le SOM pour l'apprentissage de la structure topologique et du clustering.}
+L'encodeur $ W_e $ apprend à encoder les données d'entrée $x$ dans un espace latent $z$, qui est ensuite utilisé par le décodeur $ W_{de} $, 
+pour la reconstruction de $x$ et par le SOM pour l'apprentissage de la structure topologique et du clustering.}
 \label{fig:desom_architecture_forw}
 \end{figure}
 
@@ -1361,13 +1377,13 @@ la perte de reconstruction de l'AE, $ \mathcal{L}_{\text{R}} $, et la perte du S
 
 Pour un SOM classique, soit $\mathcal{L}_{\text{SOM}}^i$ la fonction de perte du SOM pour un échantillon d'entrée $x_i$, avec $w_{c(x_i)}$ comme noeud gagant (BMU),
 alors la fonction de perte du SOM pour cet échantillon est donnée par :
-$$ \mathcal{L}_{\text{SOM}}^i(x_i, \{w_j\}) = \sum_{j=1}^{M} h_{c(x_i) j} \| x_i - w_j \|^2 $$
+$$ \mathcal{L}_{\text{SOM}}^i(x_i, c(x_i), \{w_j\}) = \sum_{j=1}^{M} h_{c(x_i) j} \| x_i - w_j \|^2 $$
 
 Cette expression est donc la somme des distances au carré entre $x_i$ et les prototypes, où $c(x_i)$ est l'indice du BMU pour l'échantillon $x_i$, 
 $h_{c(x_i) j}$ est la fonction de voisinage entre $w_j$ et le BMU.
 
 Donc, la fonction de perte d'un SOM de manière générale est donnée par :
-$$ \mathcal{L}_{\text{SOM}} = \sum_{i=1}^{N} \mathcal{L}_{\text{SOM}}^i(x_i, c_i, \{w_j\}) \Leftrightarrow $$
+$$ \mathcal{L}_{\text{SOM}} = \sum_{i=1}^{N} \mathcal{L}_{\text{SOM}}^i(x_i, c(x_i), \{w_j\}) \Leftrightarrow $$
 $$ \mathcal{L}_{\text{SOM}} = \sum_{i=1}^{N} \sum_{j=1}^{M} h_{c(x_i) j} \| x_i - w_j \|^2 $$
 
 La seconde composante pour $ \mathcal{L}_{\text{DESOM}} $ est la fonction de perte de reconstruction $\mathcal{L}_{\text{R}}$ de l'auto-encodeur.
@@ -1387,7 +1403,7 @@ Il est important de noter que la fonction de perte du SOM, $\mathcal{L}_{\text{S
 Ces données d'entrée ne sont plus les données d'origine $x_i$, mais plutôt les représentations latentes $z_i \in \mathbb{R}^L$. Nous aurons donc pour un noeud $S_j$ 
 son vecteur de poids $w_j \in \mathbb{R}^L$.
 
-Le paramètre $\gamma$ est un hyperparamètre qui équilibre l'importance relative de la perte de reconstruction et de la perte du SOM lors de l'apprentissage conjoint du DESOM.
+Le paramètre $\gamma \in \mathbb{R}^+$, est un hyperparamètre qui équilibre l'importance relative de la perte de reconstruction et de la perte du SOM lors de l'apprentissage conjoint du DESOM.
 Une valeur élevée de $\gamma$ donne plus d'importance à l'organisation topologique et au clustering dans l'espace latent, 
 tandis qu'une valeur plus faible privilégie la qualité de reconstruction de l'autoencodeur. 
 
@@ -1409,7 +1425,7 @@ nous considérons $h_{c(x_i) j}$ comme des coefficients constants à chaque éta
 
 Cette contrainte, nous permet d'utiliser la rétropropagation et la descente de gradient pour mettre à jour les paramètres du modèle.
 
-Les gradients de perte globale s'ecrivent alors \cite{DESOM}:
+Les gradients de perte globale pour les poids $W_e$, $W_{de}$ et $w_j$ s'ecrivent alors \cite{DESOM}:
 \begin{align*}
 \frac{\partial \mathcal{L}_{\text{DESOM}}}{\partial W_e} &= \frac{\partial \mathcal{L}_{\text{R}}}{\partial W_e} + \gamma \frac{\partial \mathcal{L}_{\text{SOM}}}{\partial W_e} \\
 \frac{\partial \mathcal{L}_{\text{DESOM}}}{\partial W_{de}} &= \frac{\partial \mathcal{L}_{\text{R}}}{\partial W_{de}} \\
@@ -1600,55 +1616,755 @@ Cette contrainte encourage l'apprentissage d'un espace latent qui améliore la q
 % =========================
 
 \chapter{Etude empirique}
+Ce chapitre consistera à la comparaison expériemntale de trois modèles: un SOM implémenté depuis zéro, 
+une approche en deux étapes combinant un autoencodeur et un SOM (AE+SOM), ainsi que le DESOM. Les expériences sont réalisées sur deux jeux de données d'images, MNIST et Fashion-MNIST.
 
-Ce chapitre consistera à la comparaison des performances dans certains jeux de données entre un SOM implémenté depuis zéro, SOM d'une librairie 
-et un DESOM implémenté à l'aide de la librairie PyTorch \cite{PyTorch}.
-
+L'objectif de cette étude permettra d'analyser les avantages et les limites de chaque approche selon certains critères:
+la qualité de quantification, la préservation de la topologie, la qualité du regroupement obtenu et le comportement visuel des cartes générées. 
+Cette comparaison nous permettra aussi d'analyser les situations dans lesquelles le DESOM peut être benefique par rapport aux autres approches.
 
 \section{Données utilisées}
+Les expériences seront menées sur 2 jeux de données disponibles via la bibliothèque \texttt{torchvision} :
+\begin{itemize}
+    \item \textbf{MNIST} : MNIST est un ensemble de données d'images de chiffres manuscrits. La tailles de chaque image est de $28\times28$ pixels.
+    Nous avons normalisé les valeurs des pixels dans l'intervalle $[0,1]$, puis nous avons aplati chaque image en un vecteur de 784 composantes. 
+    \item \textbf{Fashion-MNIST} : Fashion-MNIST est un ensemble de données d'images de vêtements et accessoires. Celui-ci est similaire à MNIST en termes de taille et de format, 
+    mais il est plus complexe en raison de la diversité des classes de vêtements et d'une plus grande similarité visuelle entre certaines classes. 
+    Nous avons appliqué les mêmes prétraitements que pour MNIST, en normalisant les valeurs des pixels dans $[0,1]$ et en aplatissant les images en vecteurs de 784 composantes.
+\end{itemize}
 
-\section{SOM de base}
-
-\section{DESOM}
-
-\section{Comparaison et analyse des résultats}
+Pour des raisons de simplicité et de temps d'exécution, les expériences sont réalisées sur des sous-échantillons de ces jeux de données, 
+composés de 10'000 échantillons d'entraînement et 2'000 échantillons de test. Les mêmes sous-échantillons sont utilisés pour tous les modèles afin de garantir une comparaison équitable.
 
 
-pour MNIST:
-\begin{tabular}{lrrrrl}
+\section{Configuration expérimentale}
+Cette section présente la configuration expérimentale utilisée pour comparer les trois modèles étudiés. Pour une évaluation équitable, 
+certains hyperparamètres sont partagé entre les modèles: la taille de la grille, la distance utilisée, la fonction de décroissance du rayon de voisinage
+et la topologie de la grille. L'implémentation est réalisée en \textbf{Python}, notamment avec les bibliothèques \texttt{NumPy} pour le batch SOM et \texttt{PyTorch} pour l'autoencodeur et le DESOM.
+
+\subsection{Configuration des modèles et hyperparamètres}
+\subsubsection{Batch SOM}
+Nous avons décidé d'implémenter un SOM de type batch, car comme mentionné précédemment, il est généralement plus stable, plus rapide à converger que la version incrémentale
+et ne nécessite pas d'un taux d'apprentissage.
+
+Les prototypes du SOM sont initialisés de manière aléatoire à partir des données d'entrée et la fonction de calcul du rayon $\sigma(t)$
+est une autre version de la fonction de décroissance exponentielle présentée dans l'algorithme \ref{alg:SOM_batch}.
+
+$$ \sigma(t) = \sigma_{\text{initial}} \bigg(\frac{\sigma_{\text{final}}}{\sigma_{\text{initial}}}\bigg)^{\frac{t}{T}} $$
+
+où $t$ désigne l'itération courante et $T$ le nombre total d'itérations.
+
+Les hyperparamètres choisis pour le batch SOM sont les suivants :
+
+\begin{center}
+\begin{tabular}{ll}
 \toprule
-Modèle & QE & TE & Pureté & NMI & Grille \\
+Paramètre & Valeur \\
 \midrule
-SOM & 5.266000 & 0.436000 & 0.794000 & 0.529000 & 10x10 \\
-AE+SOM & 1.279000 & 0.499000 & 0.845000 & 0.556000 & 10x10 \\
-DESOM & 0.246000 & 0.518000 & 0.848000 & 0.554000 & 10x10 \\
+Taille de grille & $8 \times 8$ \\
+Nombre d'itérations & 250 \\
+Rayon initial & 8 \\
+Rayon final & 0.1 \\
+Initialisation des prototypes & aléatoire à partir des données \\
+Distance utilisée & euclidienne \\
+Topologie de la grille & rectangulaire \\
+Historique de l'erreur de quantification & oui \\
 \bottomrule
 \end{tabular}
+\end{center}
+
+L'historique de l'erreur de quantification est enregistré à chaque itération pour analyser la convergence du SOM.
+
+\subsubsection{AE+SOM}
+L'approche AE+SOM est une approche en deux étapes. Dans un premier temps, un auto-encodeur est entraîné pour 
+avoir une représentation latente des données d'entrée, puis un SOM est entraîné sur ces représentations latentes.
+
+Nous avons construit un auto-encodeur avec \texttt{PyTorch}. 
+L'encodeur est composé d'une couche d'entrée de dimension $784$, de trois couches cachées de taille respectivement 
+$(128, 64, 128)$, avec fonction d'activation ReLU, et d'une couche latente de dimension $10$.
+Le décodeur est symétrique à l'encodeur, avec des tailles de couches inversées et reconstruit les données d'entrée à partir de la représentation latente.
+La fonction de perte utilisée pour entraîner l'autoencodeur est l'erreur quadratique moyenne, et l'optimisation est effectuée avec Adam.
+
+Après l'entraînement de l'auto-encodeur, le SOM est entraîné sur les représentations latentes produites par l'encodeur,
+en utilisant les mêmes hyperparamètres que pour le batch SOM.
 
 
-Pour Fashion-MNIST:
-\begin{tabular}{lrrrrl}
+Les hyperparamètres choisis pour l'AE+SOM sont les suivants :
+
+\begin{center}
+\begin{tabular}{ll}
 \toprule
-Modèle & QE & TE & Pureté & NMI & Grille \\
+Paramètre & Valeur \\
 \midrule
-SOM & 4.387000 & 0.450000 & 0.741000 & 0.495000 & 10x10 \\
-AE+SOM & 0.859000 & 0.537000 & 0.740000 & 0.496000 & 10x10 \\
-DESOM & 0.178000 & 0.483000 & 0.732000 & 0.491000 & 10x10 \\
+Dimension d'entrée & 784 \\
+Dimension latente & 10 \\
+Taille de grille & $8 \times 8$ \\
+Nombre d'itérations pour le SOM et l'auto-encodeur & 250 \\
+Taille du batch & 32 \\
+Taux d'apprentissage & 0.001 \\
+Rayon initial & 8 \\
+Rayon final & 0.1 \\
+Initialisation des prototypes & aléatoire \\
+Distance utilisée & euclidienne \\
+Topologie de la grille & rectangulaire \\
+Historique de l'erreur de quantification & oui \\
 \bottomrule
 \end{tabular}
+\end{center}
+
+Cette approche nous permet d'évaluer l'effet d'une réduction de dimension sans influence de la fonction de perte du SOM.
+
+\subsubsection{DESOM}
+Contrairement à l'approche AE+SOM, dans le DESOM, les deux composantes sont entraînées conjointement. Le SOM est donc intégré directement dans la fonction de perte du modèle.
+
+Nous avons utilisé la même architecture d'auto-encodeur que pour l'approche AE+SOM, avec les mêmes tailles de couches et fonctions d'activation.
+Cependant, le SOM utilisé a été implémenté avec \texttt{pytorch}, ce qui permet d'intégrer le SOM dans le processus d'apprentissage conjoint du DESOM.
+Cela permet d'optimiser simultanément les poids de l'auto-encodeur et les prototypes du SOM par rétropropagation. Pour l'apprentissage du DESOM,
+l'algorithme \ref{alg:DESOM_alg} est suivi, avec les mises à jour des poids effectuées à l'aide de la descente de gradient stochastique par mini-batch.
+
+\begin{center}
+\begin{tabular}{ll} 
+\toprule
+Paramètre & Valeur \\
+\midrule
+Dimension d'entrée & 784 \\
+Dimension latente & 10 \\
+Taille de grille & $8 \times 8$ \\
+Nombre d'époques & 250 \\
+Taille du batch & 32 \\
+Rayon initial & 8 \\
+Rayon final & 0.1 \\
+Taux d'apprentissage & 0.001 \\
+$\gamma$ & 0.001 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Le DESOM utilise un taux d'apprentissage pour l'optimiseur Adam utilisé pour la mise à jour des poids de l'auto-encodeur et des prototypes du SOM, 
+la taille du batch est la taille du mini-batch utilisée pour la descente de gradient stochastique, le nombre d'époques correspond au nombre de passages complets 
+à travers l'ensemble de données d'entraînement. Le choix des hyperparamètres ont été fait
+en s'inspirant des valeurs utilisées dans l'article \cite{DESOM}.
+
+\subsubsection{Hyperparamètres communs}
+Les hyperparamètres communs aux trois modèles sont résumés dans le tableau suivant :
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Paramètre & Valeur \\
+\midrule
+Taille de grille principale & $8 \times 8$ \\
+Distance utilisée & euclidienne \\
+Topologie de la grille & rectangulaire \\
+Rayon initial & 8 \\
+Rayon final & 0.1 \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 
+\subsection{Métriques d'évaluation}
+Pour évaluer les performances des modèles, nous utiliserons les métriques suivantes :
+\begin{itemize}
+    \item \textbf{Erreur de quantification (QE)} : Cette métrique mesure la distance moyenne entre les données d'entrée et leurs prototypes correspondants dans le SOM. 
+    Un QE plus faible indique une meilleure quantification des données. Formellement, pour un échantillon d'entrée $x_i$ et son BMU avec le vecteur $w_{c(x_i)}$, le QE est défini comme :
+    $$ QE = \frac{1}{N} \sum_{i=1}^{N} \| x_i - w_{c(x_i)} \| $$
+    où $N$ est le nombre total d'échantillons d'entrée.
+
+    \item \textbf{Erreur de topologie (TE)} : Cette métrique mesure la préservation de la topologie dans le SOM. 
+    Un TE plus faible indique une meilleure préservation de la topologie. Le TE est défini comme la proportion d'échantillons d'entrée pour lesquels les deux prototypes les plus proches ne sont pas des voisins dans le codebook.
+    Formellement, pour un échantillon d'entrée $x_i$, soit $w_{c_1(x_i)}$ et $w_{c_2(x_i)}$ les deux prototypes les plus proches, alors :
+    $$ TE = \frac{1}{N} \sum_{i=1}^{N} \mathbb{I}(w_{c_1(x_i)}, w_{c_2(x_i)}) $$
+    où $\mathbb{I}$ est la fonction indicatrice qui vaut 1 si les prototypes ne sont pas des voisins dans le codebook et 0 sinon.
+
+    \item \textbf{Pureté} : Cela mesure la pureté des clusters formés par le SOM. Un score de pureté plus élevé indique que les clusters sont plus homogènes en termes de classes d'origine.
+    La pureté est définie comme suit : pour chaque cluster, on attribue la classe majoritaire parmi les échantillons qui y sont assignés, 
+    puis on calcule la proportion d'échantillons correctement classés. Formellement, soit $C_k$ le cluster $k$ et $L_j$ la classe $j$, alors :
+    $$ \text{Pureté} = \frac{1}{N} \sum_{k} \max_j |C_k \cap L_j| $$
+    où $N$ est le nombre total d'échantillons d'entrée.
+    \item \textbf{NMI (Normalized Mutual Information)} :C'est une mesure la similarité entre les clusters formés par le SOM et les classes d'origine. 
+    Un score de NMI plus élevé indique une meilleure correspondance entre les clusters et les classes d'origine. Le NMI est défini comme suit : 
+    soit $C$ l'ensemble des clusters et $L$ l'ensemble des classes d'origine, alors :
+    $$ NMI(C, L) = \frac{I(C; L)}{\sqrt{H(C) H(L)}} $$
+    où $I(C; L)$ est l'information mutuelle entre les clusters et les classes, et $H(C)$ et $H(L)$ sont les entropies des clusters et des classes respectivement.
+\end{itemize}
+
+\subsection{Visualisation utilisées}
+Pour compléter l'analyse, nous allons également examiner les cartes générées par les modèles.
+Il y a deux types de visualisations que nous allons utiliser :
+\begin{itemize}
+    \item \textbf{U-matrice}: Ce type de visualisation nous permet de voir les distances entres prototypes du SOM. 
+    Les Zones avec des distances plus élevées sont généralement les frontières entres les clusters.
+    \item \textbf{Hit map}: Cela montre le nombre d'échantillons d'entrée qui sont assignés à chaque prototype du SOM.
+    Cela permet d'observer la distribution des données d'entrée sur la carte et d'identifier les zones de forte densité.
+\end{itemize}
+
+\section{Analyse des résultats}
+
+\subsection{Résultats quantitatifs}
+Après avoir entraîné les trois modèles sur les deux jeux de données, nous avons calculé les métriques d'évaluation pour chaque modèle.
+Les valeurs en gras indiquent les meilleurs résultats pour chaque métrique.
+
+\subsubsection{MNIST}
+\begin{table}[H]
+\centering
+\caption{Résultats quantitatifs pour MNIST}
+\label{tab:results_mnist}
+\begin{tabular}{lrrrr}
+\toprule
+Modèle & QE & TE & Pureté & NMI \\
+\midrule
+SOM & 5.416 & \textbf{0.418} & 0.782 & 0.543  \\
+AE+SOM & 1.206 & 0.466 & 0.811 & 0.564  \\
+DESOM & \textbf{0.247} & 0.555 & \textbf{0.825} & \textbf{0.565} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Dans le tableau \ref{tab:results_mnist}, l'erreur de quantification (QE) est significativement plus faible pour le DESOM par rapport au SOM et l'approche AE+SOM.
+Ce résultat indique que le DESOM a des prototypes assez proches des représentations encodées des données.
+Ainsi, la faible QE du DESOM ne signifie pas nécessairement que ses prototypes sont plus proches des images originales, 
+mais plutôt que l'espace latent produit par l'auto-encodeur est mieux adapté pour la quantification par le SOM.
+
+En revanche, nous observons une erreur de topologie (TE) plus élevée pour le DESOM que les deux autres modèles.
+Cela suggère que l'amélioration de la quantification peut se faire au détriment de la préservation locale de la topologie de la carte.
+En effet, cela est cohérent avec l'apprentissage conjoint du DESOM : 
+l'encodeur est optimisé pour produire un espace latent favorable à la reconstruction et à la quantification par le SOM, 
+mais cette optimisation ne garantit pas nécessairement une meilleure organisation topologique de la carte.
+
+En ce qui concerne la pureté et le NMI, le DESOM obtient les meilleurs résultats.
+Cela suggère que l'espace latent produit par l'auto-encodeur du DESOM fournit une représentation plus adaptée pour le clustering que l'espace d'entrée d'origine.
+Cependant, la différence entre les trois modèles reste tout de même relativement faible pour les deux métriques.
+
+Ainsi, pour le jeu de données MNIST, 
+le DESOM se distingue par une erreur de quantification extrêmement basse et offre un meilleur compromis global pour ce jeu de données.
+
+\subsubsection{Fashion-MNIST}
+\begin{table}[H]
+\centering
+\caption{Résultats quantitatifs pour Fashion-MNIST}
+\label{tab:results_fashion_mnist}
+\begin{tabular}{lrrrr}
+\toprule
+Modèle & QE & TE & Pureté & NMI \\
+\midrule
+SOM & 4.531 & \textbf{0.398} & 0.712 & 0.503 \\
+AE+SOM & 0.887 & 0.406 & 0.722 & 0.510 \\
+DESOM & \textbf{0.177} & 0.509 & \textbf{0.738} & \textbf{0.516} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 
+Comme pour MNIST, le tableau \ref{tab:results_fashion_mnist} montre que l'erreur de quantification du DESOM est nettement plus faible que celle des deux autres modèles.
+Cela renforce l'idée que l'apprentissage conjoint du DESOM permet d'obtenir un espace latent très adapté pour la quantification par le SOM.
+
+De plus, comme obtenu sur MNIST, le DESOM obtient la plus grande erreur de topologie, ce qui appuie encore l'idée de compromis
+entre la quantification et la préservation de la topologie.
+DESOM obtient les meilleures performances en termes de pureté et de NMI même si la différence reste relativement faible.
+Donc pour Fashion-MNIST, l'apprentissage conjoint du DESOM permet d'améliorer la quantification dans l'espace latent en 
+échange d'une organisation topologique moins bonne.
+
+Ainsi, même si le DESOM offre une meilleure quantification, les avantages en termes de clustering ne sont pas aussi marqués que pour les autres métriques, mais
+de manière globale, le DESOM offre un meilleur compromis pour ce jeu de données.
+
+\subsection{Analyse visuelle des cartes}
+Nous allons maintenant examiner les cartes générées par les trois modèles pour les deux jeux de données.
+
+\subsubsection{U-matrices}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.32\textwidth]{images/u_matrix_som.png}
+\quad
+\includegraphics[width=0.32\textwidth]{images/u_matrix_ae_som.png}
+\quad
+\includegraphics[width=0.32\textwidth]{images/u_matrix_desom.png}
+\caption{U-matrix pour les trois modèles sur le jeu de données MNIST.}
+\label{fig:u_matrix_comparison_mnist}
+\end{figure}
+
+Dans la figure \ref{fig:u_matrix_comparison_mnist}, les trois U-matrices présentent des organisations différentes pour MNIST.
+
+Pour le SOM, nous pouvons observer une échelle de distance de $3.5$ à $5.5$. Cela indique des distances élevées entre les prototypes,
+notamment dans la partie supérieure à droite de la carte, cela montre des frontières plus marquées.
+L'approche AE+SOM semble présenter une échelle moins élevée que celui du SOM, avec des distances qui varient entre $2.4$ et $1.4$.
+
+Le DESOM montre, quant à lui, a les distances plus faibles, avec une échelle entre $0.3$ et $0.6$.
+Ces observations reste cohérentes avec les résultats quantitatifs obtenus précédement: le DESOM présente une erreur de quantification nettement 
+plus faible que les deux autres modèles. 
+Cela s'explique par la création de l'espace latent de dimension plus faible, les vecteurs de cet espace sont donc 
+plus proches les uns des autres que les vecteurs d'origine.
+
+Cependant, nous remarquons que les contrastes entre les zones sont moins distincts pour le DESOM que pour les SOM.
+La priorité donnée à la quantification dans le DESOM se fait au détriment d'une augmentation de l'erreur topologique.
+Donc, malgré que l'espace latent du DESOM soit favorable à la quantification, ce n'est pas nécessairement le cas pour 
+l'organisation topologique de la carte. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.32\textwidth]{images/u_matrix_som_fashion.png}
+\quad
+\includegraphics[width=0.32\textwidth]{images/u_matrix_ae_som_fashion.png}
+\quad
+\includegraphics[width=0.32\textwidth]{images/u_matrix_desom_fashion.png}
+\caption{U-matrix pour les trois modèles sur le jeu de données Fashion-MNIST.}
+\label{fig:u_matrix_comparison_fashion}
+\end{figure}
+
+Dans la figure \ref{fig:u_matrix_comparison_fashion}, les U-matrices pour Fashion-MNIST montre un
+comportement similaire à celle observée sur MNIST.
+
+Le SOM présente des zones de distances élevées, notament dans la partie supérieure à droite de la carte.
+Ces régions peuvent être interprétées comme des frontières entre régions de la carte.
+
+L'approche AE+SOM montre des distances plus faibles et une distinction de zones moins marquée que pour le SOM, ce qui indique une 
+organisation plus compacte.
+
+Pour le DESOM, l'échelle est encore plus basse, avec des distances qui varient entre $0.2$ et $0.5$.
+Cela semble indiquer que l'espace latent est très compact, ce qui force les prototypes à être plus proches des représentations latentes des données.
+Cette observation est cohérente avec les résultats quantitatifs,
+le DESOM présente une meilleure erreur de quantification, mais les régions sont moins bien réparties donc une moins bonne organisation topologique.
 
 
+\subsubsection{Hit maps}
+Les hit maps présentées dans les figures \ref{fig:hit_map_comparison_mnist} et \ref{fig:hit_map_comparison_fashion}
+permettent d'analyser la répartition des données sur les prototypes de chaque carte. Une activation élevée (prototypes surchargés) indique
+une grande quantité de données d'entrée assignées à ce prototype, tandis qu'une activation faible indique peu ou pas de données assignées à ce prototype.
+
+% Hit map
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.32\textwidth]{images/hit_map_som.png}
+\quad
+\includegraphics[width=0.32\textwidth]{images/hit_map_ae_som.png}
+\quad
+\includegraphics[width=0.32\textwidth]{images/hit_map_desom.png}
+\caption{Hit map pour les trois modèles sur le jeu de données MNIST.}
+\label{fig:hit_map_comparison_mnist}
+\end{figure}
+
+Pour MNIST, le trois modèles présentent une repartition relativement hétérogène des activations.
+Le SOM contient plusieurs prototypes très chargés et d'autres très peu utilisés, ce qui veut dire qu'il y a
+une importante concentration des données dans certaines régions de la carte.
+L'approche AE+SOM semble avoir aussi plusieurs prototypes faiblement utilisés voir vides,
+mais les activation fortes sont plus localisées. Cela peut s'interpréter que l'espace latent concentre les représentations latentes
+dans quelques prototypes, tandis que d'autres restent peu utilisés.
+Le DESOM montre aussi une répartition hétérogène : certaines zones sont fortement utilisées, notamment en bordure de carte, 
+tandis que plusieurs prototypes restent faiblement activés. 
+Cependant, la carte semble être mieux repartie que pour AE+SOM.
+Cela suggère que, sur MNIST, aucune des trois cartes n'utilise parfaitement l'ensemble des prototypes de manière uniforme.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.32\textwidth]{images/hit_map_som_fashion.png}
+\quad
+\includegraphics[width=0.32\textwidth]{images/hit_map_ae_som_fashion.png}
+\quad
+\includegraphics[width=0.32\textwidth]{images/hit_map_desom_fashion.png}
+\caption{Hit map pour les trois modèles sur le jeu de données Fashion-MNIST.}
+\label{fig:hit_map_comparison_fashion}
+\end{figure}
+
+Pour Fashion-MNIST, les carte semble globalement plus équilibrée que pour MNIST.
+Le SOM et AE+SOM ont encore quelque prototypes surchargés, mais les données sont mieux réparties sur la carte.
+Le DESOM semble présenter une meilleure répartition des données d'entrée sur la carte, avec moins de prototypes vides 
+et une répartition relativement homogène des activations.
+
+Ainsi, pour les deux jeux de données, l'observation des hit maps complète l'analyse de U-matrices et des métriques
+quantitatives en montrant comment les observations sont distribuées sur les cartes. 
+Elles indiquent que la qualité d'un modèle ne dépend pas seulement de la proximité entre prototypes et données, 
+mais aussi de l'utilisation effective des prototypes de la carte.
+Sur MNIST, la répartition reste assez hétérogène pour les trois modèles, 
+tandis que sur Fashion-MNIST, le DESOM semble produire une utilisation légèrement plus équilibrée de la carte.
+
+
+\subsubsection{Cartes colorées}
+%visualisation des cartes colorées
+Nous avons également produit des cartes colorées pour les trois modèles sur les deux jeux de données.
+Les vecteurs des prototypes sont de dimension 10 pour le AE+SOM et le DESOM et de dimension 784 pour le SOM.
+Afin de visualiser qualitativement les relations de similarité entre prototypes, nous avons projeté ces vecteurs en trois dimensions à l'aide d'une PCA, 
+puis converti les trois valeurs obtenues en couleurs RGB.
+Les figures \ref{fig:colored_maps_mnist} et \ref{fig:colored_maps_fashion} présentent les cartes colorées pour les trois modèles sur les deux jeux de données.
+
+Il convient toutefois de noter que cette représentation est avant tout qualitative.
+Les couleurs ne correspondent pas à des labels de classes, mais à une représentation visuelle de la position relative des prototypes après projection.
+Elle permet de visualiser la continuité relative entre prototypes voisins à l'intérieur d'une même carte.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.32\textwidth]{images/codebook_color_map_som.png}
+\quad
+\includegraphics[width=0.32\textwidth]{images/codebook_color_map_ae_som.png}
+\quad
+\includegraphics[width=0.32\textwidth]{images/codebook_color_map_desom.png}
+\caption{Visualisation des cartes colorées pour les trois modèles sur le jeu de données MNIST.}
+\label{fig:colored_maps_mnist}
+\end{figure}
+
+Les cartes dans la figure \ref{fig:colored_maps_mnist} montrent des structures différentes pour chaque modèle.
+La carte du SOM présente une transition plus progressive, cela est cohérent avec le résultat obtenu pour l'erreur de topologie
+qui indique une meilleure préservation de la topologie. Ses frontières entre groupe de prototypes sont moins visibles.
+Pour l'approche AE+SOM, les transition sont plus marquées, mais les fontières se distinguent mieux que pour le SOM.
+La transition de la carte du DESOM est la plus hétérogène, cela est cohérent avec les résultats
+de l'erreur de topologie.
+
+Cependant, les frontières de la carte du DESOM sont les plus marquées. Cela s'explique 
+comme dit précédement par le fait que le DESOM privilégie la quantification dans l'espace latent, 
+ce qui peut se faire au détriment de la préservation de la topologie. 
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.32\textwidth]{images/codebook_color_map_som_fashion.png}
+\quad
+\includegraphics[width=0.32\textwidth]{images/codebook_color_map_ae_som_fashion.png}
+\quad
+\includegraphics[width=0.32\textwidth]{images/codebook_color_map_desom_fashion.png}
+\caption{Visualisation des cartes colorées pour les trois modèles sur le jeu de données Fashion-MNIST.}
+\label{fig:colored_maps_fashion}
+\end{figure}
+
+Pour Fashion-MNIST, les trois cartes paraissent globalement plus régulières que sur MNIST.
+La carte du SOM présente des transitions relativement lisses, cela suggère une organisation progressive des prototypes
+sur la grille. Cette observation est cohérente avec son erreur topologique plus faible.
+Nous remarquons aussi une amélioration de la distiction des frontières.
+La carte de AE+SOM montre aussi une transitionassez régulière, avec des zones de couleurs proches regroupées localement.
+Les transition semblent être un peu plus marquées que pour le SOM, ce qui peut indiquer une organisation moins
+progressive que pour le SOM.
+Pour ce qui est de la carte du DESOM, nous avons aussi une structure globalement plus régulière, mais avec des 
+transitions plus abruptes entre prototypes voisins.
+Cette observation est cohérente avec les résultats quantitatifs obtenus pour ce jeu de données, 
+où le DESOM présente une erreur de topologie plus élevée que les deux autres modèles.
+
+Ainsi, les cartes colorées pour les deux jeux de données confirment qualitativement le 
+compromis observé dans les métriques: le DESOM privilégie l'apprentissage d'un espace latent 
+favorable à la quantification, en échange d'une organisation topologique moins régulière.
+
+
+\subsubsection{Visualisation des prototypes}
+Les figures \ref{fig:visualization_prototypes_MNIST} et \ref{fig:visualization_prototypes_Fashion-MNIST} présentent les prototypes appris 
+par chaque modèle pour les deux jeux de données.
+Cette visualisation permet d'observer directement ce que représententles prototypes des cartes.
+Pour le SOM, les prototypes sont directement visualisés comme des images de $28 \times 28$ pixels, tandis que pour les approches AE+SOM et DESOM,
+les prototypes sont appris dans l'espace latent de dimension 10. Nous les reconstruisons à l'aide du 
+décodeur correspondant pour être visualisés sous forme d'images de $28 \times 28$ pixels.
+
+
+Nous observons que, pour MNIST, les trois modèles ont des prototypes globalement reconnaissables.
+Le SOM a certains prototypes qui paraissent ambigus et semblent mélanger des caractéristiques de plusieurs chiffres.
+Cela peut être lié à la difficulté de représenter toute la variabilité du jeu de données dans une carte de taille limitée.
+
+L'approche AE+SOM semble produire aussi des prototypes reconnaissables. Nous observons des transitions relativement progressives entre certaines régions de la carte.
+Plusieurs zones montrent des familles qui semble proche visuellement, par exemples les prototypes qui resembles aux chiffres $7$ et $1$, ou encore aux
+chiffres $0$ et $6$. Cela pourrait être lié au fait que l'espace latent conserve une partie de la structure visuelle des données.
+
+Le DESOM a aussi des prototypes reconnaissable, mais certains apparaissent moins distincts ou plus flous.
+Une cause possible de cette observation est l'apprentissage de ses prototypes: ils sont appris dans un espace latent, puis reconstruits par le décodeur.
+Il y a donc une certaine dépendance de la qualité de reconstruction de l'auto-encodeur. Un prototype peut devenir donc une moyenne
+de plusieurs exemples proches.
+Ces observations sont cohérentes avec les résultats précédents : 
+le DESOM obtient une très faible erreur de quantification dans l'espace latent, mais sans garantir une organisation visuelle parfaitement progressive sur MNIST.
+
+% Visualisation des prototypes regroupée par jeu de données et modèle
+\begin{figure}[H]
+\centering
+% Column headers
+\begin{minipage}{0.3\textwidth}\centering\textbf{}\end{minipage}\quad
+\begin{minipage}{0.3\textwidth}\centering\textbf{MNIST}\end{minipage}\quad
+\begin{minipage}{0.3\textwidth}\centering\textbf{}\end{minipage}
+
+\vspace{4pt}
+
+\begin{minipage}{0.3\textwidth}\centering
+\includegraphics[width=\textwidth]{images/prototype_grid_som.png}\\
+\small SOM
+\end{minipage}\quad
+\begin{minipage}{0.3\textwidth}\centering
+\includegraphics[width=\textwidth]{images/prototype_grid_ae_som.png}\\
+\small AE+SOM
+\end{minipage}\quad
+\begin{minipage}{0.3\textwidth}\centering
+\includegraphics[width=\textwidth]{images/prototype_grid_desom.png}\\
+\small DESOM
+\end{minipage}
+
+\caption{Visualisation des prototypes pour les trois modèles sur le jeu de données MNIST.}
+\label{fig:visualization_prototypes_MNIST}
+\end{figure}
+
+Les trois cartes des prototypes sont aussi interprétable pour Fashion-MNIST.
+Le SOM apprend des prototypes correspondant à différentes catégories d'objets, comme des pulls, des pantalons, des sacs ou des chaussures.
+La carte présente une organisation visuelle assez claire, avec certaines régions associées à des familles d'objets similaires.
+Par exemple, les chaussures semblent être regroupées dans la partie de la carte, tandis que les vêtements du haut sont regroupés dans une autre région.
+
+L'approche AE+SOM produit aussi des prototypes relativement nets, notamment pour les chaussures, les pantalons et les vêtements du haut.
+Cependant, il semble avoir des transitions plus abruptes entre catégories, par exemple entre les vetement et les chaussures.
+Cela rejoint les résultats précédents, où cette approche n'obtient pas les meilleurs résultats en termes de préservation de la topologie.
+
+Le DESOM apprend aussi des prototype reconnaissables, mais certaines transitions semblent plus marquées entre prototypes voisins, par exemple lorsq'une région de chaussure 
+est proche d'une région de vêtements.
+Cela est cohérent avec les résultats quantitatifs obtenus pour ce jeu de données, où le DESOM présente une erreur de topologie plus élevée que les deux autres modèles.
+Cependant, les prototypes du DESOM semblent globalement plus nets, ce qui peut être lié au fait que certaines catégories de fashion-mnist possèdent 
+des structures visuelles plus régulières, ce qui facilite la reconstruction de prototypes moyens par le décodeur.
+
+\begin{figure}[H]
+\centering
+% Column headers
+\begin{minipage}{0.3\textwidth}\centering\textbf{}\end{minipage}\quad
+\begin{minipage}{0.3\textwidth}\centering\textbf{Fashion-MNIST}\end{minipage}\quad
+\begin{minipage}{0.3\textwidth}\centering\textbf{}\end{minipage}
+
+\vspace{4pt}
+
+\begin{minipage}{0.3\textwidth}\centering
+\includegraphics[width=\textwidth]{images/fashion_mnist_prototype_grid_som.png}\\
+\small SOM
+\end{minipage}\quad
+\begin{minipage}{0.3\textwidth}\centering
+\includegraphics[width=\textwidth]{images/fashion_mnist_prototype_grid_ae_som.png}\\
+\small AE+SOM
+\end{minipage}\quad
+\begin{minipage}{0.3\textwidth}\centering
+\includegraphics[width=\textwidth]{images/fashion_mnist_prototype_grid_desom.png}\\
+\small DESOM
+\end{minipage}
+\caption{Visualisation des prototypes pour les trois modèles sur le jeu de données Fashion-MNIST.}
+\label{fig:visualization_prototypes_Fashion-MNIST}
+\end{figure}
+
+Ainsi, grâce à les visualisation de plusieurs types de cartes, nous avons pu renforcer qualitativement les observations 
+faites à partir des métriques quantitatives. Cela nous a permis aussi de mieux comprendre les compromis entre les différents modèles, 
+notamment en ce qui concerne la quantification et la préservation de la topologie.
+
+\subsection{Courbes de l'erreur de quantification et fonction de perte}
+Cette section présente les courbes de l'erreur de quantification pour le batch SOM et AE+SOM, ainsi que les courbes de la fonction de pertes pour le DESOM.
+Ces courbes permettent l'analyse de la convergences des différents modèles, ainsi que de l'évolution de l'erreur de quantification au cours de l'entraînement.
+
+% courbe de l'erreur de quantification pour le batch SOM
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{images/training_curves_som.png}
+\quad
+\includegraphics[width=0.45\textwidth]{images/training_curves_som_fashion.png}
+\caption{Courbes d'erreur de quantification pour le batch SOM sur le jeu de données MNIST et Fashion-MNIST.}
+\label{fig:courbe_apprentissage_qe_som}
+\end{figure}
+
+Pour le batch SOM, les courbes d'erreur de quantification montrent une diminution progressive de l'erreur au cours des itérations,
+indiquant que les prototypes s'ajustent progressivement pour mieux représenter les données d'entrée.
+Dans les deux cas, l'erreur de quantification diminue rapidement au début de l'entraînement, puis ralentit après un certain nombre d'itérations, 
+aux alentour de 175 à 190 itérations et elle atteint un plateau vers la fin de l'entraînement,
+Ce plateau suggère que le modèle a convergé et que les prototypes ne sont plus modifiés de manière significative.
+
+Nous observons également que la convergence est relativement régulière pour les deux jeux de données.
+Sur MNIST, l'erreur de quantification se stabilise autour de $5.25$, tandis que sur Fashion-MNIST elle se stabilise autour de $4.5$.
+
+
+% courbe d'apprentissage AE+SOM
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{images/training_curves_ae.png}
+\quad
+\includegraphics[width=0.45\textwidth]{images/training_curves_ae_fashion.png}
+\caption{Courbes d'erreur de quantification pour l'approche AE+SOM sur le jeu de données MNIST et Fashion-MNIST.}
+\label{fig:courbe_apprentissage_qe_ae_som}
+\end{figure}
+
+La figure \ref{fig:courbe_apprentissage_qe_ae_som} montre la courbe d'erreur de quantification pour le SOM entraîné sur les représentations latentes de l'auto-encodeur.
+Cette courbe montre une diminution progressive de l'erreur au cours des itérations,
+indiquant que les prototypes du SOM s'adaptent progressivement aux représentations produites par l'encodeur.
+Sur MNIST, la QE se stabilise autour de $1.2$, tandis que sur Fashion-MNIST elle se stabilise autour de $0.9$.
+Ces valeurs pour le SOM sur les représentations latentes sont plus faibles que pour le batch SOM, 
+ce qui suggère que l'auto-encodeur a réussi à produire un espace latent plus adapté pour la quantification par le SOM.
+
+
+% courbe d'apprentissage du DESOM
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{images/training_curves_desom.png}
+\quad
+\includegraphics[width=0.45\textwidth]{images/training_curves_desom_fashion.png}
+\caption{Courbes d'erreur de quantification pour le DESOM sur le jeu de données MNIST et Fashion-MNIST.}
+\label{fig:courbe_apprentissage_qe_desom}
+\end{figure}
+
+La figure \ref{fig:courbe_apprentissage_qe_desom} montre la courbe de la fonction de perte de la composante SOM du DESOM.
+Pour les deux jeux de données, la composante SOM diminue fortement au début de l'entraînement, puis décroît plus lentement avant d'atteindre un plateau.
+Cela indique que les prototypes s'adaptent rapidement aux représentations latentes produites par l'encodeur, puis se stabilisent progressivement.
+Cette évolution est cohérente avec les résultats quantitatifs, où le DESOM obtient une très faible erreur de quantification dans l'espace latent.
+
+La perte de reconstruction reste beaucoup plus faible que la composante SOM sur l'échelle affichée.
+Ainsi, la perte totale est visuellement très proche de la courbe d'erreur de construction.
+L'hyperparamètre $\gamma$ est en partie responsable de cette observation, car il est fixé à une valeur relativement faible ($\gamma = 0.001$), donnant ainsi plus d'importance à la composante de reconstruction.
+Cette observation peut expliquer pourquoi le DESOM obtient une très bonne quantification latente, tout en ne garantissant pas toujours la meilleure préservation topologique, 
+comme observé sur MNIST.
+
+Sur Fashion-MNIST, la composante SOM diminue de manière régulière et atteint un plateau plus bas que sur MNIST.
+Cela est cohérent avec les résultats précédents, où le DESOM obtient les meilleurs scores pour l'ensemble des métriques sur Fashion-MNIST.
+
+\subsection{Impact de la taille de la grille}
+Dans cette section, nous avons analysé l'impact de la taille de la grille sur les performances des modèles.
+Pour cela, nous avons entraîné les trois modèles avec différentes tailles de grilles : 
+$(6, 6), (8, 8), (10, 10), (12, 12)$ et $(15, 15)$. 
+Nous avons ensuite calculé les métriques d'évaluation pour chaque taille de grille afin d'observer 
+comment la performance évolue en fonction de ce paramètre.
+
+La figure \ref{fig:grid_size_impact_qe} présente  l'évolution de l'erreur de quantification selon 
+la taille de la grille pour les trois modèles, sur MNIST et Fashion-MNIST.
+Cette figure montre que, pour les deux jeux de données, 
+l'erreur de quantification diminue lorsque le nombre de prototypes augmente.
+Cela est attendu: une grille plus grande permet d'avoir plus de prototypes,
+ce qui peut permet de représenter plus finement la diversité des données d'entrée.
+
+Cependant, cette diminution de QE reste relativement faible pour AE+SOM et DESOM, 
+en particulier pour les tailles de grilles plus grandes. Cela suggère que l'espace 
+latent appris permet déjà une quantification plus compacte, l'ajout suplémentaire de prototypes apporte relativement peu d'amélioration.
+
+On observe également que, pour les plus grandes tailles de grille, les courbes tendent à se stabiliser.
+Cela indique qu'au-delà d'une certaine taille, augmenter le nombre de prototypes n'apporte pas nécessairement 
+une amélioration significative de la quantification.
+
+Pour le SOM nous observons une diminution, un peu plus marquée, de l'erreur de quantification lorsque la grille augmente.
+Cela peut être lié au fait que le SOM est directement entraîné sur les données d'entrée, et une plus grande grille permet 
+d'avoir plus de prototypes pour mieux représenter la diversité des données d'entrée.
+
+% resultats pour QE
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{images/grid_size_study_qe.png}
+\quad
+\includegraphics[width=0.45\textwidth]{images/grid_size_study_qe_fashion.png}
+\caption{Évolution de l'erreur de quantification selon la taille de la grille pour les trois modèles sur MNIST et Fashion-MNIST.}
+\label{fig:grid_size_impact_qe}
+\end{figure}
+
+
+Pour l'erreur de topologie, la figure \ref{fig:grid_size_impact_te} montre que l'augmentation de la taille de la grille
+n'entraîne pas une amélioration systématique de la préservation de la topologie.
+
+Contrairement à l'erreur de quantification, qui tend généralement à diminuer lorsque le nombre de prototypes augmente, 
+l'erreur de topologie présente des variations irrégulières.
+
+Sur MNIST, l'approche AE+SOM obtient les valeurs les plus stables et atteint son meilleur score de TE pour les tailles de grilles intermédiaires.
+Le SOM présente une erreur plus faible pour les petites grilles, mais celle-ci augmente lorsque le nombre de nœuds devient plus important.
+Le DESOM présente les variations les plus marquées et obtient globalement les erreurs de topologie les plus élevées sur ce jeu de données.
+
+Sur Fashion-MNIST, les courbes montrent une tendance similaire, avec une augmentation de l'erreur de topologie pour les tailles de grilles plus grandes, en particulier pour le DESOM.
+Le SOM et l'approche AE+SOM obtiennent des résultats relativement proches pour les tailles de grille intermédiaires et grandes.
+Le DESOM, en revanche, voit son erreur topologique augmenter avec la taille de la grille, ce qui suggère que l'organisation topologique de la carte 
+devient plus difficile à stabiliser lorsque le nombre de prototypes augmente.
+
+% resultats pour TE
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{images/grid_size_study_te.png}
+\quad
+\includegraphics[width=0.45\textwidth]{images/grid_size_study_te_fashion.png}
+\caption{Évolution de l'erreur topologique selon la taille de la grille pour les trois modèles sur MNIST et Fashion-MNIST.}
+\label{fig:grid_size_impact_te}
+\end{figure}
+
+
+Nous observons dans la figure \ref{fig:grid_size_impact_purity} que la pureté a tendance à augmenter lorsque la taille de la grille augmente, pour les trois modèles.
+Cette tendance est particulièrement visible pour le SOM classique.
+Cette augmentation globale s'explique en partie par la définition de la pureté: lorsque le nombre de prototypes augmente, 
+les données peuvent être réparties dans un plus grand nombre de clusters.
+Chaque cluster contient alors potentiellement des observations plus homogènes, 
+ce qui peut conduire à une meilleure correspondance entre les prototypes et les classes d'origine.
+
+Pour le jeu de données MNIST, le AE+SOM obtient des scores de pureté plus élevés notamment pour les grilles $(10,10)$ et $(15,15)$. 
+Il faut remarquer que l'augmentation du nombre de prototypes peut réduire l'écart entre les modèles sur cette métrique.
+Pour la plus grande grille, les trois modèles obtiennent des scores de pureté relativement proches.
+
+Pour le jeu de données Fashion-MNIST, le DESOM obtient les meilleurs scores de pureté pour la plupart des tailles de grilles,
+cela peut s'expliquer par l'apprentissage conjoint du DESOM qui permet d'obtenir des représentations latentes favorables au regroupement des classes.
+Néanmoins, pour la plus grande grille, les performances des trois modèles deviennent relativement proches. 
+Le AE+SOM obtient le score le plus grand avec la grille $(15, 15)$.
+
+% resultats pour pureté
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{images/grid_size_study_purete.png}
+\quad
+\includegraphics[width=0.45\textwidth]{images/grid_size_study_purete_fashion.png}
+\caption{Évolution de la pureté selon la taille de la grille pour les trois modèles sur MNIST et Fashion-MNIST.}
+\label{fig:grid_size_impact_purity}
+\end{figure}
+
+
+L'évolution du NMI en fonction de la taille de la grille, présentée dans la figure \ref{fig:grid_size_impact_nmi}, montre une tendance différente à celle observée pour la pureté.
+Alors que la pureté augmente globalement avec le nombre de prototypes, le NMI a plutôt tendance à diminuer lorsque la taille de la grille devient plus grande.
+Cela peut être lié au fait que le NMI mesure la similarité entre les clusters formés, et une plus grande taille de grille peut fragmenter les classes sur un plus grand nombre de prototypes.
+Cette fragmentation peut réduire la similarité globale entre les clusters obtenus et les classes réelles, ce qui se traduit par une baisse du NMI.
+
+Pour le jeu de données MNIST, le AE+SOM obtient les meilleurs résultats pour toutes les tailles de grilles.
+Cependant, lorsque la taille de la grille augmente d'avantage, le NMI diminue pour AE+SOM et DESOM, ainsi se rapprochant des performances du SOM.
+Le SOM présente une diminution plus raide, mais ses scores restent assez proches de ceux des autres modèles pour les grandes grilles.
+Ces résultats montrent qu'une augmentation du nombre de prototypes ne conduit pas nécessairement à une meilleure correspondance globale avec les classes réelles.
+
+Pour fashion-MNIST, les trois modèles présentent également une diminution globale du NMI lorsque la taille de la grille augmente.
+Le DESOM obtient le meilleurs scores pour la plus petite grille et reste compétitif pour les tailles intermédiaires, mais son avantage n'est pas systématique.
+Pour les grandes grilles, les scores des trois modèles deviennent relativement proches.
+Cela indique que, pour Fashion-MNIST également, l'augmentation de la taille de la grille peut améliorer la pureté tout en diminuant la cohérence globale entre les clusters et les classes
+
+% resultats pour NMI
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\textwidth]{images/grid_size_study_nmi.png}
+\quad
+\includegraphics[width=0.45\textwidth]{images/grid_size_study_nmi_fashion.png}
+\caption{Courbes de NMI selon la taille de la grille pour les trois modèles sur MNIST et Fashion-MNIST.}
+\label{fig:grid_size_impact_nmi}
+\end{figure}
+
+Ainsi, cette étude montre que la taille de la grille a un impact significatif pour l'erreur topologique, la pureté et le MNI.
+Une grille plus grande permet d'avoir une meilleur pureté, mais elle peut dégrader le NMI et l'erreur de topologie.
+Quant à l'erreur de quantification, elle tend a diminuer avec l'augmentation de la grille, mais cette diminution reste relativement faible voir inexistante 
+pour les approches basées sur l'apprentissage d'un espace latent, ce qui suggère que l'espace latent appris est déjà très adapté pour la quantification par le SOM.
+Dans nos expériences, les tailles intermédiaires semblent offrir un compromis plus raisonnable entre quantification, pureté, NMI et préservation topologique. 
 
 % =========================
 % Contenu chap4
 % =========================
 
 \chapter{Conclusion}
+ 
+Dans ce rapport, nous avons étudier les cartes auto-organisées qui constituent une familles de modèles d'apprentissage 
+compétitif non supervisé. Nous avons commencer par présenter leur principes général, en distingant les
+prototypes utilisés des neurones formels utilisés dans les réseaux de neurones. Nous avons continué 
+en décrivant leur structure de base, leur algorithme de mis à jour, ainsi qu'un variant de SOM appelé batch SOM qui est plus adapté aux applications
+pratiques.
 
+Nous avons également discuté sur certaines limites du SOM, notament leur coût de calcul lorsque la taille des données augmente et
+et les difficultés liées à la préservation simultanée de la quantification et de la topologie. Nous avons présenté 
+quelques extensions qui proposent des solutions à ces problèmes.
+
+Dans la seconde partie de ce document, nous nous sommes concentrés sur une approche hybride particulière qui intégre le SOM dans le cadre
+du deep learning: DESOM (Deep Embedded Self-Organizing Map). Cette méthode combine un auto-encodeur avec une carte auto-organisée afin d'apprendre 
+de manière conjointe une représentation latente des données d'entrée et une organisation topologique des prototypes.
+Une étude empirique a été réalisée sur deux sous-ensembles des jeux de données: MNIST et Fashion-MNIST.
+
+Les résultats obtenus montrent que le DESOM est une solution intéressante pour le traitement des données de grande dimension.
+Il permet d'obtenir une erreur de quantification très faible dans l'espace latent, indiquant que l'espace latent appris est belletôt adapté pour la quantification par le SOM (SOM-friendly).
+Cependant, l'amélioration de la quantification a un compromis en termes de préservation de la topologie de la carte. L'erreur de quantification faible est acompagnée
+d'une erreur topologique plus élevée dans nos expériences.
+
+L'étude empirique a également montré que les approches comme AE+SOM et DESOM peuvent obtenir de bonne performances en clustering,
+notament en terme de pureté et de NMI. Néanmoins, l'écart entre les modèles reste faible et les résultats dépendent du choix 
+des hyperparamètres, de la taille de la grille et de la qualité de l'espace latent appris.
+
+Il existe plusieurs études possibles pour prolonger ce travail.
+Une étude sur l'hyperparamètre $\gamma$ du DESOM pourrait être intéressante, car ce hyperparamètre contrôle l'importance relative de l'organisation faite par le SOM.
+Dans ce document $\gamma$ est fixé à une valeur relativement faible. Un meilleur choix de $\gamma$ pourrait 
+potentiallement diminuer l'erreur topologique tout en coservant une bonne quantification.
+Il serait également pertinent de produire les expérience sur les jeux de données complets, afin d'obtenir des resultats plus robustes.
+
+En conclusion, les carte auto-organisées seul sont aujourd'hui moins compétitifs que certaines approches modernes dans une contexte où le données 
+sont de plus en plus volumineuses (grande dimension) et complexes.
+Cependant, leur principe reste pertient, car elles offrent une manière de combiner quantification, clustering et visualisation topologique.
+Le méthodes récente comme le DESOM ou les approches appliquées telle que FlowSOM demontrent que le principe des SOM reste d'actualité, en particulier
+lorsqu'ells sont combinées avec des techniques d'apprentissage automatique.
+Ainsi, les SOM concervent un intérêt important comme outil historique et comme base pour certains modèles hybrides interprétables et adaptés à l'analyse de données complexes.
 
 
 \bibliographystyle{plain}

@@ -25,7 +25,7 @@ class stepwiseSOM:
             grid_size (tuple): Taille de la grille du SOM
             n_steps (int): Nombre d'étapes pour l'entraînement du SOM
             weight_init (str): Méthode d'initialisation des poids random par défaut (ex: 'random', 'pca')
-            dis_choice (str): Métrique de distance utilisée pour trouver le neurone gagnant euclidean par défaut (ex: 'euclidean', 'manhattan', etc.)
+            dis_choice (str): Métrique de distance utilisée pour trouver le noeud gagnant euclidean par défaut (ex: 'euclidean', 'manhattan', etc.)
             topology (str): Topologie de la grille du SOM (ex: 'rectangular', 'hexagonal')
 
         """

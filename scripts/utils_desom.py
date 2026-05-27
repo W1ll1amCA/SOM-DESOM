@@ -9,11 +9,11 @@ class Encodeur(nn.Module):
         super().__init__()
         # Construction d'un réseau de neurones simple pour l'encodeur
         self.net = nn.Sequential(
-            nn.Linear(input_dim, 128),
+            nn.Linear(input_dim, 128), 
             nn.ReLU(),
-            nn.Linear(128, 64),
+            nn.Linear(128, 64), 
             nn.ReLU(),
-            nn.Linear(64, latent_dim)
+            nn.Linear(64, latent_dim) 
         )
 
     def forward(self, x : torch.Tensor) -> torch.Tensor:

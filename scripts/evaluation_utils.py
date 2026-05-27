@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -6,9 +8,9 @@ import torch
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, Subset
 
+from sklearn.decomposition import PCA
 from sklearn.metrics import normalized_mutual_info_score
 from scipy.stats import mode
-
 
 
 def flatten_weights(weights: np.ndarray) -> np.ndarray:
@@ -185,10 +187,11 @@ def evaluate_som_model(model_name : str, data : np.ndarray,
 
     return results
 
-def create_results_dataframe_to_latex(results : list, round_digits : int = 3) -> pd.DataFrame:
+def create_results_dataframe_to_latex(name : str, results : list, round_digits : int = 3) -> pd.DataFrame:
     """
     Convertit une liste de résultats d'évaluation en un DataFrame pandas
     Args:
+        name (str): nom utilisé pour le nom du fichier LaTeX
         results (list): Liste de dictionnaires contenant les résultats d'évaluation
         round_digits (int): Nombre de chiffres après la virgule pour l'arrondi des valeurs numériques
     Returns:
@@ -199,7 +202,7 @@ def create_results_dataframe_to_latex(results : list, round_digits : int = 3) ->
     numeric_cols = df.select_dtypes(include=[np.number]).columns
     df[numeric_cols] = df[numeric_cols].round(round_digits)
 
-    df.to_latex("resultats_des_metriques.tex", index=False)
+    df.to_latex(f"{name}.tex", index=False)
     
     return df
 
@@ -216,13 +219,13 @@ def u_matrix_compute(poids: np.ndarray, grid_size: tuple) -> np.ndarray:
     Returns:
         np.ndarray: U-Matrix de forme de grid_size
     """
+    
     poids = flatten_weights(poids)
 
     r, c = grid_size
 
     if poids.shape[0] != r * c:
         raise ValueError(f"Incohérence entre grid_size={grid_size} et le nombre de poids={poids.shape[0]}.")
-
 
     grid_poids = poids.reshape(r, c, -1)
     
@@ -254,6 +257,8 @@ def plot_u_matrix(poids: np.ndarray, grid_size: tuple, title: str = "U-Matrix", 
         u_matrix (np.ndarray): U-Matrix de forme (r, c)
         title (str): Titre du graphique
         save_path (str): Chemin pour sauvegarder l'image de la U-Matrix
+    returns:
+        np.ndarray: U-Matrix de forme (r, c)
     """
     u_matrix = u_matrix_compute(poids, grid_size)
 
@@ -268,70 +273,7 @@ def plot_u_matrix(poids: np.ndarray, grid_size: tuple, title: str = "U-Matrix", 
         plt.savefig(save_path, dpi=300, bbox_inches="tight") 
 
     plt.show()
-
-
-# =============================================================================================================================
-# LABEL MAP
-# =============================================================================================================================
-
-def compute_label_maj_map(data: np.ndarray, poids: np.ndarray, y_true: np.ndarray, grid_size: tuple) -> np.ndarray:
-    """
-    Calcule une carte chaque noeud reçoit le label majoritaire
-    des points qui lui sont associés.
-    Args:
-        data (np.ndarray): Données d'entrée de forme (n_samples, input_dim)
-        poids (np.ndarray): Codebook du SOM de forme (n_nodes, input_dim)
-        y_true (np.ndarray): Labels vrais de forme (n_samples,)
-        grid_size (tuple): Taille de la grille du SOM
-    Returns:
-        np.ndarray: Tableau de labels majoritaires pour chaque prototype du SOM
-    """
-    poids = flatten_weights(poids)
-    
-    bmu_indices, _ = compute_BMU(data, poids)
-    r, c = grid_size
-
-    if poids.shape[0] != r * c:
-        raise ValueError(f"Incohérence entre grid_size={grid_size} et le nombre de poids={poids.shape[0]}.")
-
-    label_map = np.full(r * c, fill_value=-1)
-
-    for node in range(r * c):
-        labels = y_true[bmu_indices == node]
-
-        if len(labels) > 0:
-            label_map[node] = mode(labels, keepdims=True).mode[0]
-
-    return label_map.reshape(r, c)
-
-def plot_label_map(data: np.ndarray, weights: np.ndarray, 
-                   y_true: np.ndarray, grid_size: tuple, 
-                   title: str = "Carte des labels", save_path: str = None)-> None:
-    """
-    Affiche la carte des labels majoritaires.
-    Les noeuds sans point associé valent -1.
-    Args:
-        data (np.ndarray): Données d'entrée de forme (n_samples, input_dim)
-        weights (np.ndarray): Codebook du SOM de forme (n_nodes, input_dim)
-        y_true (np.ndarray): Labels vrais de forme (n_samples,)
-        grid_size (tuple): Taille de la grille du SOM
-        title (str): Titre du graphique
-        save_path (str): Chemin pour sauvegarder l'image de la carte des labels
-    """
-    label_map = compute_label_maj_map(data, weights, y_true, grid_size)
-
-    plt.figure(figsize=(6, 5))
-    plt.imshow(label_map, cmap="tab10")
-    plt.colorbar(label="Label majoritaire")
-    plt.title(title)
-    plt.xlabel("Colonne")
-    plt.ylabel("Ligne")
-
-    if save_path is not None:
-        plt.savefig(save_path, dpi=300, bbox_inches="tight")
-
-    plt.show()
-
+    return u_matrix
 
 # =============================================================================================================================
 # HIT MAP
@@ -374,6 +316,149 @@ def hit_map(data: np.ndarray, poids: np.ndarray, grid_size: tuple, title: str = 
         plt.savefig(save_path, dpi=300, bbox_inches="tight")
 
     plt.show()
+
+# =============================================================================================================================
+# PROTOTYPE GRID
+# =============================================================================================================================
+
+def plot_prototype_grid(
+    weights: np.ndarray,
+    grid_size: tuple,
+    title: str = "Grille des prototypes",
+    image_shape: tuple | None = None,
+    decoder=None,
+    cmap: str = "gray",
+    save_path: str | Path = None,
+) -> None:
+    """
+    Affiche la grille des prototypes d'un SOM.
+
+    Si `decoder` est fourni, les prototypes sont d'abord décodés depuis l'espace latent
+    avant l'affichage. Cela permet d'afficher une carte de prototypes comparable pour
+    batch SOM, AE+SOM et DESOM.
+    """
+
+    weights = flatten_weights(weights)
+
+    if decoder is not None:
+        if not isinstance(weights, torch.Tensor):
+            weights_tensor = torch.tensor(weights, dtype=torch.float32)
+        else:
+            weights_tensor = weights.detach().float()
+
+        decoder_device = None
+        if hasattr(decoder, "parameters"):
+            try:
+                decoder_device = next(decoder.parameters()).device
+            except StopIteration:
+                decoder_device = None
+
+        if decoder_device is not None:
+            weights_tensor = weights_tensor.to(decoder_device)
+
+        with torch.no_grad():
+            decoded = decoder(weights_tensor)
+            if isinstance(decoded, torch.Tensor):
+                decoded = decoded.detach().cpu().numpy()
+            else:
+                decoded = np.asarray(decoded)
+    else:
+        decoded = np.asarray(weights)
+
+    r, c = grid_size
+
+    if decoded.shape[0] != r * c:
+        raise ValueError(
+            f"Incohérence entre grid_size={grid_size} et le nombre de prototypes={decoded.shape[0]}."
+        )
+
+    if image_shape is None:
+        flat_dim = decoded.shape[1]
+        side = int(np.sqrt(flat_dim))
+        if side * side != flat_dim:
+            raise ValueError(
+                "Impossible d'inférer une forme d'image carrée. Passez `image_shape`."
+            )
+        image_shape = (side, side)
+
+    prototypes = decoded.reshape(r * c, *image_shape)
+
+    fig, axes = plt.subplots(r, c, figsize=(c * 1.2, r * 1.2))
+    axes = np.asarray(axes).reshape(r, c)
+
+    for idx, ax in enumerate(axes.ravel()):
+        ax.imshow(prototypes[idx], cmap=cmap)
+        ax.set_xticks([])
+        ax.set_yticks([])
+
+    fig.suptitle(title)
+    plt.tight_layout()
+
+    if save_path is not None:
+        plt.savefig(save_path, dpi=300, bbox_inches="tight")
+
+    plt.show()
+
+
+def plot_codebook_color_map(
+    weights: np.ndarray,
+    grid_size: tuple[int, int],
+    title: str = "Codebook color map",
+    save_path: str | None = None,
+    show: bool = True,
+) -> np.ndarray:
+    """
+    Affiche une carte couleur du codebook d'un SOM à partir d'une projection PCA en 3D.
+
+    Args:
+        weights: poids du SOM, de forme (rows, cols, dim) ou (n_nodes, dim).
+        grid_size: taille de la grille SOM sous la forme (rows, cols).
+        title: titre de la figure.
+        save_path: chemin optionnel pour sauvegarder l'image.
+        show: si True, affiche la figure avec matplotlib.
+
+    Returns:
+        np.ndarray de forme (rows, cols, 3) contenant l'image RGB normalisée.
+    """
+
+    weights = flatten_weights(weights)
+    rows, cols = grid_size
+
+    expected_nodes = rows * cols
+    if weights.shape[0] != expected_nodes:
+        raise ValueError(
+            f"Incohérence entre grid_size={grid_size} et le nombre de prototypes={weights.shape[0]}."
+        )
+
+    if weights.shape[0] < 3:
+        raise ValueError("La projection PCA en 3D nécessite au moins 3 prototypes.")
+
+    pca = PCA(n_components=3)
+    codebook_rgb = pca.fit_transform(weights)
+
+    min_vals = codebook_rgb.min(axis=0)
+    max_vals = codebook_rgb.max(axis=0)
+    spans = np.where((max_vals - min_vals) == 0, 1.0, max_vals - min_vals)
+    codebook_rgb = (codebook_rgb - min_vals) / spans
+    codebook_rgb = np.clip(codebook_rgb, 0.0, 1.0)
+
+    codebook_rgb = codebook_rgb.reshape(rows, cols, 3)
+
+    plt.figure(figsize=(cols, rows))
+    plt.imshow(codebook_rgb, interpolation="nearest")
+    plt.title(title)
+    plt.axis("off")
+
+    if save_path is not None:
+        plt.savefig(save_path, dpi=300, bbox_inches="tight")
+
+    if show:
+        plt.show()
+    else:
+        plt.close()
+
+    return codebook_rgb
+
 
 
 # =============================================================================================================================

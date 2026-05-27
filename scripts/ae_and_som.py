@@ -12,7 +12,9 @@ class AESOM:
                  latent_dim: int, 
                  rayon_init: float, 
                  grid_size: tuple, 
-                 n_steps_som: int, 
+                 n_steps_som: int,
+                 calculate_qe: bool = False,
+                 batch_size: int = 32, 
                  weight_init: str = 'random', 
                  dis_choice: str = 'euclidean', 
                  topology: str = 'rectangular',
@@ -24,7 +26,8 @@ class AESOM:
             latent_dim (int): Dimension de l'espace latent
             rayon_init (float): Rayon initial pour le SOM
             grid_size (tuple): Taille de la grille pour le SOM
-            n_steps_som (int): Nombre d'étapes pour l'entraînement du SOM
+            n_steps_som (int): Nombre d'étapes pour l'entraînement du SOM 
+            calculate_qe (bool): Indique si l'erreur de quantification doit être calculée à chaque itération du SOM (False par défaut)
             weight_init (str): Méthode d'initialisation des poids pour le SOM (ex: 'random', 'pca')
             dis_choice (str): Choix de la distance pour le SOM (ex: 'euclidean', 'manhattan', etc.)
             topology (str): Topologie pour le SOM (ex: 'rectangular', 'hexagonal')
@@ -32,19 +35,20 @@ class AESOM:
         """
 
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
-
+        self.n_steps_som = n_steps_som
+        self.batch_size = batch_size
+        self.calculate_qe = calculate_qe
         # Initialisation de l'autoencodeur et du SOM
         self.autoencoder = Autoencoder(input_dim, latent_dim).to(self.device)
-        self.som = batchSOM(rayon_init, grid_size, n_steps=n_steps_som, rayon_final=0.1, 
+        self.som = batchSOM(rayon_init, grid_size, n_steps=self.n_steps_som, rayon_final=0.1, 
                             weight_init=weight_init, dis_choice=dis_choice, topology=topology,
-                            calculate_qe=False)
+                            calculate_qe=self.calculate_qe)
 
-    def train_ae(self, data, n_epochs=100, batch_size=32, lr=1e-3):
+    def train_ae(self, data, lr=1e-3,n_steps_ae =100):
         """
         Entraîne seulement l'autoencodeur.
         Args:
             data (torch.Tensor): Données d'entrée pour l'entraînement de l'autoencodeur
-            n_epochs (int): Nombre d'époques pour l'entraînement
             batch_size (int): Taille des lots pour l'entraînement
             lr (float): Taux d'apprentissage pour l'optimiseur
         returns:
@@ -60,12 +64,12 @@ class AESOM:
         criterion = nn.MSELoss()
 
         dataset = TensorDataset(data)
-        dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+        dataloader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
 
         self.autoencoder.train()
         losses = []
 
-        for epoch in range(n_epochs):
+        for epoch in range(n_steps_ae):
 
             epoch_loss = 0.0
 
@@ -128,20 +132,18 @@ class AESOM:
         z_np = self.encode_latent(data)
         return self.som.train(z_np)
     
-    def train_ae_n_som(self, data, n_epochs=100, batch_size=32, lr=1e-3):
+    def train_ae_n_som(self, data, lr=1e-3):
         """
         Entraînement complet en deux étapes :
         1. autoencodeur
         2. SOM sur l'espace latent
         Args:
             data (torch.Tensor): Données d'entrée pour l'entraînement
-            n_epochs (int): Nombre d'époques pour l'entraînement de l'autoencodeur
-            batch_size (int): Taille des lots pour l'entraînement de l'autoencodeur
             lr (float): Taux d'apprentissage pour l'optimiseur de l'autoencodeur
         returns:
             tuple: (ae_losses, som_result) où ae_losses est la liste des pertes d'entraînement de l'autoencodeur et som_result est le codebook entraîné du SOM
         """
-        ae_losses = self.train_ae(data, n_epochs, batch_size, lr)
+        ae_losses = self.train_ae(data, lr)
         som_result = self.train_som(data)
 
         return ae_losses, som_result
