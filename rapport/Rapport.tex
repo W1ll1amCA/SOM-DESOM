@@ -950,7 +950,7 @@ Cependant, malgré ses avantages, le batch SOM présente certaines limites, nota
 
 \section{Limites}
 Les cartes auto-organisées possèdent la capacité de réaliser simultanément une quantification vectorielle et un reduction de dimension. 
-Cependant, certains travaux on montré que, du point de vue de l'erreur de la quantification ou de la préservation des distances, les SOM peuvent être moins performant que 
+Cependant, certains travaux ont montré que, du point de vue de l'erreur de la quantification ou de la préservation des distances, les SOM peuvent être moins performant que 
 la combinaison de deux méthodes spécialisées \cite{Limitations_SOM}. En particulier, l'association d'une méthode de quantification vectorielle telle que le k-means, 
 suivie d'une technique de reduction de dimension comme le Sammon mapping, permet d'optimiser séparément ces deux objectifs.
 
@@ -1778,8 +1778,8 @@ Pour évaluer les performances des modèles, nous utiliserons les métriques sui
     où $\mathbb{I}$ est la fonction indicatrice qui vaut 1 si les prototypes ne sont pas des voisins dans le codebook et 0 sinon.
 
     \item \textbf{Pureté} : Cela mesure la pureté des clusters formés par le SOM. Un score de pureté plus élevé indique que les clusters sont plus homogènes en termes de classes d'origine.
-    La pureté est définie comme suit : pour chaque cluster, on attribue la classe majoritaire parmi les échantillons qui y sont assignés, 
-    puis on calcule la proportion d'échantillons correctement classés. Formellement, soit $C_k$ le cluster $k$ et $L_j$ la classe $j$, alors :
+    La pureté est définie comme suit : pour chaque cluster, nous attribuons la classe majoritaire parmi les échantillons qui y sont assignés, 
+    puis nous calculons la proportion d'échantillons correctement classés. Formellement, soit $C_k$ le cluster $k$ et $L_j$ la classe $j$, alors :
     $$ \text{Pureté} = \frac{1}{N} \sum_{k} \max_j |C_k \cap L_j| $$
     où $N$ est le nombre total d'échantillons d'entrée.
     \item \textbf{NMI (Normalized Mutual Information)} :C'est une mesure la similarité entre les clusters formés par le SOM et les classes d'origine. 
@@ -2220,7 +2220,7 @@ Cependant, cette diminution de QE reste relativement faible pour AE+SOM et DESOM
 en particulier pour les tailles de grilles plus grandes. Cela suggère que l'espace 
 latent appris permet déjà une quantification plus compacte, l'ajout suplémentaire de prototypes apporte relativement peu d'amélioration.
 
-On observe également que, pour les plus grandes tailles de grille, les courbes tendent à se stabiliser.
+Nous observons également que, pour les plus grandes tailles de grille, les courbes tendent à se stabiliser.
 Cela indique qu'au-delà d'une certaine taille, augmenter le nombre de prototypes n'apporte pas nécessairement 
 une amélioration significative de la quantification.
 
