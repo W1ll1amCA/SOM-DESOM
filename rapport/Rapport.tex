@@ -345,7 +345,7 @@ Ce type d'apprentissage est utilisé notamment pour le clustering sous le nom de
 \subsection{Quantification vectorielle (VQ)} \label{sec:VQ}
 La quantification vectorielle (VQ) est une technologie utilisée surtout dans le traitement moderne de la numérisation des signaux \cite{Kohonen2012SOM}.
 Elle consite à partitionner l'espace d'origine en régions distinctes et contiguës dont chacune est représentée par un vecteur.
-Dans cette méthode, les données d'entrées fonctionnent comme des features qui sont représentées dans un espace fini par 
+Dans cette méthode, les données d'entrée fonctionnent comme des features qui sont représentées dans un espace fini par 
 d'autres vecteurs de même dimension. Cet ensemble de vecteurs se nomme codebook. 
 Une VQ s'interprète de la manière suivante: Soit $x \in \mathbb{R}^d$ une donnée d'entrée et soit le codebook avec $w_j$ vecteurs de même dimension et $w_{c(x)}$, le vecteur gagnant (apprentissage compétitif),
 le plus proche de $x$ \cite{SOM1990}.
@@ -953,7 +953,7 @@ Cependant, malgré ses avantages, le batch SOM présente certaines limites, nota
 Les cartes auto-organisées possèdent la capacité de réaliser simultanément une quantification vectorielle et une reduction de dimension. 
 Cependant, certains travaux ont montré que, du point de vue de l'erreur de la quantification ou de la préservation des distances, les SOM peuvent être moins performants que 
 la combinaison de deux méthodes spécialisées \cite{Limitations_SOM}. En particulier, l'association d'une méthode de quantification vectorielle telle que le k-means, 
-suivie d'une technique de reduction de dimension comme le Sammon mapping, permet d'optimiser séparément ces deux objectifs.
+suivie d'une technique de reduction de dimension comme le Sammon mapping \cite{Sammon1969}, permet d'optimiser séparément ces deux objectifs.
 
 Cette différence s'explique par le fait que les méthodes utilisées dans une approche séquentielle sont chacune conçues pour minimiser explicitement une fonction de coût spécifique, 
 tandis que les SOM réalisent simultanément ces tâches à travers un mécanisme unique d'apprentissage. Ce couplage induit un compromis entre la qualité de la quantification et celle de la projection, 
@@ -1062,7 +1062,7 @@ Dans cette section, nous allons parcourir certaines extension qui permettent une
 Nous allons présenter les extensions suivantes : K-SOM, flow-SOM, hybride SOM (MLP + SOM et CNN + SOM).
 
 \subsection{Accelerating Stochastique K-SOM}
-Cette extension, présentée dans \cite{sto_K_SOM} propose une approche pour d'accélération d'une autre extension nommée Kernel self-organizing maps (KSOM).
+Cette extension, présentée dans \cite{sto_K_SOM}, propose une approche qui reduit le temps de calcul d'une autre extension nommée Kernel self-organizing maps (K-SOM).
 K-SOM est une extension des SOM qui utilise des fonctions de noyau pour permettre la modélisation de relations non linéaires entre les données d'entrée et les prototypes du SOM.
 Cependant, l'apprentissage d'un K-SOM peut être plus coûteux en termes de temps de calcul que celui d'un SOM classique, en particulier pour les grands ensembles de données.
 Pour avoir une convergence correcte, l'algorithme d'apprentissage aura besoin de $\beta n$ itérations, où $\beta$ est un facteur de proportionnalité pour le nombre d'itérations qui dépend 
@@ -1101,7 +1101,7 @@ Ainsi, cette extension est un avancement pour les SOM dans le cadre de données 
 pour lesquelles l'approches classique n'est pas applicables.
 
 \subsection{FlowSOM}
-FlowSOM n'est pas une extension mais plutôt une application intéressante utilisée notament dans le domaine de la biologie et plus précisément pour l'analyse de données de cytométrie \cite{FlowSOM}.
+FlowSOM n'est pas une extension, mais plutôt une application intéressante utilisée notament dans le domaine de la biologie et plus précisément pour l'analyse de données de cytométrie \cite{FlowSOM}.
 Cette approche en réalité ne propose pas une nouvelle variante de SOM, mais plutôt une nouvelle manière d'utiliser les SOM pour l'analyse de données de cytométrie avec une structure spécifique.
 Elle a comme objectif de faciliter la visualisation et l'interprétation des données de cytométrie, au lieu d'utiliser des scatter plots traditionnels, 
 qui peuvent être difficiles à interpréter lorsque nous avons un grand nombre de dimensions et de points de données \cite{FlowSOM}.
@@ -1124,10 +1124,10 @@ cela correspond à un point d'inflexion dans la courbe de la distance entre les 
 
 FlowSOM a montré des performances plus élevées que des méthodes traditionnelles d'analyse de données de cytométrie comme SPADE, notamment en termes de temps de calcul, 
 de qualité de clustering et de visualisation des données.
-FlowSOM est donc une extension intéressante pour les cartes auto-organisées dans le contexte de l'analyse de données de cytométrie.
+FlowSOM est donc une approche d'utilisation intéressante pour les cartes auto-organisées dans le contexte de l'analyse de données de cytométrie.
 
-Ainsi, cette méthode fusionne les SOM avec d'autres techniques de machine learning formant un pipeline plus large et permettant de répondre efficacement à un domaine d'application spécifique.
-Cela est aussi le cas avec les SOM hybrides.
+Ainsi, cette méthode fusionne les SOM avec d'autres techniques d'apprentissage automatique formant un pipeline plus large et permettant de répondre efficacement à un domaine d'application spécifique.
+Cela est aussi le cas pour les SOM hybrides.
 
 \subsection{SOM Hybrides}
 Les SOM hybrides sont une extension combinant les cartes auto-organisées avec d'autres techniques d'apprentissage automatique.
@@ -1175,7 +1175,7 @@ où les données sont souvent complexes et nécessitent une approche plus intég
 Nous avons présenté quelques extensions, mais il en existe d'autres, qui essayent de remédier différentes limites des SOM, que ce soit au niveau de la convergence, de la complexité, 
 de la capacité à traiter des données non vectorielles, ou encore de l'intégration avec d'autres modèles d'apprentissage automatique.
 
-Cela est représenté dans le document \cite{SurveySOM} qui présente une revue complète des principales evolutions des cartes auto-organisées.
+Cela est représenté dans le document \cite{SurveySOM} qui présente une revue complète des principales évolutions des cartes auto-organisées.
 
 Dans la suite de ce rapport, nous allons nous intéresser à l'extension deep embedded self-organizing maps (DESOM) qui mixe les SOM avec une 
 technique moderne d'apprentissage profond: les auto-encodeurs.
@@ -1183,8 +1183,8 @@ technique moderne d'apprentissage profond: les auto-encodeurs.
 \section{Deep embedded self-organizing maps (DESOM)}
 
 L'apprentissage profond est une technique d'apprentissage automatique qui repose sur l'utilisation des réseaux de neurones profonds pour modéliser des relations complexes dans les données.
-Elle est souvent utilisée pour les tâches supervisées, mais peut àgalement être appliquée pour des tâches non supervisées, 
-notamment à travers les auto-encodeurs (AE). Ces derniers sont des réseaux de neurones conçus pour apprendre une représentation compacte des données d'entrées, appelée espace latent \cite{DESOM}.
+Elle est souvent utilisée pour les tâches supervisées, mais peut également être appliquée pour des tâches non supervisées, 
+notamment à travers les auto-encodeurs (AE). Ces derniers sont des réseaux de neurones conçus pour apprendre une représentation compacte des données d'entrée, appelée espace latent \cite{DESOM}.
 
 Cela a conduit à l'emergence des modèles hybrides qui combinent les cartes auto-organisées avec des techniques d'apprentissage profond. L'objectif est de tirer parti à la fois de la capacité 
 de représentation des réseaux profonds et des propriétés topologiques des SOM. Une de ces approches est le Deep Embedded Self-Organizing Maps (DESOM), qui intègre un auto-encodeur 
@@ -1829,7 +1829,7 @@ Les valeurs en gras indiquent les meilleurs résultats pour chaque métrique.
 \label{tab:results_mnist}
 \begin{tabular}{lrrrr}
 \toprule
-Modèle & QE & TE & Pureté & NMI \\
+Modèle & QE $\downarrow$ & TE $\downarrow$ & Pureté $\uparrow$ & NMI $\uparrow$ \\
 \midrule
 SOM & 5.416 & \textbf{0.418} & 0.782 & 0.543  \\
 AE+SOM & 1.206 & 0.466 & 0.811 & 0.564  \\
@@ -1863,7 +1863,7 @@ le DESOM se distingue par une erreur de quantification extrêmement basse et off
 \label{tab:results_fashion_mnist}
 \begin{tabular}{lrrrr}
 \toprule
-Modèle & QE & TE & Pureté & NMI \\
+Modèle & QE $\downarrow$ & TE $\downarrow$ & Pureté $\uparrow$ & NMI $\uparrow$ \\
 \midrule
 SOM & 4.531 & \textbf{0.398} & 0.712 & 0.503 \\
 AE+SOM & 0.887 & 0.406 & 0.722 & 0.510 \\
@@ -2170,7 +2170,7 @@ Ces courbes permettent l'analyse de la convergences des différents modèles, ai
 Pour le batch SOM, les courbes d'erreur de quantification montrent une diminution progressive de l'erreur au cours des itérations,
 indiquant que les prototypes s'ajustent progressivement pour mieux représenter les données d'entrée.
 Dans les deux cas, l'erreur de quantification diminue rapidement au début de l'entraînement, puis ralentit après un certain nombre d'itérations, 
-aux alentours de $175$ à $190$ itérations et elle atteint un plateau vers la fin de l'entraînement,
+aux alentours de $175$ à $190$ itérations et elle atteint un plateau vers la fin de l'entraînement.
 Ce plateau suggère que le modèle a convergé et que les prototypes ne sont plus modifiés de manière significative.
 
 Nous observons également que la convergence est relativement régulière pour les deux jeux de données.
@@ -2376,7 +2376,7 @@ Dans ce document $\gamma$ est fixé à une valeur relativement faible. Un meille
 potentiallement diminuer l'erreur topologique tout en coservant une bonne quantification.
 Il serait également pertinent de produire les expérience sur les jeux de données complets, afin d'obtenir des resultats plus robustes.
 
-En conclusion, les carte auto-organisées seul sont aujourd'hui moins compétitifs que certaines approches modernes dans une contexte où le données 
+En conclusion, les carte auto-organisées seul sont aujourd'hui moins compétitifs que certaines approches modernes dans un contexte où le données 
 sont de plus en plus volumineuses (grande dimension) et complexes.
 Cependant, leur principe reste pertient, car elles offrent une manière de combiner quantification, clustering et visualisation topologique.
 Le méthodes récente comme le DESOM ou les approches appliquées telle que FlowSOM demontrent que le principe des SOM reste d'actualité, en particulier
