@@ -149,7 +149,7 @@ le fonctionnement d'un neurone avec des méthodes d'apprentissage automatique (m
 \label{fig:neurone}
 \end{figure}
 
-Dans ce contexte, le but du réseau de neurones est d'approximer une fonction de prédiction du type $y = \phi(x)$ par une fonction $\phi_\theta$, represenntée
+Dans ce contexte, le but du réseau de neurones est d'approximer une fonction de prédiction du type $y = \phi(x)$ par une fonction $\phi_\theta$, representée
 par le réseau et paramétrée par $\theta = [w_{ij}^k]$ l'ensemble des poids.
 
 Le théorème d'approximation universelle montre que cela est possible avec un certain niveau d'approximation \cite{Approx_cap_multilayers}.
@@ -178,7 +178,7 @@ le neurone $S_c$ le plus proche de la donnée d'entrée $x_i$ est appelé \texti
 Le vecteur de poids $w_c$, ainsi que les vecteurs de poids $w_j$ des noeuds de son voisinage, sont mis à jour en fonction de la formule suivante : 
 $$w_j^{(t+1)} = w_j^{(t)} + h_{cj}(t)[x_i - w_j^{(t)}]$$ 
 
-Où, $h_{cj}(t)$ est la fonction de voisinage qui diminue avec la distance entre le neurone $S_j$ et le BMU $S_c$, ainsi que du temps $t$ \cite{Kohonen2012SOM} cf. section \ref{SOM_base}.
+Où, $h_{cj}(t)$ est la fonction de voisinage qui diminue avec la distance entre le neurone $S_j$ et le BMU $S_c$, ainsi que du temps $t$ \cite{Kohonen2012SOM} (cf. section \ref{SOM_base}).
 
 Dans ce contexte, nous avons un apprentissage dit non supervisé et compétitif, car les "neurones" sont en compétition pour représenter les données d'entrée, et sans labels pour guider l'apprentissage.
 Cela est une différence fondamentale avec les neurones formels, car les SOM sont utilisés pour la visualisation et la réduction de la dimensionnalité, 
@@ -339,7 +339,7 @@ Enfin, nous analyserons et discuterons de leurs performances, afin de mettre en 
 
 Les cartes auto-organisées ont été introduites par Teuvo Kohonen en 1982 \cite{SurveySOM}. 
 Ce modèle se base sur une approche d'apprentissage compétitive. Il s'agit d'une forme d'apprentissage non supervisé
-où chaque nœud "compétent" représente une région de l'espace des données d'entrée. 
+où chaque nœud concurrent représente une région de l'espace des données d'entrée. 
 Ce type d'apprentissage est utilisé notamment pour le clustering sous le nom de quantification vectorielle.
 
 \subsection{Quantification vectorielle (VQ)} \label{sec:VQ}
@@ -361,7 +361,7 @@ Admettons que $p(x)$ soit la densité de probabilité de $x$ sur $V$, alors l'er
 
 où $V$ est l'espace d'entrée et donc $dV$ est le volume différentiel. La fonction $\mathcal{E}$ est une fonction d'energie qui peut être minimisée par 
 l'algorithme de descente de gradient \cite{Kohonen2012SOM}. Par simplification, nous avons pris une distance euclidienne, mais d'autres mesures de distance peuvent être utilisées.
-La variante que nous avons présentée est connue sous le nom de "k-means" \cite{Kohonen2012SOM}.
+La variante que nous avons présentée est connue sous le nom de "k-means" \cite{bishop2006chapter9}.
 
 Dans la pratique, $p(x)$ est inconnue, mais nous avons un ensemble de données $\{x_i \in \mathbb{R}^d\}_{1 \leq i \leq n}$. Pour avoir une estimation de  $\mathcal{E}$, 
 il faut approximer $p(x)$ par une distribution empirique à partir de l'ensemble de données. Donc, nous avons :
@@ -497,7 +497,7 @@ Le BMU suit le même principe que celui de la VQ, c'est à dire le noeud le plus
 $$ c(x) = \arg\min_{j} ||x - w_j||^2 $$
 $$ BMU(x) = w_{c(x)} $$
 
-L'entier $c(x)$ représente l'indice du noeud gagnant pour les donnée $x$. En partant de la quantification vectorielle, l'équation de mise à jour d'un noeud $w_j$ est la suivante \cite{SOM1990}:
+L'entier $c(x)$ représente l'indice du noeud gagnant pour la donnée $x$. En partant de la quantification vectorielle, l'équation de mise à jour d'un noeud $w_j$ est la suivante \cite{SOM1990}:
 $$w_j^{(t+1)} = \begin{cases}
     w_j^{(t)} + \alpha(t)[x - w_j^{(t)}] & \text{si } j = c(x) \\
     w_j^{(t)} & \text{sinon}
@@ -778,6 +778,7 @@ $$w_j^* = \frac{\sum_{k} h_{kj} \, n_k \, x_{w,k}}{\sum_{k} h_{kj} \, n_k}$$
 
 Avec cette nouvelle interprétation, chaque noeud $w_j$ est mise à jour comme une moyenne pondérée des données qui lui sont associées. Nous avons donc une première approche de comment batch SOM fonctionne. 
 Comme déjà mentionné, cette variante traite l'ensemble des données d'entrée à chaque itération et pour cela les noeuds du SOM sont associés à une liste des copies des $x$ dont ils sont le BMU \cite{Kohonen2012SOM}.
+Cette approche s'apparente à l'algorithme des k-means, mais avec des contraintes topologiques (la carte) entre les noeuds (équivalents aux centroïdes dans k-means).
 Schématiquement, la figure \ref{fig:batch_som} illustre la mise à jour des noeuds dans le batch SOM.
 \begin{figure}[H]
 \centering
@@ -909,7 +910,7 @@ Schématiquement, la figure \ref{fig:batch_som} illustre la mise à jour des noe
 \label{fig:batch_som}
 \end{figure}
 
-L'algorithme suit l'idée présentée dans la figure \ref{fig:batch_som}. Nous avons une notions de regroupement de données pour chaque noeud.
+L'algorithme suit l'idée présentée dans la figure \ref{fig:batch_som}. Nous avons une notion de regroupement de données pour chaque noeud.
 L'implémentation est faite à l'aide d'un dictionnaire qui associe au noeud $w_j$ l'ensemble $B_{j} =\{x \in \mathbb{R}^d : BMU(x) = w_j\}$.
 L'algorithme d'apprentissage du batch SOM est présenté dans l'algorithme \ref{alg:SOM_batch}, où la fonction de voisinage est définie par :
 $$h_{ji}(t) = \exp\left(-\frac{\|p_j - p_i\|^2}{2\sigma(t)^2}\right)$$
@@ -949,8 +950,8 @@ Enfin, nous avons présenté deux variantes d'apprentissage pour un SOM classiqu
 Cependant, malgré ses avantages, le batch SOM présente certaines limites, notamment en termes de complexité computationnelle et de mémoire requise \cite{SurveySOM}.
 
 \section{Limites}
-Les cartes auto-organisées possèdent la capacité de réaliser simultanément une quantification vectorielle et un reduction de dimension. 
-Cependant, certains travaux ont montré que, du point de vue de l'erreur de la quantification ou de la préservation des distances, les SOM peuvent être moins performant que 
+Les cartes auto-organisées possèdent la capacité de réaliser simultanément une quantification vectorielle et une reduction de dimension. 
+Cependant, certains travaux ont montré que, du point de vue de l'erreur de la quantification ou de la préservation des distances, les SOM peuvent être moins performants que 
 la combinaison de deux méthodes spécialisées \cite{Limitations_SOM}. En particulier, l'association d'une méthode de quantification vectorielle telle que le k-means, 
 suivie d'une technique de reduction de dimension comme le Sammon mapping, permet d'optimiser séparément ces deux objectifs.
 
@@ -962,7 +963,7 @@ Dans le cas de la quantification vectorielle, la méthode k-means a tendance à 
 tandis que les SOM doivent également satisfaire une contrainte d'organisation topologique. Cela limite la capacité de répresentation des structures de données complexes, 
 en particulier lorsque nous avons un nombre plus élevé de clusters \cite{Limitations_SOM}.
 
-Concernant la reduction de dimension, les techniques traditionnellles ont tendance à mieux préserver les distances entre les points de données, tandis que les SOM peuvent introduire des distorsions dans la représentation 
+Concernant la reduction de dimension, les techniques traditionnellles, notamment celles issues du multidimensional scaling (MDS), ont tendance à mieux préserver les distances entre les points de données \cite{BorgGroenen2005}, tandis que les SOM peuvent introduire des distorsions dans la représentation 
 des distances à cause de leur structure en grille et de la manière dont ils mettent à jour les poids. Cela s'accentue particulièrement avec l'augmentation de dimensionnalité des données d'entrée.
 
 \subsection{Quantification vectorielle et reduction de dimension}
@@ -974,9 +975,9 @@ Cette structure permet de projeter les données sur une carte de prototypes, où
 Donc, pour les SOM, le codebook est organisé sur une grille régulière cela induit une contrainte sur la manière dont les poids sont mis à jour. 
 Il est également important de savoir que lorsque la fonction de voisinage $h_{ci} \rightarrow 0$, l'algorithme SOM se comportent de manière similaire au k-means, car seul le BMU est mis à jour\cite{Kohonen2012SOM}. 
 
-Un reduction de dimension, pour être plus précis, est une transformation $\Phi: \mathbb{R}^D \rightarrow \mathbb{R}^d$ qui préserve les similarités ou distances dans l'espace de départ 
-lors de la projection dans $\mathbb{R}^d$. Il existe plusieurs techniques de reduction de dimension, chacune avec ses propres avantages et inconvénients. 
-Par exemple, le Sammon mapping, le Umap, tsne ou encore les cartes auto-organisées. Le sammon mapping, en particulier, permet la reduction de dimension en minimisant la fonction de coût 
+Une reduction de dimension, pour être plus précis, est une transformation $\Phi: \mathbb{R}^D \rightarrow \mathbb{R}^d$ qui préserve les similarités ou distances dans l'espace de départ 
+lors de la projection dans $\mathbb{R}^d$ \cite{BorgGroenen2005}. Il existe plusieurs techniques de reduction de dimension, chacune avec ses propres avantages et inconvénients. 
+Par exemple, le Sammon mapping \cite{Sammon1969}, le Umap\cite{UMAP2018}, tsne\cite{TSNE2008} ou encore les cartes auto-organisées. Le sammon mapping, en particulier, permet la reduction de dimension en minimisant la fonction de coût 
 qui pondère les différences de distances entre les points de données et leurs projections. Cela est optimisé par la méthode de la decente de gradient \cite{Limitations_SOM}.
 Soit $d_{ij}$ la distance entre les points $x_i$ et $x_j$ dans l'espace d'origine, et $\hat{d}_{ij}$ la distance entre leurs projections $\Phi(x_i)$ et $\Phi(x_j)$ dans l'espace réduit. 
 La fonction de coût s'écrit :
@@ -993,7 +994,7 @@ Les performances de cette approche sont comparées à celles des SOM pour diffé
 \centering
 \begin{tabular}{lccccc}
 \toprule
-algorithm & no. clusters & dimension & msqe $\uparrow$ & Rand $\downarrow$ & corr.$\uparrow$ \\
+algorithm & no. clusters & dimension & msqe $\downarrow$ & Rand $\uparrow$ & corr.$\uparrow$ \\
 \midrule
 
 \multirow{6}{*}{SOM}
@@ -1033,18 +1034,18 @@ algorithm & no. clusters & dimension & msqe $\uparrow$ & Rand $\downarrow$ & cor
 
 À partir des résultats, nous observons que la combinaison k-means + Sammon mapping (oKMC+) a ,en moyenne, des meilleures performances que les SOM :
 \begin{itemize}
-\item un plus faible erreur quadratique moyenne (msqe) pour la quantification vectorielle, 
+\item une plus faible erreur quadratique moyenne (msqe) pour la quantification vectorielle, 
 \item un indice de Rand plus élevé (qui mesure la similarité entre les partitions) pour la qualité du clustering,
 \item une corrélation plus forte pour la mesure de la qualité de préservation de la topologie. 
 \end{itemize}
 
-Cela montre une limite importante des SOM, leurs performances est inférieure par rapport à des méthodes spécialisées pour la quantification vectorielle et la reduction de dimension.
+Cela montre une limite importante des SOM, leur performance est inférieure par rapport à des méthodes spécialisées pour la quantification vectorielle et la reduction de dimension.
 Les resultats suggèrent que les SOM peuvent ne pas être la meilleure option pour des tâches de clustering ou de réduction de dimensionnalité, surtout lorsque la qualité de la quantification ou de la reduction de dimension est cruciale.
 
 \subsection{Autres limitations}
 
 Les SOM présentent d'autres contraintes, notamment l'augmentation de la compléxité computationnelle avec la dimensionnalité des données d'entrée \cite{SurveySOM}.
-Lorsque la dimension de la donnée est élevée, le nombre de noeuds dans la grille doit être augmenté pour capturer la complexité des données, ce qui peut entraîner une augmentation significative du temps de calcul 
+Lorsque la dimension de les données sont élevées, le nombre de noeuds dans la grille et la dimensionalité doivent être augmentées pour capturer la complexité des données, ce qui peut entraîner une augmentation significative du temps de calcul 
 et de la mémoire requise pour l'apprentissage du SOM.
 
 En effet, la complexité de l'algorithme d'apprentissage est généralement de l'ordre de $O(n \cdot m \cdot T)$, où $n$ est le nombre d'échantillons d'entrée et $m$ est le nombre de noeuds dans la grille du SOM 
@@ -1067,7 +1068,7 @@ Cependant, l'apprentissage d'un K-SOM peut être plus coûteux en termes de temp
 Pour avoir une convergence correcte, l'algorithme d'apprentissage aura besoin de $\beta n$ itérations, où $\beta$ est un facteur de proportionnalité pour le nombre d'itérations qui dépend 
 de la complexité du modèle et de la nature des données d'entrée. Cela nous donne une complexité de $O(\beta n^3 \cdot m)$ \cite{sto_K_SOM}, ce qui peut être prohibitif pour les grands ensembles de données.
 
-L'approche proposée dans \cite{sto_K_SOM} consiste à faire un une reformulation des calculs effectués lors des étapes d'affectation et de mise à jour.
+L'approche proposée dans \cite{sto_K_SOM} consiste à faire une reformulation des calculs effectués lors des étapes d'affectation et de mise à jour.
 Elle introduit deux structures intermédiaires : un vecteur $A^t$ et une matrice $B^t$, qui permettent de stocker des quantités liées aux produits scalaires dans l'espace de Hilbert induit par le noyau. 
 Cela permet d'éviter le recalcul complet des distances entre chaque donnée et les prototypes à chaque itération. 
 
@@ -1149,7 +1150,7 @@ Comme pour FlowSOM, cette approche ne propose pas une nouvelle variante de SOM, 
 Le SOM est utilisé pour effectuer un clustering des données et produire une représentation structurée, qui est ensuite exploitée par un modèle supervisé 
 tel qu'un CNN, afin d'améliorer les performances de prédiction.
 
-Dans le document \cite{CNN_SOM}, ce type d'approche est testée pour savoir si la précision de detection de la resistance phénotypique des vecteurs de malaria est améliorée. 
+Dans le document \cite{CNN_SOM}, ce type d'approche est testé pour savoir si la précision de detection de la resistance phénotypique des vecteurs de malaria est améliorée. 
 Les résultats expérimentaux montrent une amélioration des performances en termes de précision de classification par rapport à un CNN seul, 
 suggérant que l'intégration du SOM permet de mieux capturer la structure des données.
 
@@ -1157,7 +1158,7 @@ suggérant que l'intégration du SOM permet de mieux capturer la structure des d
 La combinaison d'un SOM avec un perceptron multicouche (MLP) est une autre approche hybride qui vise à tirer parti des avantages de chaque technique.
 L'approche du document \cite{MLP_SOM} présente ce modèle hybride pour la prédiction manquante des logs de puits, en se basant sur des similitudes lithofaciques géologiques.
 
-Dans cette architecture, le but du SOM est de est d'organiser les données dans un espace de faible dimension (souvent bidimensionnel) tout en préservant leur structure topologique, 
+Dans cette architecture, le but du SOM est d'organiser les données dans un espace de faible dimension (souvent bidimensionnel) tout en préservant leur structure topologique, 
 et de regrouper les observations similaires en clusters. Cette représentation peut ensuite être utilisée comme entrée d'un modèle supervisé. Le MLP, en tant que réseau de neurones 
 profond capable de modéliser des relations non linéaires complexes, exploite ces informations pour effectuer des tâches de prédiction, telles que l'estimation de valeurs manquantes. 
 
@@ -1197,8 +1198,8 @@ Dans la suite de ce rapport, nous allons présenter les principes de fonctionnem
 
 \subsection{Autoencodeur (AE)}
 
-Les auto-encodeurs sont des réseaux de neurones conçus pour la reconstruction des données d'entrée de manière non supervisée dont l'objectif 
-est de reconstruire les données d'entrée tout en apprenant une représentation compacte de celles-ci. 
+Les auto-encodeurs sont des réseaux de neurones conçus pour apprendre une représentation plus compacte des données d'entrée de manière auto-supervisée (self-supervised),
+avec pour objectif de reconstruire fidèlement ces données de sortie.
 Ils permettent ainsi d'extraire des caractéristiques pertinentes en minimisant la perte d'information entre l'entrée et sa reconstruction.
 
 Un AE est composé de deux parties principales: un encodeur, qui transforme les données d'entrée $x$ en une représentation de plus faible dimension appelée espace latent $z$,
@@ -1628,9 +1629,25 @@ Les expériences seront menées sur 2 jeux de données disponibles via la biblio
 \begin{itemize}
     \item \textbf{MNIST} : MNIST est un ensemble de données d'images de chiffres manuscrits. La tailles de chaque image est de $28\times28$ pixels.
     Nous avons normalisé les valeurs des pixels dans l'intervalle $[0,1]$, puis nous avons aplati chaque image en un vecteur de 784 composantes. 
+    \begin{figure}[H]
+    \centering
+    
+    \includegraphics[width=0.9\textwidth]{images/mnist_examples_by_label.png}
+    \caption{Exemples d'images issues des jeux de données MNIST}
+    \label{fig:dataset_examples_mnist}
+    \end{figure}
+
+    
     \item \textbf{Fashion-MNIST} : Fashion-MNIST est un ensemble de données d'images de vêtements et accessoires. Celui-ci est similaire à MNIST en termes de taille et de format, 
     mais il est plus complexe en raison de la diversité des classes de vêtements et d'une plus grande similarité visuelle entre certaines classes. 
     Nous avons appliqué les mêmes prétraitements que pour MNIST, en normalisant les valeurs des pixels dans $[0,1]$ et en aplatissant les images en vecteurs de 784 composantes.
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/fashion_examples_by_label.png}
+    \caption{Exemples d'images issues des jeux de données Fashion-MNIST}
+    \label{fig:dataset_examples_fashion}
+    \end{figure}
+
 \end{itemize}
 
 Pour des raisons de simplicité et de temps d'exécution, les expériences sont réalisées sur des sous-échantillons de ces jeux de données, 
@@ -1943,11 +1960,11 @@ une grande quantité de données d'entrée assignées à ce prototype, tandis qu
 \label{fig:hit_map_comparison_mnist}
 \end{figure}
 
-Pour MNIST, le trois modèles présentent une repartition relativement hétérogène des activations.
+Pour MNIST, les trois modèles présentent une repartition relativement hétérogène des activations.
 Le SOM contient plusieurs prototypes très chargés et d'autres très peu utilisés, ce qui veut dire qu'il y a
 une importante concentration des données dans certaines régions de la carte.
-L'approche AE+SOM semble avoir aussi plusieurs prototypes faiblement utilisés voir vides,
-mais les activation fortes sont plus localisées. Cela peut s'interpréter que l'espace latent concentre les représentations latentes
+L'approche AE+SOM semble avoir aussi plusieurs prototypes faiblement utilisés voire vides,
+mais les activations fortes sont plus localisées. Cela peut s'interpréter que l'espace latent concentre les représentations latentes
 dans quelques prototypes, tandis que d'autres restent peu utilisés.
 Le DESOM montre aussi une répartition hétérogène : certaines zones sont fortement utilisées, notamment en bordure de carte, 
 tandis que plusieurs prototypes restent faiblement activés. 
@@ -2029,7 +2046,7 @@ La carte du SOM présente des transitions relativement lisses, cela suggère une
 sur la grille. Cette observation est cohérente avec son erreur topologique plus faible.
 Nous remarquons aussi une amélioration de la distiction des frontières.
 La carte de AE+SOM montre aussi une transitionassez régulière, avec des zones de couleurs proches regroupées localement.
-Les transition semblent être un peu plus marquées que pour le SOM, ce qui peut indiquer une organisation moins
+Les transitions semblent être un peu plus marquées que pour le SOM, ce qui peut indiquer une organisation moins
 progressive que pour le SOM.
 Pour ce qui est de la carte du DESOM, nous avons aussi une structure globalement plus régulière, mais avec des 
 transitions plus abruptes entre prototypes voisins.
@@ -2044,7 +2061,7 @@ favorable à la quantification, en échange d'une organisation topologique moins
 \subsubsection{Visualisation des prototypes}
 Les figures \ref{fig:visualization_prototypes_MNIST} et \ref{fig:visualization_prototypes_Fashion-MNIST} présentent les prototypes appris 
 par chaque modèle pour les deux jeux de données.
-Cette visualisation permet d'observer directement ce que représententles prototypes des cartes.
+Cette visualisation permet d'observer directement ce que représentent les prototypes des cartes.
 Pour le SOM, les prototypes sont directement visualisés comme des images de $28 \times 28$ pixels, tandis que pour les approches AE+SOM et DESOM,
 les prototypes sont appris dans l'espace latent de dimension 10. Nous les reconstruisons à l'aide du 
 décodeur correspondant pour être visualisés sous forme d'images de $28 \times 28$ pixels.
@@ -2153,7 +2170,7 @@ Ces courbes permettent l'analyse de la convergences des différents modèles, ai
 Pour le batch SOM, les courbes d'erreur de quantification montrent une diminution progressive de l'erreur au cours des itérations,
 indiquant que les prototypes s'ajustent progressivement pour mieux représenter les données d'entrée.
 Dans les deux cas, l'erreur de quantification diminue rapidement au début de l'entraînement, puis ralentit après un certain nombre d'itérations, 
-aux alentour de 175 à 190 itérations et elle atteint un plateau vers la fin de l'entraînement,
+aux alentours de $175$ à $190$ itérations et elle atteint un plateau vers la fin de l'entraînement,
 Ce plateau suggère que le modèle a convergé et que les prototypes ne sont plus modifiés de manière significative.
 
 Nous observons également que la convergence est relativement régulière pour les deux jeux de données.
