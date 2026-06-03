@@ -389,7 +389,7 @@ $$ \mathcal{E} \approx \frac{1}{n} \sum_{i=1}^{n} ||x_i - w_{c(x_i)}||^2 $$
 
 
 Ainsi, la quantification vectorielle minimise l'énergie $\mathcal{E}$ en associant chaque donnée d'entrée a son prototype (BMU) le plus proche.
-Les SOM suivent cette même approche d'apprentissage compétitive. Cependant, contrairement à la VQ classique, les SOM imposent une topologie sur les prototypes (la grille), 
+Les SOM suivent cette même approche d'apprentissage compétitive. Cependant, contrairement à la VQ classique, les SOM imposent une topologie sur les prototypes (la carte), 
 de manière à ce que les prototypes voisins dans la grille soient aussi proches dans l'espace des données d'entrée. 
 \begin{figure}[H]
 \centering
@@ -504,7 +504,7 @@ $$w_j^{(t+1)} = \begin{cases}
 \end{cases}$$
 
 Où $\alpha(t)$ est le taux d'apprentissage qui diminue avec le temps $t$. Nous observons que dans cette formule, seul le noeud gagnant est mis à jour, il est "attiré" vers la donnée d'entrée.
-Dans le VQ classique, seulement le noeud gagnant est mis à jour et sans interaction avec ses voisins. Cependant, dans les SOM, les noeuds voisins du BMU sont aussi mis à jour.
+Dans le VQ classique, seulement le noeud gagnant est mis à jour et sans interaction avec ses voisins. Cependant, pour imposer la topologie de la carte dans les SOM, les noeuds voisins du BMU sont aussi mis à jour.
 
 Admettons l'ensemble de noeuds voisins du BMU $N_c(t)$ qui décroit avec le temps, alors la formule de mise à jour devient \cite{SOM1990} (rappelons que $w_{c(x)} \in N_c(t)$):
 $$w_j^{(t+1)} = \begin{cases}
@@ -977,11 +977,11 @@ Il est également important de savoir que lorsque la fonction de voisinage $h_{c
 
 Une reduction de dimension, pour être plus précis, est une transformation $\Phi: \mathbb{R}^D \rightarrow \mathbb{R}^d$ qui préserve les similarités ou distances dans l'espace de départ 
 lors de la projection dans $\mathbb{R}^d$ \cite{BorgGroenen2005}. Il existe plusieurs techniques de reduction de dimension, chacune avec ses propres avantages et inconvénients. 
-Par exemple, le Sammon mapping \cite{Sammon1969}, le Umap\cite{UMAP2018}, tsne\cite{TSNE2008} ou encore les cartes auto-organisées. Le sammon mapping, en particulier, permet la reduction de dimension en minimisant la fonction de coût 
+Par exemple, le Sammon mapping \cite{Sammon1969}, le Umap\cite{UMAP2018}, t-SNE\cite{TSNE2008} ou encore les cartes auto-organisées. Le sammon mapping, en particulier, permet la reduction de dimension en minimisant la fonction de coût 
 qui pondère les différences de distances entre les points de données et leurs projections. Cela est optimisé par la méthode de la decente de gradient \cite{Limitations_SOM}.
-Soit $d_{ij}$ la distance entre les points $x_i$ et $x_j$ dans l'espace d'origine, et $\hat{d}_{ij}$ la distance entre leurs projections $\Phi(x_i)$ et $\Phi(x_j)$ dans l'espace réduit. 
+Soit $\hat{\mathcal{X}} = \{\Phi(x_i)\}_{i=0}^{n-1}$ l'ensemble de projections, $d_{ij}$ la distance entre les points $x_i$ et $x_j$ dans l'espace d'origine, et $\hat{d}_{ij}$ la distance entre leurs projections $\Phi(x_i)$ et $\Phi(x_j)$ dans l'espace réduit. 
 La fonction de coût s'écrit :
-$$\frac{1}{\sum_{i=0}^{n-1} \sum_{j < i} d_{ij}} \sum_{i=0}^{n-1} \sum_{j < i}  \frac{(d_{ij} - \hat{d}_{ij})^2}{d_{ij}}$$
+$$\mathcal{L}(\hat{\mathcal{X}}) = \frac{1}{\sum_{i=0}^{n-1} \sum_{j < i} d_{ij}} \sum_{i=0}^{n-1} \sum_{j < i}  \frac{(d_{ij} - \hat{d}_{ij})^2}{d_{ij}}$$
 
 Enfin, il est important de remarquer que le codebook d'un SOM est limité en nombre de noeuds, cela entraine une discrétisation de l'espace d'entrée, 
 ce qui peut conduire à une perte d'information si le nombre de noeuds est insuffisant et à une représentation moins précise des données \cite{Limitations_SOM}.
@@ -1048,8 +1048,8 @@ Les SOM présentent d'autres contraintes, notamment l'augmentation de la complé
 Lorsque la dimension de les données sont élevées, le nombre de noeuds dans la grille et la dimensionalité doivent être augmentées pour capturer la complexité des données, ce qui peut entraîner une augmentation significative du temps de calcul 
 et de la mémoire requise pour l'apprentissage du SOM.
 
-En effet, la complexité de l'algorithme d'apprentissage est généralement de l'ordre de $O(n \cdot m \cdot T)$, où $n$ est le nombre d'échantillons d'entrée et $m$ est le nombre de noeuds dans la grille du SOM 
-(en général $m \ll n$) et $T$ le nombre d'itérations d'apprentissage. Cela le rend moins adapté pour des jeux de données de grande taille ou de forte dimensionnalité \cite{SurveySOM}. 
+En effet, la complexité de l'algorithme d'apprentissage est généralement de l'ordre de $O(N \cdot M \cdot T)$, où $N$ est le nombre d'échantillons d'entrée et $M$ est le nombre de noeuds dans la grille du SOM 
+(en général $M \ll N$) et $T$ le nombre d'itérations d'apprentissage. Cela le rend moins adapté pour des jeux de données de grande taille ou de forte dimensionnalité \cite{SurveySOM}. 
 
 Une autre limitation des SOM est leur incapacité à traiter les données de nature séquentielle ou temporelle. Les SOM classiques ne sont pas conçus pour traiter des données temporelles, 
 ce qui peut limiter leur application dans des domaines tels que la reconnaissance de la parole ou l'analyse de séries temporelles \cite{SurveySOM}.
@@ -2258,9 +2258,10 @@ d'avoir plus de prototypes pour mieux représenter la diversité des données d'
 
 Pour l'erreur de topologie, la figure \ref{fig:grid_size_impact_te} montre que l'augmentation de la taille de la grille
 n'entraîne pas une amélioration systématique de la préservation de la topologie.
-
 Contrairement à l'erreur de quantification, qui tend généralement à diminuer lorsque le nombre de prototypes augmente, 
-l'erreur de topologie présente des variations irrégulières.
+l'erreur de topologie présente des variations irrégulières. Une hypothèse explicative de ce phénomène est la sensibilité
+du SOM à l'initialisation aléatoire des poids: comme pour l'algorithme k-means, l'apprentissage peut converger vers des configurations
+sous-optimales selon l'initialisation, introduisant une variabilité dans l'erreur de topologie indépendamment de la taille de la grille.
 
 Sur MNIST, l'approche AE+SOM obtient les valeurs les plus stables et atteint son meilleur score de TE pour les tailles de grilles intermédiaires.
 Le SOM présente une erreur plus faible pour les petites grilles, mais celle-ci augmente lorsque le nombre de nœuds devient plus important.
@@ -2376,12 +2377,13 @@ Dans ce document $\gamma$ est fixé à une valeur relativement faible. Un meille
 potentiallement diminuer l'erreur topologique tout en coservant une bonne quantification.
 Il serait également pertinent de produire les expérience sur les jeux de données complets, afin d'obtenir des resultats plus robustes.
 
-En conclusion, les carte auto-organisées seul sont aujourd'hui moins compétitifs que certaines approches modernes dans un contexte où le données 
-sont de plus en plus volumineuses (grande dimension) et complexes.
-Cependant, leur principe reste pertient, car elles offrent une manière de combiner quantification, clustering et visualisation topologique.
-Le méthodes récente comme le DESOM ou les approches appliquées telle que FlowSOM demontrent que le principe des SOM reste d'actualité, en particulier
-lorsqu'ells sont combinées avec des techniques d'apprentissage automatique.
-Ainsi, les SOM concervent un intérêt important comme outil historique et comme base pour certains modèles hybrides interprétables et adaptés à l'analyse de données complexes.
+En conclusion, les carte auto-organisées seul sont aujourd'hui moins compétitives que certaines approches modernes dans un contexte où les données 
+sont de plus en plus volumineuses de grande dimension et complexes.
+Cependant, leur principe reste pertinent, car elles offrent une manière de combiner quantification, clustering et visualisation topologique.
+Les méthodes récentes comme le DESOM ou les approches appliquées telles que FlowSOM demontrent que le principe des SOM reste d'actualité, en particulier
+lorsqu'elles sont combinées avec des techniques d'apprentissage automatique.
+Ainsi, les SOM restent un outil de référence en apprentissage non 
+supervisé et comme base pour certains modèles hybrides interprétables et adaptés à l'analyse de données complexes.
 
 
 \bibliographystyle{plain}
