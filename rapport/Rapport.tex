@@ -89,8 +89,8 @@ de leur voisinage.
 
 \section{Contexte}
 Actuellement, les réseaux de neurones ont une place centrale dans le domaine de l'apprentissage automatique. 
-Insipirée aussi des neurones biologiques, des cellues nerveuses dont la fonction est d'agréger et transmettre 
-des informations via des sigaux chimiques et électriques \cite{Neurone_wikipedia}, ces modèles consistent à former des interconnexions entre 
+Insipirée aussi des neurones biologiques, des cellules nerveuses dont la fonction est d'agréger et transmettre 
+des informations via des signaux chimiques et électriques \cite{Neurone_wikipedia}, ces modèles consistent à former des interconnexions entre 
 couches de neurones artificiels. 
 
 Dans la littérature, nous observons une tendance à appeler les SOM des réseaux 
@@ -149,7 +149,7 @@ le fonctionnement d'un neurone avec des méthodes d'apprentissage automatique (m
 \label{fig:neurone}
 \end{figure}
 
-Dans ce contexte, le but du réseau de neurones est d'approximer une fonction de prédiction du type $y = \phi(x)$ par une fonction $\phi_\theta$, representée
+Dans ce contexte, le but du réseau de neurones est d'approximer une fonction de prédiction du type $y = \phi(x)$ par une fonction $\phi_\theta$, représentée
 par le réseau et paramétrée par $\theta = [w_{ij}^k]$ l'ensemble des poids.
 
 Le théorème d'approximation universelle montre que cela est possible avec un certain niveau d'approximation \cite{Approx_cap_multilayers}.
@@ -950,10 +950,10 @@ Enfin, nous avons présenté deux variantes d'apprentissage pour un SOM classiqu
 Cependant, malgré ses avantages, le batch SOM présente certaines limites, notamment en termes de complexité computationnelle et de mémoire requise \cite{SurveySOM}.
 
 \section{Limites}
-Les cartes auto-organisées possèdent la capacité de réaliser simultanément une quantification vectorielle et une reduction de dimension. 
+Les cartes auto-organisées possèdent la capacité de réaliser simultanément une quantification vectorielle et une réduction de dimension. 
 Cependant, certains travaux ont montré que, du point de vue de l'erreur de la quantification ou de la préservation des distances, les SOM peuvent être moins performants que 
 la combinaison de deux méthodes spécialisées \cite{Limitations_SOM}. En particulier, l'association d'une méthode de quantification vectorielle telle que le k-means, 
-suivie d'une technique de reduction de dimension comme le Sammon mapping \cite{Sammon1969}, permet d'optimiser séparément ces deux objectifs.
+suivie d'une technique de réduction de dimension comme le Sammon mapping \cite{Sammon1969}, permet d'optimiser séparément ces deux objectifs.
 
 Cette différence s'explique par le fait que les méthodes utilisées dans une approche séquentielle sont chacune conçues pour minimiser explicitement une fonction de coût spécifique, 
 tandis que les SOM réalisent simultanément ces tâches à travers un mécanisme unique d'apprentissage. Ce couplage induit un compromis entre la qualité de la quantification et celle de la projection, 
@@ -963,10 +963,10 @@ Dans le cas de la quantification vectorielle, la méthode k-means a tendance à 
 tandis que les SOM doivent également satisfaire une contrainte d'organisation topologique. Cela limite la capacité de répresentation des structures de données complexes, 
 en particulier lorsque nous avons un nombre plus élevé de clusters \cite{Limitations_SOM}.
 
-Concernant la reduction de dimension, les techniques traditionnellles, notamment celles issues du multidimensional scaling (MDS), ont tendance à mieux préserver les distances entre les points de données \cite{BorgGroenen2005}, tandis que les SOM peuvent introduire des distorsions dans la représentation 
+Concernant la réduction de dimension, les techniques traditionnelles, notamment celles issues du multidimensional scaling (MDS), ont tendance à mieux préserver les distances entre les points de données \cite{BorgGroenen2005}, tandis que les SOM peuvent introduire des distorsions dans la représentation 
 des distances à cause de leur structure en grille et de la manière dont ils mettent à jour les poids. Cela s'accentue particulièrement avec l'augmentation de dimensionnalité des données d'entrée.
 
-\subsection{Quantification vectorielle et reduction de dimension}
+\subsection{Quantification vectorielle et réduction de dimension}
 
 Une des méthodes les plus courantes pour la quantification vectorielle est le k-means, qui est un algorithme de clustering qui partitionne les données en $k$ clusters en minimisant 
 la somme des distances au carré entre les points de données et les centres de cluster. Cette méthode a été déjà mentionnée dans la section \ref{sec:VQ}. 
@@ -975,9 +975,9 @@ Cette structure permet de projeter les données sur une carte de prototypes, où
 Donc, pour les SOM, le codebook est organisé sur une grille régulière cela induit une contrainte sur la manière dont les poids sont mis à jour. 
 Il est également important de savoir que lorsque la fonction de voisinage $h_{ci} \rightarrow 0$, l'algorithme SOM se comportent de manière similaire au k-means, car seul le BMU est mis à jour\cite{Kohonen2012SOM}. 
 
-Une reduction de dimension, pour être plus précis, est une transformation $\Phi: \mathbb{R}^D \rightarrow \mathbb{R}^d$ qui préserve les similarités ou distances dans l'espace de départ 
-lors de la projection dans $\mathbb{R}^d$ \cite{BorgGroenen2005}. Il existe plusieurs techniques de reduction de dimension, chacune avec ses propres avantages et inconvénients. 
-Par exemple, le Sammon mapping \cite{Sammon1969}, le Umap\cite{UMAP2018}, t-SNE\cite{TSNE2008} ou encore les cartes auto-organisées. Le sammon mapping, en particulier, permet la reduction de dimension en minimisant la fonction de coût 
+Une réduction de dimension, pour être plus précis, est une transformation $\Phi: \mathbb{R}^D \rightarrow \mathbb{R}^d$ qui préserve les similarités ou distances dans l'espace de départ 
+lors de la projection dans $\mathbb{R}^d$ \cite{BorgGroenen2005}. Il existe plusieurs techniques de réduction de dimension, chacune avec ses propres avantages et inconvénients. 
+Par exemple, le Sammon mapping \cite{Sammon1969}, le Umap\cite{UMAP2018}, t-SNE\cite{TSNE2008} ou encore les cartes auto-organisées. Le sammon mapping, en particulier, permet la réduction de dimension en minimisant la fonction de coût 
 qui pondère les différences de distances entre les points de données et leurs projections. Cela est optimisé par la méthode de la decente de gradient \cite{Limitations_SOM}.
 Soit $\hat{\mathcal{X}} = \{\Phi(x_i)\}_{i=0}^{n-1}$ l'ensemble de projections, $d_{ij}$ la distance entre les points $x_i$ et $x_j$ dans l'espace d'origine, et $\hat{d}_{ij}$ la distance entre leurs projections $\Phi(x_i)$ et $\Phi(x_j)$ dans l'espace réduit. 
 La fonction de coût s'écrit :
@@ -986,7 +986,7 @@ $$\mathcal{L}(\hat{\mathcal{X}}) = \frac{1}{\sum_{i=0}^{n-1} \sum_{j < i} d_{ij}
 Enfin, il est important de remarquer que le codebook d'un SOM est limité en nombre de noeuds, cela entraine une discrétisation de l'espace d'entrée, 
 ce qui peut conduire à une perte d'information si le nombre de noeuds est insuffisant et à une représentation moins précise des données \cite{Limitations_SOM}.
 
-Dans \cite{Limitations_SOM}, nous trouvons une approche qui consiste à faire d'abord une quantification vectorielle avec le k-means, puis à appliquer une reduction de dimension avec le Sammon mapping.
+Dans \cite{Limitations_SOM}, nous trouvons une approche qui consiste à faire d'abord une quantification vectorielle avec le k-means, puis à appliquer une réduction de dimension avec le Sammon mapping.
 Les performances de cette approche sont comparées à celles des SOM pour différentes configurations, comme illustré dans le tableau \ref{tab:comparison_som_kmeans}.
 
 
@@ -1039,8 +1039,8 @@ algorithm & no. clusters & dimension & msqe $\downarrow$ & Rand $\uparrow$ & cor
 \item une corrélation plus forte pour la mesure de la qualité de préservation de la topologie. 
 \end{itemize}
 
-Cela montre une limite importante des SOM, leur performance est inférieure par rapport à des méthodes spécialisées pour la quantification vectorielle et la reduction de dimension.
-Les resultats suggèrent que les SOM peuvent ne pas être la meilleure option pour des tâches de clustering ou de réduction de dimensionnalité, surtout lorsque la qualité de la quantification ou de la reduction de dimension est cruciale.
+Cela montre une limite importante des SOM, leur performance est inférieure par rapport à des méthodes spécialisées pour la quantification vectorielle et la réduction de dimension.
+Les résultats suggèrent que les SOM peuvent ne pas être la meilleure option pour des tâches de clustering ou de réduction de dimensionnalité, surtout lorsque la qualité de la quantification ou de la réduction de dimension est cruciale.
 
 \subsection{Autres limitations}
 
@@ -1101,7 +1101,7 @@ Ainsi, cette extension est un avancement pour les SOM dans le cadre de données 
 pour lesquelles l'approches classique n'est pas applicables.
 
 \subsection{FlowSOM}
-FlowSOM n'est pas une extension, mais plutôt une application intéressante utilisée notament dans le domaine de la biologie et plus précisément pour l'analyse de données de cytométrie \cite{FlowSOM}.
+FlowSOM n'est pas une extension, mais plutôt une application intéressante utilisée notamment dans le domaine de la biologie et plus précisément pour l'analyse de données de cytométrie \cite{FlowSOM}.
 Cette approche en réalité ne propose pas une nouvelle variante de SOM, mais plutôt une nouvelle manière d'utiliser les SOM pour l'analyse de données de cytométrie avec une structure spécifique.
 Elle a comme objectif de faciliter la visualisation et l'interprétation des données de cytométrie, au lieu d'utiliser des scatter plots traditionnels, 
 qui peuvent être difficiles à interpréter lorsque nous avons un grand nombre de dimensions et de points de données \cite{FlowSOM}.
@@ -1119,7 +1119,7 @@ L'algorithme de flowSOM peut être résumé comme suit \cite{FlowSOM}:
 
 L'étape de meta-clustering repose sur une sur-segmentation initiale des données via le SOM, où un nombre élevé de prototypes est utilisé pour ainsi capturer des plus petites structures dans les données, 
 puis regrouper en un nombre réduit de clusters plus interprétables. Dans \cite{FlowSOM} pour avoir le nombre de clusters final, ils utilisent la méthode de l'elbow 
-pour déterminer le nombre optimal de clusters à partir du MST. Elle consiste à detecter le point où la variation de la distance entre les clusters devient moins significative, 
+pour déterminer le nombre optimal de clusters à partir du MST. Elle consiste à détecter le point où la variation de la distance entre les clusters devient moins significative, 
 cela correspond à un point d'inflexion dans la courbe de la distance entre les clusters en fonction du nombre de clusters.
 
 FlowSOM a montré des performances plus élevées que des méthodes traditionnelles d'analyse de données de cytométrie comme SPADE, notamment en termes de temps de calcul, 
@@ -1137,7 +1137,7 @@ Nous allons présenter deux type de SOM hybrides : SOM-CNN et SOM-MLP. Il en exi
 Cette extension combine les capacités de représentation des réseaux de neurones convolutionnels (CNN) avec les propriétés de structuration topologique des SOM.
 Selon les approches, les caractéristiques extraites par le CNN peuvent être utilisées comme entrée d'un SOM pour effectuer un clustering, ou inversement, 
 les sorties d'un SOM peuvent servir d'entrée à un CNN pour des tâches supervisées.
-Ce type de réseau, employé notament dans l'analyse d'images, utilise l'opération de convolution pour extraire des caractéristiques à partir des données d'entrée, ce qui est particulièrement 
+Ce type de réseau, employé notamment dans l'analyse d'images, utilise l'opération de convolution pour extraire des caractéristiques à partir des données d'entrée, ce qui est particulièrement 
 efficace pour les données structurées en grille, comme les images.
 
 Opération de convolution est définie de manière \textbf{discrète} comme suit:
@@ -1616,8 +1616,8 @@ Cette contrainte encourage l'apprentissage d'un espace latent qui améliore la q
 % Contenu chap3
 % =========================
 
-\chapter{Etude empirique}
-Ce chapitre consistera à la comparaison expériemntale de trois modèles: un SOM implémenté depuis zéro, 
+\chapter{Étude empirique}
+Ce chapitre consistera à la comparaison expérimentale de trois modèles: un SOM implémenté depuis zéro, 
 une approche en deux étapes combinant un autoencodeur et un SOM (AE+SOM), ainsi que le DESOM. Les expériences sont réalisées sur deux jeux de données d'images, MNIST et Fashion-MNIST.
 
 L'objectif de cette étude permettra d'analyser les avantages et les limites de chaque approche selon certains critères:
@@ -1799,7 +1799,7 @@ Pour évaluer les performances des modèles, nous utiliserons les métriques sui
     puis nous calculons la proportion d'échantillons correctement classés. Formellement, soit $C_k$ le cluster $k$ et $L_j$ la classe $j$, alors :
     $$ \text{Pureté} = \frac{1}{N} \sum_{k} \max_j |C_k \cap L_j| $$
     où $N$ est le nombre total d'échantillons d'entrée.
-    \item \textbf{NMI (Normalized Mutual Information)} :C'est une mesure la similarité entre les clusters formés par le SOM et les classes d'origine. 
+    \item \textbf{NMI (Normalized Mutual Information)} :C'est une mesure de la similarité entre les clusters formés par le SOM et les classes d'origine. 
     Un score de NMI plus élevé indique une meilleure correspondance entre les clusters et les classes d'origine. Le NMI est défini comme suit : 
     soit $C$ l'ensemble des clusters et $L$ l'ensemble des classes d'origine, alors :
     $$ NMI(C, L) = \frac{I(C; L)}{\sqrt{H(C) H(L)}} $$
@@ -1931,7 +1931,7 @@ l'organisation topologique de la carte.
 Dans la figure \ref{fig:u_matrix_comparison_fashion}, les U-matrices pour Fashion-MNIST montre un
 comportement similaire à celle observée sur MNIST.
 
-Le SOM présente des zones de distances élevées, notament dans la partie supérieure à droite de la carte.
+Le SOM présente des zones de distances élevées, notamment dans la partie supérieure à droite de la carte.
 Ces régions peuvent être interprétées comme des frontières entre régions de la carte.
 
 L'approche AE+SOM montre des distances plus faibles et une distinction de zones moins marquée que pour le SOM, ce qui indique une 
@@ -2235,7 +2235,7 @@ ce qui peut permet de représenter plus finement la diversité des données d'en
 
 Cependant, cette diminution de QE reste relativement faible pour AE+SOM et DESOM, 
 en particulier pour les tailles de grilles plus grandes. Cela suggère que l'espace 
-latent appris permet déjà une quantification plus compacte, l'ajout suplémentaire de prototypes apporte relativement peu d'amélioration.
+latent appris permet déjà une quantification plus compacte, l'ajout supplémentaire de prototypes apporte relativement peu d'amélioration.
 
 Nous observons également que, pour les plus grandes tailles de grille, les courbes tendent à se stabiliser.
 Cela indique qu'au-delà d'une certaine taille, augmenter le nombre de prototypes n'apporte pas nécessairement 
@@ -2245,7 +2245,7 @@ Pour le SOM nous observons une diminution, un peu plus marquée, de l'erreur de 
 Cela peut être lié au fait que le SOM est directement entraîné sur les données d'entrée, et une plus grande grille permet 
 d'avoir plus de prototypes pour mieux représenter la diversité des données d'entrée.
 
-% resultats pour QE
+% résultats pour QE
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.45\textwidth]{images/grid_size_study_qe.png}
@@ -2272,7 +2272,7 @@ Le SOM et l'approche AE+SOM obtiennent des résultats relativement proches pour 
 Le DESOM, en revanche, voit son erreur topologique augmenter avec la taille de la grille, ce qui suggère que l'organisation topologique de la carte 
 devient plus difficile à stabiliser lorsque le nombre de prototypes augmente.
 
-% resultats pour TE
+% résultats pour TE
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.45\textwidth]{images/grid_size_study_te.png}
@@ -2299,7 +2299,7 @@ cela peut s'expliquer par l'apprentissage conjoint du DESOM qui permet d'obtenir
 Néanmoins, pour la plus grande grille, les performances des trois modèles deviennent relativement proches. 
 Le AE+SOM obtient le score le plus grand avec la grille $(15, 15)$.
 
-% resultats pour pureté
+% résultats pour pureté
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.45\textwidth]{images/grid_size_study_purete.png}
@@ -2325,7 +2325,7 @@ Le DESOM obtient le meilleurs scores pour la plus petite grille et reste compét
 Pour les grandes grilles, les scores des trois modèles deviennent relativement proches.
 Cela indique que, pour Fashion-MNIST également, l'augmentation de la taille de la grille peut améliorer la pureté tout en diminuant la cohérence globale entre les clusters et les classes
 
-% resultats pour NMI
+% résultats pour NMI
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.45\textwidth]{images/grid_size_study_nmi.png}
@@ -2335,9 +2335,9 @@ Cela indique que, pour Fashion-MNIST également, l'augmentation de la taille de 
 \label{fig:grid_size_impact_nmi}
 \end{figure}
 
-Ainsi, cette étude montre que la taille de la grille a un impact significatif pour l'erreur topologique, la pureté et le MNI.
-Une grille plus grande permet d'avoir une meilleur pureté, mais elle peut dégrader le NMI et l'erreur de topologie.
-Quant à l'erreur de quantification, elle tend a diminuer avec l'augmentation de la grille, mais cette diminution reste relativement faible voir inexistante 
+Ainsi, cette étude montre que la taille de la grille a un impact significatif pour l'erreur topologique, la pureté et le NMI.
+Une grille plus grande permet d'avoir une meilleure pureté, mais elle peut dégrader le NMI et l'erreur de topologie.
+Quant à l'erreur de quantification, elle tend à diminuer avec l'augmentation de la grille, mais cette diminution reste relativement faible voir inexistante 
 pour les approches basées sur l'apprentissage d'un espace latent, ce qui suggère que l'espace latent appris est déjà très adapté pour la quantification par le SOM.
 Dans nos expériences, les tailles intermédiaires semblent offrir un compromis plus raisonnable entre quantification, pureté, NMI et préservation topologique. 
 
@@ -2353,7 +2353,7 @@ prototypes utilisés des neurones formels utilisés dans les réseaux de neurone
 en décrivant leur structure de base, leur algorithme de mis à jour, ainsi qu'un variant de SOM appelé batch SOM qui est plus adapté aux applications
 pratiques.
 
-Nous avons également discuté sur certaines limites du SOM, notament leur coût de calcul lorsque la taille des données augmente et
+Nous avons également discuté sur certaines limites du SOM, notamment leur coût de calcul lorsque la taille des données augmente et
 et les difficultés liées à la préservation simultanée de la quantification et de la topologie. Nous avons présenté 
 quelques extensions qui proposent des solutions à ces problèmes.
 
@@ -2368,14 +2368,14 @@ Cependant, l'amélioration de la quantification a un compromis en termes de pré
 d'une erreur topologique plus élevée dans nos expériences.
 
 L'étude empirique a également montré que les approches comme AE+SOM et DESOM peuvent obtenir de bonne performances en clustering,
-notament en terme de pureté et de NMI. Néanmoins, l'écart entre les modèles reste faible et les résultats dépendent du choix 
+notamment en terme de pureté et de NMI. Néanmoins, l'écart entre les modèles reste faible et les résultats dépendent du choix 
 des hyperparamètres, de la taille de la grille et de la qualité de l'espace latent appris.
 
 Il existe plusieurs études possibles pour prolonger ce travail.
 Une étude sur l'hyperparamètre $\gamma$ du DESOM pourrait être intéressante, car ce hyperparamètre contrôle l'importance relative de l'organisation faite par le SOM.
 Dans ce document $\gamma$ est fixé à une valeur relativement faible. Un meilleur choix de $\gamma$ pourrait 
 potentiallement diminuer l'erreur topologique tout en coservant une bonne quantification.
-Il serait également pertinent de produire les expérience sur les jeux de données complets, afin d'obtenir des resultats plus robustes.
+Il serait également pertinent de produire les expérience sur les jeux de données complets, afin d'obtenir des résultats plus robustes.
 
 En conclusion, les carte auto-organisées seul sont aujourd'hui moins compétitives que certaines approches modernes dans un contexte où les données 
 sont de plus en plus volumineuses de grande dimension et complexes.
